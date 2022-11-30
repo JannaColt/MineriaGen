@@ -127,6 +127,13 @@ Ya establecida toda la paquetería e instalados todos los pipelines podemos come
 
 ## 4. Comencemos explorando las reads:
 
+Las Lecturas comúnmente se encuentran en formato FASTQ, muy similar al FASTA solo que contiene indicios de calidad.
+
+Son Archivos (de texto o ficheros) muy grandes que no se pueden leer. Ciertos comandos te permiten observar aspectos clave (Head/tail/more - trabajando con ficheros en Linux). Una imagen de la estructura de un archivo fastq la podemos observar más adelante en el apartado del pre-procesamiento.
+
+[Estructura FASTQ](##5.-Pre-procesamiento,-análisis-de-calidad-usando-FASTQC-y-FASTP)
+
+
 Para conocer un poco nuestras secuencias podemos utilizar script de bash. En este caso trabajamos con los siguientes archivos:
 
 
@@ -159,7 +166,7 @@ zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.g
 zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz | tail -n 4
 ```
 
-### b) Revisión de las secuencias, número, longitud, que ambos estén pareados
+### b) Revisión de las secuencias, número, longitud, que ambos estén pareados (Esta parte se puede omitir ya que fastqc te muestra algunos de estos resultados)
 
 El siguiente bloque permite revisar si los archivos están pareados
 ```bash
@@ -257,4 +264,45 @@ graficaR2 = df2.plot(x= 'ocurrences', y= 'length', kind ='line')
 plt.show()
 plt.savefig("ReadlenghtR2.jpg", bbox_inches='tight')
 ```
-Lo siguiente puede ser opcional
+Lo siguiente puede ser opcional.
+
+### c) bloques para mostrar solo secuencias o secuencias repetidas
+
+```bash
+#Desplegar solo la información de la secuencia
+%%bash
+zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz | awk 'NR % 4 == 2 {print;}' | head -n 10
+```
+
+```bash
+%%bash
+zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz | awk 'NR % 4 == 2 {print;}' | head -n 10
+```
+podemos considerar un output txt para las secuencias repetidas
+
+```bash
+#Observar barcodes-secuencias que se presentan más frecuentemente
+%%bash
+zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz | awk 'NR % 4 == 2 {print;}' | sort | uniq -c | sort -n -r | head -n 10
+zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz | awk 'NR % 4 == 2 {print;}' | sort | sort -n -r | uniq -c > /content/drive/MyDrive/Analisis_Posdoc/Sec_rep1.txt
+```
+```bash
+%%bash
+zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz | awk 'NR % 4 == 2 {print;}' | sort | uniq -c | sort -n -r | head -n 10
+zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz | awk 'NR % 4 == 2 {print;}' | sort | sort -n -r | uniq -c > /content/drive/MyDrive/Analisis_Posdoc/Sec_rep2.txt
+```
+
+## 5. Pre-procesamiento, análisis de calidad usando FASTQC y FASTP
+
+Identificamos primeramente problemas de calidad en las lecturas
+
+El Control de calidad ayuda a mantener solo secuencias adecuadas y reducir el tamaño del archivo.
+
+### a) Fastqc
+
+```python
+# Pre-alignment QA 
+!fastqc /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz
+!fastqc /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz
+```
+
