@@ -201,4 +201,60 @@ y podemos añadir parámetros para imprimir en txt
 zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz | awk 'NR%4 == 2 {lengths[length($0)]++ ; counter++} END {for (l in lengths){print l, lengths[l]}}' | sort -n | uniq -c > /content/drive/MyDrive/Analisis_Posdoc/read_length1.txt
 ```
 
+el txt generado lo podemos importar y transformar a csv para después graficarlo en matplotlib, para lo cual se pueden aplicar los siguientes bloques:
 
+```python
+read_file = pd.read_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_length1.txt',header=None)
+read_file.to_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_lengthR1.csv', index=None,header=None)
+```
+Generar el df tipo decimal
+
+```python
+read_file[0] = read_file[0].astype(str)
+df = read_file[0].apply(lambda x: x.strip(" "))
+df = pd.DataFrame(df.str.split(' ',2).tolist(),
+                                 columns = ['fips','length', 'ocurrences'])
+df
+df=df.astype(float)
+```
+
+y graficamos
+```python
+##Graficar la longitud de secuencia contra las ocurrencias
+df.plot(x= 'ocurrences', y= 'length', kind ='line')
+plt.show()
+```
+lo anterior lo aplicamos también en Reverse 
+
+```bash
+%%bash
+zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz | awk 'NR%4 == 2 {lengths[length($0)]++ ; counter++} END {for (l in lengths){print l, lengths[l]}; print "total reads: " counter}'
+```
+
+```bash
+#Output de distribución de longitudes de secuencias y graficar en matplotib
+%%bash
+zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz | awk 'NR%4 == 2 {lengths[length($0)]++ ; counter++} END {for (l in lengths){print l, lengths[l]}}' | sort -n | uniq -c > /content/drive/MyDrive/Analisis_Posdoc/read_length2.txt
+```
+
+```python
+read_file2 = pd.read_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_length2.txt',header=None)
+read_file2.to_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_lengthR2.csv', index=None,header=None)
+```
+
+```python
+read_file2[0] = read_file2[0].astype(str)
+df2 = read_file2[0].apply(lambda x: x.strip(" "))
+df2 = pd.DataFrame(df2.str.split(' ',2).tolist(),
+                                 columns = ['fips','length', 'ocurrences'])
+df2
+df2=df2.astype(float)
+```
+
+```python
+##Graficar la longitud de secuencia contra las ocurrencias
+graficaR2 = df2.plot(x= 'ocurrences', y= 'length', kind ='line')
+plt.show()
+plt.savefig("ReadlenghtR2.jpg", bbox_inches='tight')
+```
+Lo siguiente puede ser opcional
