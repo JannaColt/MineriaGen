@@ -1,23 +1,21 @@
-# MineriaGen
+# MINERÍA GENÓMICA
 Contiene pipeline para ensamble y minería genómica de shotgun sequence con google colab
 
 Desde el cuaderno establecido primeramente se instalan todos los paquetes que se usarán y al final se monta el drive en el que se estará trabajando. Es preferible que esto se haga desde el inicio ya que cuando se instala un nuevo paquete se reinicia el entorno y lo que anteriormente llamamos ya no estará disponible. 
 
 
 Instalamos conda y lo llamamos para proceder con la instalación de los demás paquetes usando conda
-```
+```python
 !pip install -q condacolab
 import condacolab
 condacolab.install()
 ```
 Luego instalamos miniconda, para lo cual utilizamos un bloque que llame al shell: %%Shell, con lo cual estaremos utilizando los comandos que se usan cuando se utiliza el shell
 
-```
+```shell
 %%shell
-#siguiendo el pipeline de FranciscoZorrilla Metagem, el cual es para establecer relaciones metabolicas en metagenomas,
-#sin embargo, los primeros pasos para el filtrado de calidad se pueden seguir tal cual, identificar que es posible 
-# en el caso de WGS. Por lo pronto habria que instalar paquetes como fastqc y trimmomatic
-
+#Seguimos el pipeline de FranciscoZorrilla Metagem, el cual es para establecer relaciones metabolicas en metagenomas,
+#sin embargo, los primeros pasos para el filtrado de calidad se pueden seguir tal cual
 
 #instalar y ejecutar miniconda
 
@@ -31,10 +29,96 @@ conda config --set always_yes yes --set changeps1 no
 conda update --q conda
 ```
 
-Para montar el drive utilizamos el siguiente bloque:
+Para realizar la instalación de FastQC utilizamos el siguiente bloque 
+```python
+# Instalar FastQC para identificar problemas de calidad en los datasets. 
+!conda install -c bioconda fastqc -y
+
 ```
+Además podemos instalar fastp (puedes revisar la calidad ya sea utilizando fastqc o fastp, fastp también sirve para preprocesar en lugar de trimmomatic y cutapad)
+
+```python
+# Instalar fastp para identificar problemas de calidad en los datasets. 
+!conda install -c bioconda fastp -y
+```
+
+
+Ahora instalamos también MultiQC, este agregará todos los análisis de calidad de los datos 
+```python
+
+# Instalar Multiqc que puede agregar y sumar todos los QC de los datos y alinear log data en un solo archivo 
+!pip install multiqc
+```
+En caso de que querramos utilizar trimmomatic y no solo fastp podemos instalarlo a su vez.
+
+```python
+# Instalar Trimmomatic una herramienta flexible de trimming de lecturas para datos de Illumina NGS data 
+! conda install -c bioconda trimmomatic -y
+```
+
+En caso de que queramos trabajar con transcriptomas (RNASeq) podemos utilizar Kallisto, usando las opciones:
+Pseudobam
+
+  --pseudobam outputs all pseudoalignments to a file pseudoalignments.bam in the output directory. This BAM file contains the pseudoalignments in BAM format,   ordered by reads so that each pseudoalignment of a read is adjacent in the BAM file.
+
+  A detailed description of the SAM output is here.
+ y GenomeBam
+
+  --genomebam constructs the pseudoalignments to the transcriptome, but projects the transcript alignments to genome coordinates, resulting in split-read alignments. When the --genomebam option is supplied at GTF file must be given with the --gtf option. The GTF file, which can be plain text or gzipped, translates transcripts into genomic coordinates. We recommend downloading a the cdna FASTA files and GTF files from the same data source. The --chromosomes option can provide a length of the genomic chromosomes, this option is not neccessary, but gives a more consistent BAM header, some programs may require this for downstream analysis. kallisto does not require the genome sequence to do pseudoalignment, but downstream tools such as genome browsers will probably need it.
+  
+Es un programa para cuantificar la abundancia de &#x1F534; **Transcritos** a partir de datos de RNA-Seq en masa y unicelulares, o más generalmente de secuencias objetivo utilizando lecturas de secuenciación de alto rendimiento. Se basa en la novedosa idea de la pseudoalineación para determinar rápidamente la compatibilidad de las lecturas con los objetivos, sin necesidad de alineación.
+
+
+Una vista más detallada de kallisto la podemos encontrar aquí: http://pachterlab.github.io/kallisto/manual.html
+
+```python
+# Puede que Kallisto no sea necesario: es para cuantificar abundancias de transcritos de datos de RNA-seq, o 
+#o de forma mas general secuencias blanco usando high-throughput sequencing reads. Podemos omitirlo en este cuaderno 
+! conda install -c bioconda kallisto -y
+```
+
+Para utilizar metagem tenemos que clonar el repositorio del autor. Metagem nos permite reconstruir modelos metabólicos directamente de metagenomas. Se resumirá un poco más adelante.
+https://academic.oup.com/nar/article/49/21/e126/6382386
+
+
+```shell
+%%shell
+#clonar el repositorio de metagem y despues moverse al directorio
+
+git clone https://github.com/franciscozorrilla/metaGEM.git
+cd metaGEM
+
+#establecer mamba y metagem
+/root/miniconda/bin/conda create --quiet --prefix ./envs/mamba mamba -c conda-forge && source /root/miniconda/bin/activate envs/mamba
+mamba env create --quiet --prefix ./envs/metagem -f envs/metaGEM_env.yml
+
+#activar metagem en el ambiente conda e instalar las herramientas pip
+source /root/miniconda/bin/activate envs/metagem
+pip install --quiet --user memote carveme smetana 
+
+#desactivar metagem y activar el ambiente mamba
+source /root/miniconda/bin/deactivate && source /root/miniconda/bin/activate envs/mamba
+
+#Establecer metawrap y prokka-roary
+mamba env create --quiet --prefix ./envs/metawrap -f envs/metaWRAP_env.yml
+mamba env create --quiet --prefix ./envs/prokkaroary -f envs/prokkaroary_env.yml 
+```
+
+
+Para montar el drive utilizamos el siguiente bloque:
+```python
 #Montar el drive para trabajar con los archivos dentro del drive
 from google.colab import drive
 drive.mount('/content/drive')
 
+```
+
+
+
+
+
+
+```python
+import matplotlib.pyplot as plt
+import pandas as pd #llamar pandas
 ```
