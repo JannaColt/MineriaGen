@@ -123,10 +123,41 @@ from google.colab import drive
 drive.mount('/content/drive')
 
 ```
+Ya establecida toda la paquetería e instalados todos los pipelines podemos comenzar, teniendo en cuenta que nuestros archivos de secuencias (Pair-End o Single-End) deben estar guardados en nuestro drive.
+
+## 4. Comencemos explorando las reads:
+
+Para conocer un poco nuestras secuencias podemos utilizar script de bash. En este caso trabajamos con los siguientes archivos:
 
 
+![Nuestro drive y la carpeta conteniendo las lecturas:](https://user-images.githubusercontent.com/13104654/204870524-c62fcf00-b097-4758-b0a8-406bee184927.png)
 
+Nótese que los archivos están comprimidos y se pueden seguir trabajando de esta manera.
 
+### a) Explorando el contenido 
 
+Utilizando el bash podemos observar encabezados y colas de archivos, con el comando zcat podemos trabajar con archivos comprimidos, en caso de no tenerlos comprimidos simplemente usamos cat. Como las lecturas son pair end, lo realizamos con ambos archivos.
 
+```bash
+#explorar el encabezado del archivo
+%%bash
+zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz | head
+```
+```shell
+%%bash
+zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz | head
+```
+
+```shell
+#explorar el final para las lecturas R1 y R2
+%%bash
+zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz | tail -n 4
+```
+```shell
+
+%%bash
+zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz | tail -n 4
+```
+
+[Bloque en colab](https://colab.research.google.com/drive/1qHrgEQ-rsSG5IxC_BcHzs15cRPEcwwXs#scrollTo=RwerHDCv103J&line=1&uniqifier=1)
 
