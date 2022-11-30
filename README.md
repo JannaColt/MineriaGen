@@ -294,6 +294,8 @@ zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.g
 
 ## 5. Pre-procesamiento, análisis de calidad usando FASTQC y FASTP
 
+![Estructura FastQ](https://user-images.githubusercontent.com/13104654/204933554-fef6cf9a-f8d4-4e52-ad1b-a831d5bfdd92.png)
+
 Identificamos primeramente problemas de calidad en las lecturas
 
 El Control de calidad ayuda a mantener solo secuencias adecuadas y reducir el tamaño del archivo.
