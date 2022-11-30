@@ -1,8 +1,9 @@
-# MINERÍA GENÓMICA
+# MINERÍA GENÓMICA 
 Contiene pipeline para ensamble y minería genómica de shotgun sequence con google colab
 
 Desde el cuaderno establecido primeramente se instalan todos los paquetes que se usarán y al final se monta el drive en el que se estará trabajando. Es preferible que esto se haga desde el inicio ya que cuando se instala un nuevo paquete se reinicia el entorno y lo que anteriormente llamamos ya no estará disponible. 
 
+## 1. Instalación de Herramientas
 
 Instalamos conda y lo llamamos para proceder con la instalación de los demás paquetes usando conda
 ```python
@@ -69,7 +70,7 @@ Pseudobam
 Es un programa para cuantificar la abundancia de &#x1F534; **Transcritos** a partir de datos de RNA-Seq en masa y unicelulares, o más generalmente de secuencias objetivo utilizando lecturas de secuenciación de alto rendimiento. Se basa en la novedosa idea de la pseudoalineación para determinar rápidamente la compatibilidad de las lecturas con los objetivos, sin necesidad de alineación.
 
 
-Una vista más detallada de kallisto la podemos encontrar aquí: http://pachterlab.github.io/kallisto/manual.html
+Una vista más detallada de kallisto la podemos encontrar aquí: [Manual Kallisto](http://pachterlab.github.io/kallisto/manual.html)
 
 ```python
 # Puede que Kallisto no sea necesario: es para cuantificar abundancias de transcritos de datos de RNA-seq, o 
@@ -78,7 +79,7 @@ Una vista más detallada de kallisto la podemos encontrar aquí: http://pachterl
 ```
 
 Para utilizar metagem tenemos que clonar el repositorio del autor. Metagem nos permite reconstruir modelos metabólicos directamente de metagenomas. Se resumirá un poco más adelante.
-https://academic.oup.com/nar/article/49/21/e126/6382386
+[Artículo de Metagem](https://academic.oup.com/nar/article/49/21/e126/6382386)
 
 
 ```shell
@@ -104,8 +105,18 @@ mamba env create --quiet --prefix ./envs/metawrap -f envs/metaWRAP_env.yml
 mamba env create --quiet --prefix ./envs/prokkaroary -f envs/prokkaroary_env.yml 
 ```
 
+## 2. Paquetería Python
 
-Para montar el drive utilizamos el siguiente bloque:
+En caso de que necesitemos utilizar paquetes para graficar y para trabajar con archivos csv debemos importar los paquetes matplotlib y pandas
+
+```python
+import matplotlib.pyplot as plt
+import pandas as pd #llamar pandas
+```
+
+## 3. Montar Drive en colab
+Para montar el drive utilizamos el siguiente bloque, esto es necesario para poder utilizar los archivos que se guarden en el drive y para guardar outputs en el mismo:
+
 ```python
 #Montar el drive para trabajar con los archivos dentro del drive
 from google.colab import drive
@@ -118,7 +129,4 @@ drive.mount('/content/drive')
 
 
 
-```python
-import matplotlib.pyplot as plt
-import pandas as pd #llamar pandas
-```
+
