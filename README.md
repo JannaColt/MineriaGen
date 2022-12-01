@@ -129,7 +129,7 @@ Ya establecida toda la paquetería e instalados todos los pipelines podemos come
 
 Las Lecturas comúnmente se encuentran en formato FASTQ, muy similar al FASTA solo que contiene caracteres alfanuméricos que dan indicio de calidad asociada con cada nucleótido. Una imagen de la estructura de un archivo fastq la podemos observar más adelante en el apartado del pre-procesamiento.
 
-[Estructura FASTQ](##5. Pre-procesamiento, análisis de calidad usando FASTQC y FASTP)
+[Estructura FASTQ](#5-pre-procesamiento-analisis-de-calidad-usando-fastqc-y-fastp)
 
 Son Archivos (de texto o ficheros) muy grandes que no se pueden leer. Ciertos comandos te permiten observar aspectos clave (Head/tail/more - trabajando con ficheros en Linux). 
 
@@ -291,9 +291,9 @@ zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.g
 zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz | awk 'NR % 4 == 2 {print;}' | sort | sort -n -r | uniq -c > /content/drive/MyDrive/Analisis_Posdoc/Sec_rep2.txt
 ```
 
-## 5. Pre-procesamiento, análisis de calidad usando FASTQC y FASTP
+## 5. Pre procesamiento: analisis de calidad usando FASTQC y FASTP
 
-El archivo FastQ que habíamos abordado [anteriormente](##4-Comencemos-explorando-las-reads:), 
+El archivo FastQ que habíamos abordado [anteriormente](#4-comencemos-explorando-las-reads), 
 consta de cuatro líneas:
 
 &#x1F535; 1. Nombre de la secuencia (header - id del secuenciador, coordenadas del spot, flow-cell, adaptador, etc.)
