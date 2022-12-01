@@ -293,7 +293,8 @@ zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.g
 
 ## 5. Pre-procesamiento, análisis de calidad usando FASTQC y FASTP
 
-El archivo FastQ que habíamos abordado [aquí](##4.-Comencemos-explorando-las-reads:), consta de cuatro líneas:
+El archivo FastQ que habíamos abordado [anteriormente](##4.-Comencemos-explorando-las-reads:), 
+consta de cuatro líneas:
 
     &#x1F535; 1. Nombre de la secuencia (header - id del secuenciador, coordenadas del spot, flow-cell, adaptador, etc.)
     &#x1F535; 2. Secuencia
