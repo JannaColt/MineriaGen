@@ -127,12 +127,11 @@ Ya establecida toda la paquetería e instalados todos los pipelines podemos come
 
 ## 4. Comencemos explorando las reads:
 
-Las Lecturas comúnmente se encuentran en formato FASTQ, muy similar al FASTA solo que contiene indicios de calidad.
-
-Son Archivos (de texto o ficheros) muy grandes que no se pueden leer. Ciertos comandos te permiten observar aspectos clave (Head/tail/more - trabajando con ficheros en Linux). Una imagen de la estructura de un archivo fastq la podemos observar más adelante en el apartado del pre-procesamiento.
+Las Lecturas comúnmente se encuentran en formato FASTQ, muy similar al FASTA solo que contiene caracteres alfanuméricos que dan indicio de calidad asociada con cada nucleótido. Una imagen de la estructura de un archivo fastq la podemos observar más adelante en el apartado del pre-procesamiento.
 
 [Estructura FASTQ](##5.-Pre-procesamiento,-análisis-de-calidad-usando-FASTQC-y-FASTP)
 
+Son Archivos (de texto o ficheros) muy grandes que no se pueden leer. Ciertos comandos te permiten observar aspectos clave (Head/tail/more - trabajando con ficheros en Linux). 
 
 Para conocer un poco nuestras secuencias podemos utilizar script de bash. En este caso trabajamos con los siguientes archivos:
 
@@ -294,17 +293,33 @@ zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.g
 
 ## 5. Pre-procesamiento, análisis de calidad usando FASTQC y FASTP
 
+El archivo FastQ que habíamos abordado [aquí](##4.-Comencemos-explorando-las-reads:), consta de cuatro líneas:
+
+    &#x1F535; 1. Nombre de la secuencia (header - id del secuenciador, coordenadas del spot, flow-cell, adaptador, etc.)
+    &#x1F535; 2. Secuencia
+    &#x1F535; 3. Espaciador (+), que opcionalmente puede contener más texto, y
+    &#x1F535; 4. Valores de calidad: Q Score - alfanumérico. Correspondientes a los nucleótidos en línea 2
+    
+Tal como se observa en la siguiente imagen:
 ![Estructura FastQ](https://user-images.githubusercontent.com/13104654/204933554-fef6cf9a-f8d4-4e52-ad1b-a831d5bfdd92.png)
+
+Para entender un poco más acerca de calidades y los archivos fastq podemos ir a la documentación oficial [FastQ](https://maq.sourceforge.net/fastq.shtml).
+
+https://maq.sourceforge.net/qual.shtml
+https://pubmed.ncbi.nlm.nih.gov/9521921/
 
 Identificamos primeramente problemas de calidad en las lecturas
 
 El Control de calidad ayuda a mantener solo secuencias adecuadas y reducir el tamaño del archivo.
 
-### a) Fastqc
+# a) Fastqc
+Para correr FastQC en los archivos de secuencias dentro de google colab usamos el siguiente bloque de código:
 
 ```python
 # Pre-alignment QA 
 !fastqc /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz
 !fastqc /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz
 ```
+Los archivos de salida son html y abarcan las siguientes evaluaciones.
 
+## 1. Estadística simple
