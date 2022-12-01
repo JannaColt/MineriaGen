@@ -129,7 +129,7 @@ Ya establecida toda la paquetería e instalados todos los pipelines podemos come
 
 Las Lecturas comúnmente se encuentran en formato FASTQ, muy similar al FASTA solo que contiene caracteres alfanuméricos que dan indicio de calidad asociada con cada nucleótido. Una imagen de la estructura de un archivo fastq la podemos observar más adelante en el apartado del pre-procesamiento.
 
-[Estructura FASTQ](## 5. Pre-procesamiento, análisis de calidad usando FASTQC y FASTP)
+[Estructura FASTQ](##5. Pre-procesamiento, análisis de calidad usando FASTQC y FASTP)
 
 Son Archivos (de texto o ficheros) muy grandes que no se pueden leer. Ciertos comandos te permiten observar aspectos clave (Head/tail/more - trabajando con ficheros en Linux). 
 
