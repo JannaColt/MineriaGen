@@ -296,10 +296,10 @@ zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.g
 El archivo FastQ que habíamos abordado [anteriormente](##4.-Comencemos-explorando-las-reads:), 
 consta de cuatro líneas:
 
-    &#x1F535; 1. Nombre de la secuencia (header - id del secuenciador, coordenadas del spot, flow-cell, adaptador, etc.)
-    &#x1F535; 2. Secuencia
-    &#x1F535; 3. Espaciador (+), que opcionalmente puede contener más texto, y
-    &#x1F535; 4. Valores de calidad: Q Score - alfanumérico. Correspondientes a los nucleótidos en línea 2
+ &#x1F535; 1. Nombre de la secuencia (header - id del secuenciador, coordenadas del spot, flow-cell, adaptador, etc.)
+ &#x1F535; 2. Secuencia
+ &#x1F535; 3. Espaciador (+), que opcionalmente puede contener más texto, y
+ &#x1F535; 4. Valores de calidad: Q Score - alfanumérico. Correspondientes a los nucleótidos en línea 2
     
 Tal como se observa en la siguiente imagen:
 ![Estructura FastQ](https://user-images.githubusercontent.com/13104654/204933554-fef6cf9a-f8d4-4e52-ad1b-a831d5bfdd92.png)
