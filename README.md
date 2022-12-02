@@ -307,14 +307,47 @@ consta de cuatro líneas:
 Tal como se observa en la siguiente imagen:
 ![Estructura FastQ](https://user-images.githubusercontent.com/13104654/204933554-fef6cf9a-f8d4-4e52-ad1b-a831d5bfdd92.png)
 
-Los scores de calidad (Q) representados en la cuarta línea, que corresponden a caracteres ASCII, reflejan en escala logarítmica la probabilidad de que esta base en particular fuera llamada incorrectamente (P<sub>Error<\sub>).
+Los scores de calidad (Q) representados en la cuarta línea, que corresponden a caracteres ASCII, reflejan, en escala logarítmica, la probabilidad de que esta base en particular fuera llamada incorrectamente (P<sub>error</sub>).
 
-Para entender un poco más acerca de [calidades](https://maq.sourceforge.net/qual.shtml) y los archivos fastq podemos ir a la documentación oficial de [FastQ](https://maq.sourceforge.net/fastq.shtml) y este [artículo]([url](https://pubmed.ncbi.nlm.nih.gov/9521921/)).
+```math
+Q = -10 log_{10} P               
+```
+```math
+P_{error} = 10^{-Q/10}
+```
+Lo cual corresponde generalmente a:
+
+![Phred Quality score](https://user-images.githubusercontent.com/13104654/205389945-0d25371a-f02b-4db0-8e80-07e2cedf0e41.png)
+
+Hay que considerar además el método de codificado dependiendo de plataforma:
+
+![Quality scores dependiendo de la plataforma de secuenciación](https://user-images.githubusercontent.com/13104654/205388609-2d6df438-0aea-4a9e-a612-37563d0e83e6.png)
+
+Así, podemos además, aplicar otro código para determinarr si el score de nuetras lecturas corresponde a Phred+33, Phre+64 o Solexa+64
+
+```bash
+zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz | head -n 10000 |\
+  awk '{if(NR%4==0) printf("%s",$0);}' |  od -A n -t u1 | \
+  awk 'BEGIN{min=100;max=0;} \
+      {for(i=1;i<=NF;i++) \
+          {if($i>max) max=$i; \
+               if($i<min) min=$i;}}END \
+          {if(max<=74 && min<59) \
+                     print "Phred+33"; \
+           else \
+           if(max>73 && min>=64) \
+                     print "Phred+64"; \
+           else \
+           if(min>=59 && min<64 && max>73) \
+                     print "Solexa+64"; else print "Unknown score encoding!";}' --- [Table of contents](/introduction/terminology_index.html)
+```
+
+Para entender un poco más acerca de [calidades](https://maq.sourceforge.net/qual.shtml) y los archivos fastq podemos ir a la documentación oficial de [FastQ](https://maq.sourceforge.net/fastq.shtml) y este [artículo](https://pubmed.ncbi.nlm.nih.gov/9521921/), además de esta [nota técnica](https://www.illumina.com/documents/products/technotes/technote_Q-Scores.pdf) de Illumina.
 
 
-Identificamos primeramente problemas de calidad en las lecturas
+Tomando en cuenta lo anterior, podemos utilizar algunas herramientas para identificar problemas de calidad en las lecturas, con el fin no solo de mantener las secuencias adecuadas si no también de reducir el tamaño del archivo, evitar contaminación, etc.
 
-El Control de calidad ayuda a mantener solo secuencias adecuadas y reducir el tamaño del archivo.
+Entre las herramientas a utilzar tenemos:
 
 # a) Fastqc
 Para correr FastQC en los archivos de secuencias dentro de google colab usamos el siguiente bloque de código:
