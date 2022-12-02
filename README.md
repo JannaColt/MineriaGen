@@ -307,10 +307,10 @@ consta de cuatro líneas:
 Tal como se observa en la siguiente imagen:
 ![Estructura FastQ](https://user-images.githubusercontent.com/13104654/204933554-fef6cf9a-f8d4-4e52-ad1b-a831d5bfdd92.png)
 
-Para entender un poco más acerca de calidades y los archivos fastq podemos ir a la documentación oficial [FastQ](https://maq.sourceforge.net/fastq.shtml).
+Los scores de calidad (Q) representados en la cuarta línea, que corresponden a caracteres ASCII, reflejan en escala logarítmica la probabilidad de que esta base en particular fuera llamada incorrectamente (P<sub>Error<\sub>).
 
-https://maq.sourceforge.net/qual.shtml
-https://pubmed.ncbi.nlm.nih.gov/9521921/
+Para entender un poco más acerca de [calidades](https://maq.sourceforge.net/qual.shtml) y los archivos fastq podemos ir a la documentación oficial de [FastQ](https://maq.sourceforge.net/fastq.shtml) y este [artículo]([url](https://pubmed.ncbi.nlm.nih.gov/9521921/)).
+
 
 Identificamos primeramente problemas de calidad en las lecturas
 
