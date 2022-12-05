@@ -323,7 +323,7 @@ Hay que considerar además el método de codificado dependiendo de plataforma:
 
 ![Quality scores dependiendo de la plataforma de secuenciación](https://user-images.githubusercontent.com/13104654/205388609-2d6df438-0aea-4a9e-a612-37563d0e83e6.png)
 
-Así, podemos además, aplicar otro código para determinarr si el score de nuetras lecturas corresponde a Phred+33, Phre+64 o Solexa+64
+Así, podemos además, aplicar otro código para determinarr si el score de nuestras lecturas corresponde a Phred+33, Phre+64 o Solexa+64
 
 ```bash
 zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz | head -n 10000 |\
@@ -366,9 +366,20 @@ El primer apartado de estadística simple contiene el nombre del archivo, el nú
 
 ![Panorama general y vista de los estadísticos iniciales](https://user-images.githubusercontent.com/13104654/205708653-93a21bca-be14-44e7-839a-fba67d08786e.png)
 
-## 5.1.2.  Calidad de secuencias por base
+## 5.1.2.  Calidad de secuencias
+
+En este apartado se muestra una revisión del rango de los valores de calidad a través de todas las bases en cada posición en los archivos FASTQ. 
+En cada posición se muestra una boxplot con bigotes. En la gráfica podemos definir una mediana (línea roja central), rangos intercuartiles 25-75%(cajas amarillas), los bigotes representan los puntos del 10 y 90% y la calidad media (línea azul). 
+
+![calidad de secuencias por base para la lectura R1 de P69](https://user-images.githubusercontent.com/13104654/205745971-2a852136-b15d-431f-8720-de0edb5af83c.png)
 
 
+El eje y corresponde a los *scores* de calidad, el cual es dividido con un fondo verde, naranja y rojo, siendo el fondo verde para los mejores *scores*, el naranja para los *scores* de no tan buena calidad y el rojo a los de calidad pobre (entre más alto el *score* mejor). 
+
+Es normal para todas las plataformas que conforme avance la corrida la calidad disminuya. En esta parte se puede generar un warning, en el caso de que el cuartil de cualquier base sea menor de 10 o si la mediana es menor de 25 y fails si el cuartil es menor de 5 y la mediana menor de 20.
+
+En el análisis que se realizó del genoma de P69 se muestra que la calidad media no cae al fondo rojo y su comportamiento es típico disminuyendo la calidad con la corrida. 
+Se observa en la última parte solo la mediana de una caja en el umbral de 20, y los cuartiles menores de 10 pero mayores de 5, por lo tanto solo se lanza un warning, el cual será resuelto al realizar el preprocesamiento.  
 
 
 ## 5.1.3.  Calidad de secuencias por pozo 
