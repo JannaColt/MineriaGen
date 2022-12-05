@@ -349,7 +349,7 @@ Tomando en cuenta lo anterior, podemos utilizar algunas herramientas para identi
 
 Entre las herramientas a utilzar tenemos:
 
-# a) Fastqc
+# 5.1 Fastqc
 Para correr FastQC en los archivos de secuencias dentro de google colab usamos el siguiente bloque de código:
 
 ```python
@@ -357,6 +357,41 @@ Para correr FastQC en los archivos de secuencias dentro de google colab usamos e
 !fastqc /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz
 !fastqc /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz
 ```
-Los archivos de salida son html y abarcan las siguientes evaluaciones.
+Los archivos de salida son html y abarcan las siguientes evaluaciones:
 
-## 1. Estadística simple
+## 5.1.1. Estadística simple
+
+El primer apartado de estadística simple contiene el nombre del archivo, el número total de secuencias, si existen secuencias de mala calidad, longitud de las secuencias y el contenido de GC. Ya se había abordado en los scripts anteriores la determinación del total y longitud de secuencias, por lo que nos sirve para corroborar. En este apartado no se generan warnings o fails.
+
+
+![Panorama general y vista de los estadísticos iniciales](https://user-images.githubusercontent.com/13104654/205708653-93a21bca-be14-44e7-839a-fba67d08786e.png)
+
+## 5.1.2.  Calidad de secuencias por base
+
+
+
+
+## 5.1.3.  Calidad de secuencias por pozo 
+
+## 5.1.4.  Scores de calidad por secuencia 
+
+## 5.1.5.  Contenido de bases por secuencia
+
+## 5.1.6.  Contenido de GC por secuencia
+
+## 5.1.7.  Contenido de N por base 
+
+## 5.1.8.  Distribución de la longitud de secuencia
+
+## 5.1.9.  Niveles de duplicación de secuencias
+
+## 5.1.10. Secuencias sobre representadas
+
+## 5.1.11. Contenido de adaptadores 
+
+
+
+
+
+
+
