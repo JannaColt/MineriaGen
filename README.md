@@ -390,55 +390,48 @@ De esta forma, los problemas se pueden manifestar de varias formas, en la prueba
 
 ![P69 calidad de secuencia por flowcell](https://user-images.githubusercontent.com/13104654/210288959-a6367307-2827-4ff1-b6ec-2dfb468564c0.png)
 
-Puede haber una pérdida aleatoria de calidad en las posiciones y ciclos, lo cual indica un problema generalizado en el que más comúnmente se sobrecarga la celda. En el análisis de calidad de la imagen de la cepa P69 se observa algo de este problema generalizado con la corrida aunque algo menos intenso. Resulta un tanto problemático si mosaicos aparecen en áreas localizadas y grandes del *flowcell*.
+Puede haber una pérdida aleatoria de calidad en las posiciones y ciclos, lo cual indica un problema generalizado en el que más comúnmente se sobrecarga la celda. En el análisis de calidad de la imagen de la cepa P69 se observa algo de este problema generalizado con la corrida aunque algo menos intenso. Resulta un tanto problemático si mosaicos aparecen en áreas amplias y localizadas  del *flowcell*.
 
-Si se pueden observar las pérdidas de calidad en mosaicos específicos entonces es posible removerlos del análisis *downstream*, lo que resultaría algo problemático de estar al inicio de la corrida. Ya que no sabemos cuantas lecturas son afectadas entonces la mitigación en este caso (P69) podría resultar un problema.
+Si se pueden observar las pérdidas de calidad en mosaicos específicos entonces es posible removerlos del análisis *downstream*, lo que resultaría algo problemático de estar al inicio de la corrida. 
+
+Ya que no sabemos cuantas lecturas son afectadas entonces la mitigación en este caso (P69) podría resultar un problema (al remover lecturas se podría perder información).
 
 ## 5.1.4.  Scores de calidad por secuencia 
-Este apartado muestra un gráfico del número de secuencias (y) contra la escala logarítmica del Phred, indicando la calidad de cada lectura:
+Este apartado muestra un gráfico del número de secuencias (Y) contra la escala logarítmica del Phred (X), indicando la calidad de cada lectura:
 
 ![Calidad por secuencia](https://user-images.githubusercontent.com/13104654/210292722-b817acd1-1c04-415f-b470-91bc1f2aa7fd.png)
 
 Phred score = 30 indica un rango de error de 1 base en 1000, o una exactitud de 99.9%.
 Phred score = 40 indica un rango de error de 1 base en 10,000, o una exactitud de 99.99%.
-< 27 se obtendrá un warning y por debajo de 20 se dará un fail. 
+Si el Phred score es < 27 se obtendrá un warning y por debajo de 20 se dará un fail. 
 
 En el caso de P69, el promedio de calidad es 36, lo cual es bueno.
 
 ## 5.1.5.  Contenido de bases por secuencia
 
-En el caso del contenido de bases por secuencia, este apartado nos muestra, como el nombre lo muestra la composición porcentual de las bases en cada posición de la secuencia. Como habría que esperar esta composición debe permanecer estable en todos los ciclos, claro tomando en cuenta que el contenido de bases puede variar dependiendo de ciertos factores como la especie. En algunos casos podemos observar un sesgo en las primeras partes de la corrida, como es el caso del presente análisis P69. Se observa claramente que dicho sesgo se disipa en el resto de la corrida. 
-
-En este apartado se puede generar una  &#x1F4D9;**alerta** si el contenido de bases varía más del 10% en cualquier posición, y generará un &#x1F534; **fail** si este porcentaje de variación es mayor al 20%.
-
-
-    Este módulo obtendrá un warning si el contenido de base varía más del 10% en cualquier posición, como en el ejemplo de las secuencias que estamos utilizando.
-    La muestra obtendrá fail si hay más de 20% de variación en cualquier posición.
-
-
-The cause of this bias it turns out is the random priming step in library production. The priming should be driven by a selection of random hexamers which in theory should all be present with equal frequency in the priming mix and should all prime with equal efficiency.  In the real world it turns out that this isn’t the case and that certain hexamers are favoured during the priming step, resulting in the based composition over the region of the library primed by the random primers.
-
-The question then arises as to whether this bias has any implications for downstream analyses.  There are a couple of potential concerns:
-
-    It’s possible that there is increased mis-priming as part of the bias – introducing an increased number of mis-called bases at the start of the sequence
-    It’s possible that the selection bias introduced will have a significant effect of the ability of the library to fairly measure the content of the original RNA population due to certain sequences being unduly favoured
-
-In practice it seems that neither of these concerns is really a problem.  The bias at the start of the sequences appears to be the result of biased selection of fragments from the library, so high levels of predicted SNPs are not an issue.  The biased selection though doesn’t appear to be strong enough to cause major headaches in downstream quantitation of data.  A strong bias would result in a very uneven coverage of different parts of a transcript based on its sequence content, and most RNA-Seq libraries do not show these types of localised biases (excepting biases from mappability and other factors beyond this effect).  Also the biases are very similar between libraries, so any artefacts which were introduced should cancel out when doing any kind of differential analysis.
-Diagnosis
-
-This problem is most easily detected with the FastQC per-base sequence content plot.
-Mitigation
-
-People often suggest fixing this issue by 5′ trimming of the reads to remove the biased portion – this however is not a fix.  Since the biased composition is created by the selection of sequencing fragments and not by base call errors the only effect of trimming would be to change from having a library which starts over biased positions, to having a library which starts slightly downstream of biased positions.
-Prevention
-
-Ultimately this only fix for this issue will be in the introduction of new library preparation kits with a less bias prone priming step.
-Lessons Learnt
-
-Whilst the warnings generated by this problem reflect a real issue it’s not something which can be fixed, and doesn’t seem to have any serious consequences for downstream analysis.  Ironically if you are producing RNA-Seq libraries it would make for better QC if you were to focus on libraries which didn’t have this artefact in them, as they would be the ones which were truly suspicious.
+En el caso del contenido de bases por secuencia, este apartado nos muestra, como el nombre lo indica, la composición porcentual de las bases en cada posición de la secuencia. Como habría que esperar esta composición debe permanecer estable en todos los ciclos, claro tomando en cuenta que el contenido de bases puede variar dependiendo de ciertos factores como la especie. En algunos casos podemos observar un sesgo en las primeras partes de la corrida, como es el caso del presente análisis P69. Se observa claramente que dicho sesgo se disipa en el resto de la corrida. 
 
 
 ![Composición de secuencia](https://user-images.githubusercontent.com/13104654/210295270-29332fcd-2e65-4814-9439-5f7f743b6ab8.png)
+
+
+En este apartado se puede generar una  &#x1F4D9;**alerta**, si el contenido de bases varía más del 10% en cualquier posición, y generará un &#x1F534; **fail** si este porcentaje de variación es mayor al 20%.
+
+La causa de este sesgo puede ser el paso de *priming* aleatorio en la producción de las librerías. A pesar de que los hexameros en el priming deben presentarse con igual frecuencia en el mix y deberían realizar el *prime* con eficiencia similar, en la realidad no se da el caso y ciertos hexámeros son favorecidos durante este paso.
+
+¿Entonces, el sesgo tendría implicaciones en los análisis downstream?. Hay algunos puntos a tomar en cuenta:
+
+- Es posible que como parte del sesgo haya un incremento en el *mis-priming* - ocasionando un número alto de *mis-called* bases al inicio de la secuencia, y, 
+- Es posible que la selección del sesgo introducido tenga un efecto significativo en la capacidad de la librería de medir el contenido original debido a ciertas secuencias favorecidas.
+Sin embargo estos puntos pueden no representar un gran problema ya que son fácilmente detectados,  algunos mencionan que pueden mitigarse por un *Trimming 5'*, sin embargo esto no es un arreglo. Ya que la composición sesgada es creada por la selección de fragmentos de secuenciado y no por errores de llamadas de bases, el único efecto del *trimming* es cambiar de tener una libreria que inicia en posiciones sesgadas a una que inicia más allá de dichas posiciones. 
+
+La única forma de resolver este problema sería introducir nuevos kits de preparación de librerías con una menor disposición al sesgo en el paso del *priming*, sin embargo, a pesar de la advertencia,  no parece que haya consecuencias serias para los análisis posteriores, irónicamente en RNA-seq son más sospechosas las librerías que no presentan este artefacto.
+
+En este [artículo](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0085583) se documenta el *mis-priming* en RNA-seq
+
+Algunas de las razones más comunes de este error son:
+Secuencias sobrerepresentadas, sesgo en la fragmentación y composición sesgada de las librerías (que a veces ocurre naturalmente).
+En el presente caso también se observa una desviación al final, si se está analizando una biblioteca que ha sido recortada agresivamente por el adaptador, naturalmente introducirá un sesgo de composición al final de las lecturas, ya que las secuencias que coinciden con tramos cortos del adaptador se eliminan, dejando solo las secuencias que no coinciden. Por lo tanto, es probable que las desviaciones repentinas en la composición al final de las bibliotecas que han sufrido un recorte agresivo sean falsas.
 
 
 ## 5.1.6.  Contenido de GC por secuencia
