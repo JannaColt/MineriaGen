@@ -384,29 +384,92 @@ Se observa en la última parte solo la mediana de una caja en el umbral de 20, y
 
 ## 5.1.3.  Calidad de secuencias por pozo (*flowcell*) 
 
-En este apartado se muestra un heatmap de las pérdidas de calidad posicional, es decir se grafica la calidad de las llamadas de bases contra la posición física del secuenciador de la cual provienen. En los secuenciadores illumina, el área del *flowcell* se divide artificialmente en franjas (superficie superior e inferior) y estas se subdividen en mosaicos (áreas arbitrarias que se analizan por separado en la canalización de llamadas). Observar la calidad por mosaico identificará este tipo de errores. Se espera siempre la pérdida de calidad conforme los ciclos se incrementan, por ello resulta útil realizar una normalización para representar la calidad. Así un buen gráfico se observará blanco. De esta forma, los problemas se pueden  
+En este apartado se muestra un heatmap de las pérdidas de calidad posicional, es decir se grafica la calidad de las llamadas de bases contra la posición física del secuenciador de la cual provienen. En los secuenciadores illumina, el área del *flowcell* se divide artificialmente en franjas (superficie superior e inferior) y 
+estas se subdividen en mosaicos (áreas arbitrarias que se analizan por separado en la canalización de llamadas). Observar la calidad por mosaico identificará este tipo de errores. Se espera siempre la pérdida de calidad conforme los ciclos se incrementan, por ello resulta útil realizar una normalización para representar la calidad. Así un buen gráfico se observará en blanco (sólido azul rey brillante). 
+De esta forma, los problemas se pueden manifestar de varias formas, en la prueba de P69:
 
+![P69 calidad de secuencia por flowcell](https://user-images.githubusercontent.com/13104654/210288959-a6367307-2827-4ff1-b6ec-2dfb468564c0.png)
 
+Puede haber una pérdida aleatoria de calidad en las posiciones y ciclos, lo cual indica un problema generalizado en el que más comúnmente se sobrecarga la celda. En el análisis de calidad de la imagen de la cepa P69 se observa algo de este problema generalizado con la corrida aunque algo menos intenso. Resulta un tanto problemático si mosaicos aparecen en áreas localizadas y grandes del *flowcell*.
 
-Since there is an expected general loss of quality as sequencing cycles increase it is useful to normalise by cycle when plotting quality.  You can therefore create a heatmap where hotspots represent tiles where the average phred score on that tile in that cycle was lower than the average across all tiles for the same sequencing cycle.  A good plot would therefore be blank.
+Si se pueden observar las pérdidas de calidad en mosaicos específicos entonces es posible removerlos del análisis *downstream*, lo que resultaría algo problemático de estar al inicio de la corrida. Ya que no sabemos cuantas lecturas son afectadas entonces la mitigación en este caso (P69) podría resultar un problema.
 
 ## 5.1.4.  Scores de calidad por secuencia 
+Este apartado muestra un gráfico del número de secuencias (y) contra la escala logarítmica del Phred, indicando la calidad de cada lectura:
+
+![Calidad por secuencia](https://user-images.githubusercontent.com/13104654/210292722-b817acd1-1c04-415f-b470-91bc1f2aa7fd.png)
+
+Phred score = 30 indica un rango de error de 1 base en 1000, o una exactitud de 99.9%.
+Phred score = 40 indica un rango de error de 1 base en 10,000, o una exactitud de 99.99%.
+< 27 se obtendrá un warning y por debajo de 20 se dará un fail. 
+
+En el caso de P69, el promedio de calidad es 36, lo cual es bueno.
 
 ## 5.1.5.  Contenido de bases por secuencia
 
+En el caso del contenido de bases por secuencia, este apartado nos muestra, como el nombre lo muestra la composición porcentual de las bases en cada posición de la secuencia. Como habría que esperar esta composición debe permanecer estable en todos los ciclos, claro tomando en cuenta que el contenido de bases puede variar dependiendo de ciertos factores como la especie. En algunos casos podemos observar un sesgo en las primeras partes de la corrida, como es el caso del presente análisis P69. Se observa claramente que dicho sesgo se disipa en el resto de la corrida. 
+
+En este apartado se puede generar una  &#x1F4D9;**alerta** si el contenido de bases varía más del 10% en cualquier posición, y generará un &#x1F534; **fail** si este porcentaje de variación es mayor al 20%.
+
+
+    Este módulo obtendrá un warning si el contenido de base varía más del 10% en cualquier posición, como en el ejemplo de las secuencias que estamos utilizando.
+    La muestra obtendrá fail si hay más de 20% de variación en cualquier posición.
+
+
+The cause of this bias it turns out is the random priming step in library production. The priming should be driven by a selection of random hexamers which in theory should all be present with equal frequency in the priming mix and should all prime with equal efficiency.  In the real world it turns out that this isn’t the case and that certain hexamers are favoured during the priming step, resulting in the based composition over the region of the library primed by the random primers.
+
+The question then arises as to whether this bias has any implications for downstream analyses.  There are a couple of potential concerns:
+
+    It’s possible that there is increased mis-priming as part of the bias – introducing an increased number of mis-called bases at the start of the sequence
+    It’s possible that the selection bias introduced will have a significant effect of the ability of the library to fairly measure the content of the original RNA population due to certain sequences being unduly favoured
+
+In practice it seems that neither of these concerns is really a problem.  The bias at the start of the sequences appears to be the result of biased selection of fragments from the library, so high levels of predicted SNPs are not an issue.  The biased selection though doesn’t appear to be strong enough to cause major headaches in downstream quantitation of data.  A strong bias would result in a very uneven coverage of different parts of a transcript based on its sequence content, and most RNA-Seq libraries do not show these types of localised biases (excepting biases from mappability and other factors beyond this effect).  Also the biases are very similar between libraries, so any artefacts which were introduced should cancel out when doing any kind of differential analysis.
+Diagnosis
+
+This problem is most easily detected with the FastQC per-base sequence content plot.
+Mitigation
+
+People often suggest fixing this issue by 5′ trimming of the reads to remove the biased portion – this however is not a fix.  Since the biased composition is created by the selection of sequencing fragments and not by base call errors the only effect of trimming would be to change from having a library which starts over biased positions, to having a library which starts slightly downstream of biased positions.
+Prevention
+
+Ultimately this only fix for this issue will be in the introduction of new library preparation kits with a less bias prone priming step.
+Lessons Learnt
+
+Whilst the warnings generated by this problem reflect a real issue it’s not something which can be fixed, and doesn’t seem to have any serious consequences for downstream analysis.  Ironically if you are producing RNA-Seq libraries it would make for better QC if you were to focus on libraries which didn’t have this artefact in them, as they would be the ones which were truly suspicious.
+
+
+![Composición de secuencia](https://user-images.githubusercontent.com/13104654/210295270-29332fcd-2e65-4814-9439-5f7f743b6ab8.png)
+
+
 ## 5.1.6.  Contenido de GC por secuencia
+
+![Captura de pantalla 2023-01-02 a la(s) 20 09 24](https://user-images.githubusercontent.com/13104654/210295287-8ed4d1b0-051f-498d-b5f9-d2cdbb5d60c3.png)
+
+
 
 ## 5.1.7.  Contenido de N por base 
 
+![Captura de pantalla 2023-01-02 a la(s) 20 09 41](https://user-images.githubusercontent.com/13104654/210295307-9831c8c6-f696-4640-ad40-0efc91a27528.png)
+
+
 ## 5.1.8.  Distribución de la longitud de secuencia
+
+![Captura de pantalla 2023-01-02 a la(s) 20 09 57](https://user-images.githubusercontent.com/13104654/210295322-a0759d95-e0a6-42cc-b699-343741a5974e.png)
+
 
 ## 5.1.9.  Niveles de duplicación de secuencias
 
+![Captura de pantalla 2023-01-02 a la(s) 20 10 17](https://user-images.githubusercontent.com/13104654/210295333-f2d9ca7d-0193-4483-b601-e077f178b6c3.png)
+
+
 ## 5.1.10. Secuencias sobre representadas
+
+
+
 
 ## 5.1.11. Contenido de adaptadores 
 
-
+![Captura de pantalla 2023-01-02 a la(s) 20 10 33](https://user-images.githubusercontent.com/13104654/210295352-5c134059-dc4a-4e72-bee1-18e3ee3eadbb.png)
 
 
 
