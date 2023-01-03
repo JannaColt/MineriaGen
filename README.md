@@ -382,7 +382,13 @@ En el análisis que se realizó del genoma de P69 se muestra que la calidad medi
 Se observa en la última parte solo la mediana de una caja en el umbral de 20, y los cuartiles menores de 10 pero mayores de 5, por lo tanto solo se lanza un warning, el cual será resuelto al realizar el preprocesamiento.  
 
 
-## 5.1.3.  Calidad de secuencias por pozo 
+## 5.1.3.  Calidad de secuencias por pozo (*flowcell*) 
+
+En este apartado se muestra un heatmap de las pérdidas de calidad posicional, es decir se grafica la calidad de las llamadas de bases contra la posición física del secuenciador de la cual provienen. En los secuenciadores illumina, el área del *flowcell* se divide artificialmente en franjas (superficie superior e inferior) y estas se subdividen en mosaicos (áreas arbitrarias que se analizan por separado en la canalización de llamadas). Observar la calidad por mosaico identificará este tipo de errores. Se espera siempre la pérdida de calidad conforme los ciclos se incrementan, por ello resulta útil realizar una normalización para representar la calidad. Así un buen gráfico se observará blanco. De esta forma, los problemas se pueden  
+
+
+
+Since there is an expected general loss of quality as sequencing cycles increase it is useful to normalise by cycle when plotting quality.  You can therefore create a heatmap where hotspots represent tiles where the average phred score on that tile in that cycle was lower than the average across all tiles for the same sequencing cycle.  A good plot would therefore be blank.
 
 ## 5.1.4.  Scores de calidad por secuencia 
 
