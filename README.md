@@ -415,7 +415,7 @@ En el caso del contenido de bases por secuencia, este apartado nos muestra, como
 ![Composición de secuencia](https://user-images.githubusercontent.com/13104654/210295270-29332fcd-2e65-4814-9439-5f7f743b6ab8.png)
 
 
-En este apartado se puede generar una  &#x1F4D9;**alerta**, si el contenido de bases varía más del 10% en cualquier posición, y generará un &#x1F534; **fail** si este porcentaje de variación es mayor al 20%.
+En este apartado se puede generar una  :warning: **alerta**, si el contenido de bases varía más del 10% en cualquier posición, y generará un :x: **fail** si este porcentaje de variación es mayor al 20%.
 
 La causa de este sesgo puede ser el paso de *priming* aleatorio en la producción de las librerías. A pesar de que los hexameros en el priming deben presentarse con igual frecuencia en el mix y deberían realizar el *prime* con eficiencia similar, en la realidad no se da el caso y ciertos hexámeros son favorecidos durante este paso.
 
@@ -423,18 +423,34 @@ La causa de este sesgo puede ser el paso de *priming* aleatorio en la producció
 
 - Es posible que como parte del sesgo haya un incremento en el *mis-priming* - ocasionando un número alto de *mis-called* bases al inicio de la secuencia, y, 
 - Es posible que la selección del sesgo introducido tenga un efecto significativo en la capacidad de la librería de medir el contenido original debido a ciertas secuencias favorecidas.
+
 Sin embargo estos puntos pueden no representar un gran problema ya que son fácilmente detectados,  algunos mencionan que pueden mitigarse por un *Trimming 5'*, sin embargo esto no es un arreglo. Ya que la composición sesgada es creada por la selección de fragmentos de secuenciado y no por errores de llamadas de bases, el único efecto del *trimming* es cambiar de tener una libreria que inicia en posiciones sesgadas a una que inicia más allá de dichas posiciones. 
 
 La única forma de resolver este problema sería introducir nuevos kits de preparación de librerías con una menor disposición al sesgo en el paso del *priming*, sin embargo, a pesar de la advertencia,  no parece que haya consecuencias serias para los análisis posteriores, irónicamente en RNA-seq son más sospechosas las librerías que no presentan este artefacto.
 
 En este [artículo](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0085583) se documenta el *mis-priming* en RNA-seq
 
-Algunas de las razones más comunes de este error son:
+Algunas de las razones más comunes de un warning o fail en este apartado son:
 Secuencias sobrerepresentadas, sesgo en la fragmentación y composición sesgada de las librerías (que a veces ocurre naturalmente).
+
 En el presente caso también se observa una desviación al final, si se está analizando una biblioteca que ha sido recortada agresivamente por el adaptador, naturalmente introducirá un sesgo de composición al final de las lecturas, ya que las secuencias que coinciden con tramos cortos del adaptador se eliminan, dejando solo las secuencias que no coinciden. Por lo tanto, es probable que las desviaciones repentinas en la composición al final de las bibliotecas que han sufrido un recorte agresivo sean falsas.
 
 
 ## 5.1.6.  Contenido de GC por secuencia
+
+Este apartado muestra en un plot, el contenido porcentual total de GC para todas las lecturas (número total de reads vs porcentaje de bases G y C por lectura), comparando contra una "distribución teórica" de GC's, asumiendo un contenido uniforme para todas las lecturas, el pico central corresponde al contenido de GC promedio del genoma subyacente. Dado que el contenido de GC del genoma no se conoce, el contenido modal de GC es calculado de datos observados y usado para construir la distribución de referencia. 
+
+ Se observa un ⚠️**warning** si el 15% total de las secuencias caen fuera de la distribución normal.
+ Se obtendrá un :x:**fail** si más del 20% de las secuencias están fuera de la distribución normal.
+ Los fails son generalmente debidos a contaminación, frecuentemente por secuencias de adaptadores.
+
+Una distribución de forma inusual podría indicar una librería contaminada o alguna otra clase de subset sesgado. Una distribución normal cambiada índica algún sesgo sistemático, el cual es independiente de la posición de la base. Si existe un error sistemático, este no será marcado como error por que no se sabe cual debería ser el contenido de GC del genoma.
+
+Existen otras situaciones en las cuales una distribución inusual se puede presentar. Por ejemplo, con RNA seq puede haber una distribución mayor o menor del contenido medio de GC entre los transcritos, causando que el gráfico observado sea más amplio o más estrecho que una distribución normal ideal.
+
+`rgb(9, 105, 218)`
+
+  The background color should be `#ffffff` for light mode and `#0d1117` for dark mode.
 
 ![Captura de pantalla 2023-01-02 a la(s) 20 09 24](https://user-images.githubusercontent.com/13104654/210295287-8ed4d1b0-051f-498d-b5f9-d2cdbb5d60c3.png)
 
