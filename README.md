@@ -1,4 +1,5 @@
 # MINERÍA GENÓMICA 
+## CALIDAD, ENSAMBLE Y ANOTACIÓN
 Contiene pipeline para ensamble y minería genómica de shotgun sequence con google colab
 
 Desde el cuaderno establecido primeramente se instalan todos los paquetes que se usarán y al final se monta el drive en el que se estará trabajando. Es preferible que esto se haga desde el inicio ya que cuando se instala un nuevo paquete se reinicia el entorno y lo que anteriormente llamamos ya no estará disponible. 
@@ -165,7 +166,9 @@ zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.g
 zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz | tail -n 4
 ```
 
-### b) Revisión de las secuencias, número, longitud, que ambos estén pareados (Esta parte se puede omitir ya que fastqc te muestra algunos de estos resultados)
+### b) Revision del numero y longitud de secuencias 
+
+> (También revisamos que se encuentren pareados, esta parte se puede omitir ya que fastqc te muestra algunos de estos resultados)
 
 El siguiente bloque permite revisar si los archivos están pareados
 ```bash
@@ -388,7 +391,7 @@ En este apartado se muestra un heatmap de las pérdidas de calidad posicional, e
 estas se subdividen en mosaicos (áreas arbitrarias que se analizan por separado en la canalización de llamadas). Observar la calidad por mosaico identificará este tipo de errores. Se espera siempre la pérdida de calidad conforme los ciclos se incrementan, por ello resulta útil realizar una normalización para representar la calidad. Así un buen gráfico se observará en blanco (sólido azul rey brillante). 
 De esta forma, los problemas se pueden manifestar de varias formas, en la prueba de P69:
 
-![P69 calidad de secuencia por flowcell](https://user-images.githubusercontent.com/13104654/210288959-a6367307-2827-4ff1-b6ec-2dfb468564c0.png)
+![P69 calidad de secuencia por flowcell R1](https://user-images.githubusercontent.com/13104654/210288959-a6367307-2827-4ff1-b6ec-2dfb468564c0.png)
 
 Puede haber una pérdida aleatoria de calidad en las posiciones y ciclos, lo cual indica un problema generalizado en el que más comúnmente se sobrecarga la celda. En el análisis de calidad de la imagen de la cepa P69 se observa algo de este problema generalizado con la corrida aunque algo menos intenso. Resulta un tanto problemático si mosaicos aparecen en áreas amplias y localizadas  del *flowcell*.
 
@@ -438,42 +441,106 @@ En el presente caso también se observa una desviación al final, si se está an
 
 ## 5.1.6.  Contenido de GC por secuencia
 
-Este apartado muestra en un plot, el contenido porcentual total de GC para todas las lecturas (número total de reads vs porcentaje de bases G y C por lectura), comparando contra una "distribución teórica" de GC's, asumiendo un contenido uniforme para todas las lecturas, el pico central corresponde al contenido de GC promedio del genoma subyacente. Dado que el contenido de GC del genoma no se conoce, el contenido modal de GC es calculado de datos observados y usado para construir la distribución de referencia. 
+Este apartado muestra en un plot, el contenido porcentual total de GC para todas las lecturas (número total de reads vs porcentaje de bases G y C por lectura), comparando contra una "distribución teórica" de GC's, asumiendo un contenido uniforme para todas las lecturas, el pico central corresponde al contenido de GC promedio del genoma subyacente. Dado que el contenido de GC del genoma no se conoce, el contenido modal de GC es calculado de datos observados y usado para construir la distribución de referencia.
+
+![Contenido de GC](https://user-images.githubusercontent.com/13104654/210295287-8ed4d1b0-051f-498d-b5f9-d2cdbb5d60c3.png)
 
  Se observa un ⚠️**warning** si el 15% total de las secuencias caen fuera de la distribución normal.
- Se obtendrá un :x:**fail** si más del 20% de las secuencias están fuera de la distribución normal.
+ 
+ Se obtendrá un :x:**fail** si más del 20% (el manual FastQC indica 30%) de las secuencias están fuera de la distribución normal.
  Los fails son generalmente debidos a contaminación, frecuentemente por secuencias de adaptadores.
 
 Una distribución de forma inusual podría indicar una librería contaminada o alguna otra clase de subset sesgado. Una distribución normal cambiada índica algún sesgo sistemático, el cual es independiente de la posición de la base. Si existe un error sistemático, este no será marcado como error por que no se sabe cual debería ser el contenido de GC del genoma.
 
 Existen otras situaciones en las cuales una distribución inusual se puede presentar. Por ejemplo, con RNA seq puede haber una distribución mayor o menor del contenido medio de GC entre los transcritos, causando que el gráfico observado sea más amplio o más estrecho que una distribución normal ideal.
 
-`rgb(9, 105, 218)`
-
-  The background color should be `#ffffff` for light mode and `#0d1117` for dark mode.
-
-![Captura de pantalla 2023-01-02 a la(s) 20 09 24](https://user-images.githubusercontent.com/13104654/210295287-8ed4d1b0-051f-498d-b5f9-d2cdbb5d60c3.png)
-
-
-
 ## 5.1.7.  Contenido de N por base 
 
-![Captura de pantalla 2023-01-02 a la(s) 20 09 41](https://user-images.githubusercontent.com/13104654/210295307-9831c8c6-f696-4640-ad40-0efc91a27528.png)
+Si un secuenciador no puede llamar una base con confianza suficiente entonces será sustituido normalmente con un N más que una llamada de base convencional.
 
+Este módulo gráfica el porcentaje de "llamadas" de base en cada posición para las cuales una N fue considerada.
+
+![Contenido de N P69](https://user-images.githubusercontent.com/13104654/210295307-9831c8c6-f696-4640-ad40-0efc91a27528.png)
+
+Idealmente el contenido de N por base sería una línea plana en 0% sobre el eje Y, indicando que todas las bases han sido "llamadas".
+
+  - Se recibe un :warning: **warning** si el contenido de N es igual o mayor de 5%,
+  - Tendremos un :x: **fail** si el contenido de N es igual o mayor a 20%.
+
+El análisis de R1 para P69 muestra el resultado ideal para este módulo.
 
 ## 5.1.8.  Distribución de la longitud de secuencia
 
-![Captura de pantalla 2023-01-02 a la(s) 20 09 57](https://user-images.githubusercontent.com/13104654/210295322-a0759d95-e0a6-42cc-b699-343741a5974e.png)
+Este gráfico muestra, tal como hicimos en [apartados anteriores](#b-revision-del-numero-y-longitud-de-secuencias), la distribución de los tamaños de fragmentos en el archivo analizado. En muchos casos esto solo produce un gráfico simple mostrando solo un pico de un solo tamaño, pero para archivos FASTQ con longitud variable, mostrara las cantidades relativas de cada tamaño de fragmento de secuencia. En este caso nuestro archivo R1 P69 muestra longitudes variables más pequeñas (30-269pb) que el pico de 299pb. 
+
+![Longitud de secuencias R1 P69](https://user-images.githubusercontent.com/13104654/210295322-a0759d95-e0a6-42cc-b699-343741a5974e.png)
+
+
+Algunos secuenciadores (y kits de secuenciación) generan fragmentos de longitudes ampliamente variables, otros pueden generar fragmentos de longitud uniforme.
+Incluso en librerías con longitud uniforme, algunos *pipelines* cortarán secuencias para remover llamadas de bases de baja calidad del final o las primeras n bases si coninciden las primeras n bases del adapatador arriba del 90% (por defecto), algunas veces con n=1. 
+Para secuenciación con Illumina, cada lectura debería ser del mismo tamaño (?). 
+
+Este módulo arrojará un :warning:**warning** si hay cualquier variación en la longitud de las secuencias, el cual puede ser ignorado si se sabe que es normal para el tipo de datos que se tiene. 
+
+Un :x: **fail** en este módulo significa que al menos una secuencia tiene longitud de 0. 
+El análisis de R1 P69 obtiene un warning ya que hay una gran variabilidad en la longitud de las secuencias, lo cual puede cambiar al realizar el trimming.
 
 
 ## 5.1.9.  Niveles de duplicación de secuencias
 
-![Captura de pantalla 2023-01-02 a la(s) 20 10 17](https://user-images.githubusercontent.com/13104654/210295333-f2d9ca7d-0193-4483-b601-e077f178b6c3.png)
+En este módulo se grafican los niveles de duplicación de secuencias (eje x) contra el porcentaje de secuencias que muestran ese nivel de duplicación (eje y), y 
+
+Hay dos líneas en el gráfico:
+🔴 línea roja: Distribución para las secuencia de-duplicadas con las proporciones del conjunto de-duplicado las cuales provienen de diferentes niveles de duplicación en los datos originales.
+
+🔵 línea azul: Distribución de los niveles de duplicación para en conjunto completo de secuencias. 
+
+![niveles de duplicación de secuencias en R1 P69](https://user-images.githubusercontent.com/13104654/210295333-f2d9ca7d-0193-4483-b601-e077f178b6c3.png)
+
+La gráfica de los niveles de duplicación de secuencias muestran en el eje x, el número de veces que una secuencia está duplicada, y en el eje y el porcentaje de secuencias que muestran ese nivel de duplicación. Normalmente un genoma tendrá un nivel de duplicación de secuencias de 1 a 3 para la mayoría de las secuencias, con sólo un puñado de lecturas teniendo un nivel más alto que este; la línea debería tener la forma inversa a una gráfica log.
+
+En el presente análisis de R1 P69 se no se observan picos a la derecha de la gráfica y solo un bajo nivel de duplicación al inicio
+
+Un alto porcentaje de duplicación de secuencias es un indicativo de contaminación.
+
+Este módulo nos arrojará un :warning: **warning** si más del 20% de las secuencias son duplicadas.
+
+Tendrémos un :x: **fail** si más del 50% de las secuencias están duplicadas. 
+
+Un warning o fail pueden ser resultado de artefactos de PCR.
+
+#### Más acerca de la duplicación:
+
+En una librería diversa la mayoría de las secuencias se presentarán solo una vez en el set final, un bajo nivel de duplicación puede indicar un muy alto nivel de coverage de la secuencia blanco, pero un alto nivel puede indicar una clase de sesgo por enriquecimiento ( por ejemplo en la amplificación por PCR).
+Este módulo cuenta el grado de duplicación para cada secuencia en el conjunto y crea un plot mostrando el numero relativo de secuencias con diferentes grados de duplicación.
+
+Con el fin de reducir los requerimientos de memoria para este módulo, solamente las secuencias que se presentan en las primeras 200 000 en cada archivo son analizadas, pero esto debería bastar para obtener una impresión para los niveles de duplicación del archivo completo. 
+Cada secuencia es rastreada al final del archivo para dar un conteo representativo del promedio del nivel de duplocación. 
+Para reducir la cantidad de información en el gráfico final, cualquier secuencia con >10 duplicados son colocadas en esta categoría, por lo que no es inusual observar un leve incremento en esta categoría final. Si hay un gran incremento, significa que se tiene un alto número de secuencias con alto nivel de duplicación. 
+
+Debido a que la detección de la duplicación requiere de una coincidencia exacta de secuencias sobre la longitud completa de la secuencia, cualquier lectura por encima de 75pb de longitud son truncadas a 50pb para propósitos del análisis, aún así, lecturas más largas son más propensas a contener errores de secuenciamiento por lo cual incrementará artificialmente la diversidad observada y tenderá a subrepresentar las secuencias altamente duplicadas.
+
+Para datos del *Whole Genome Shotgun* se espera que cerca del 100% de las lecturas sean únicas (una sola vez en los datos de secuencia). La mayoría de las secuencias deberían caer hacia la izquierda del gráfico para ambas líneas. Esto indica una librería altamente diversa que no esta sobre secuenciada. Si la profundidad del secuenciamento es extremadamente alta (p. ej. >100x el tamaño del genoma) es inevitable que aparezcan duplicaciones de secuencias: en teoría solo hay un número finito de lecturas de secuencia completamente únicas las cuales pueden ser obtenidas de cualquier muestra de DNA ingresada.
+
+Subconjuntos de enriquecimiento más específicos, o la presencia de contaminantes de baja complejidad tenderán a producir picos hacia la derecha del gráfico. Estos picos de altos niveles de duplicación aparecerán más frecuentemente en la línea azul ya que conforman una mayor proporción de la librería original, pero usualmente desaparecen en el trazo rojo, ya que consiste de una porporción no significante del conjunto deduplicado. Si los picos persisten en la línea roja, entonces esto sugiere que hay un alto número de secuencias diferentes altamente duplicado lo que podría indicar ya sea un conjunto de contaminantes o una duplicación técnica severa.
+
+Es usualmente el caso para RNA seq donde existen algunos transcritos altamente abundantes y algunos con baja abundancia. Se espera que las lecturas duplicadas sean observadas para los transcritos de alta abundancia.
 
 
 ## 5.1.10. Secuencias sobre representadas
 
+En el caso de este módulo:
+- Si se calcula que alguna secuencia representa más del 0.1 % del genoma completo será etiquetada como una secuencia sobre-representada y se obtendrá un :warning: **warning**
+- La presencia de secuencias que representan más del 1% del genoma dará como resultado un :x: **fail**.
 
+![Sobrerrepresentación R1 P69](https://user-images.githubusercontent.com/13104654/210641941-b7fb8d5a-2bce-4183-afa8-bf31b0cf0096.png)
+
+Una librería normal contendrá un conjunto diverso de secuencias, ninguna de las cuales individualmente hace una fracción del completo. Encontrar que una sola secuencia se encuentra sobre representada en el conjunto o significa que es altamente significativa biológicamente, que la librería está contaminada o bien que no es tan diversa como se esperaba.
+
+FastQC enlista todas las secuencias que hacen más del 0.1% del total y por cada secuencia busca coincidencias en una base de datos de contaminantes comunes y reportará el mejor *Hit*. Los *Hits* deben ser de al menos 20pb en longitud y tener máximo un *mismatch*. Encontar uno no necesariamente significa que sea la fuente de contaminación pero puede apuntar en la dirección correcta. Muchas secuencias de adapadores son muy similares entre sí, por lo que podría tenerse una coincidencia técnicamente incorrecta.
+
+Los datos de RNAseq pueden tener algunos transcritos que son tan abundantes que se registran como secuencias sobre-representadas. 
+Con los datos de DNA seq, ninguna secuencia debería presentarse con suficientemente alta frecuencia para ser listada, pero algunas ocasiones podemos encontrar un pequeño porcentaje de lecturas de adaptadores.
 
 
 ## 5.1.11. Contenido de adaptadores 
