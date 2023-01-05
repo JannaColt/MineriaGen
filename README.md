@@ -511,20 +511,20 @@ Un warning o fail pueden ser resultado de artefactos de PCR.
 
 #### Más acerca de la duplicación:
 
-En una librería diversa la mayoría de las secuencias se presentarán solo una vez en el set final, un bajo nivel de duplicación puede indicar un muy alto nivel de coverage de la secuencia blanco, pero un alto nivel puede indicar una clase de sesgo por enriquecimiento ( por ejemplo en la amplificación por PCR).
+>En una librería diversa la mayoría de las secuencias se presentarán solo una vez en el set final, un bajo nivel de duplicación puede indicar un muy alto nivel de coverage de la secuencia blanco, pero un alto nivel puede indicar una clase de sesgo por enriquecimiento ( por ejemplo en la amplificación por PCR).
 Este módulo cuenta el grado de duplicación para cada secuencia en el conjunto y crea un plot mostrando el numero relativo de secuencias con diferentes grados de duplicación.
 
-Con el fin de reducir los requerimientos de memoria para este módulo, solamente las secuencias que se presentan en las primeras 200 000 en cada archivo son analizadas, pero esto debería bastar para obtener una impresión para los niveles de duplicación del archivo completo. 
+>Con el fin de reducir los requerimientos de memoria para este módulo, solamente las secuencias que se presentan en las primeras 200 000 en cada archivo son analizadas, pero esto debería bastar para obtener una impresión para los niveles de duplicación del archivo completo. 
 Cada secuencia es rastreada al final del archivo para dar un conteo representativo del promedio del nivel de duplocación. 
 Para reducir la cantidad de información en el gráfico final, cualquier secuencia con >10 duplicados son colocadas en esta categoría, por lo que no es inusual observar un leve incremento en esta categoría final. Si hay un gran incremento, significa que se tiene un alto número de secuencias con alto nivel de duplicación. 
 
-Debido a que la detección de la duplicación requiere de una coincidencia exacta de secuencias sobre la longitud completa de la secuencia, cualquier lectura por encima de 75pb de longitud son truncadas a 50pb para propósitos del análisis, aún así, lecturas más largas son más propensas a contener errores de secuenciamiento por lo cual incrementará artificialmente la diversidad observada y tenderá a subrepresentar las secuencias altamente duplicadas.
+>Debido a que la detección de la duplicación requiere de una coincidencia exacta de secuencias sobre la longitud completa de la secuencia, cualquier lectura por encima de 75pb de longitud son truncadas a 50pb para propósitos del análisis, aún así, lecturas más largas son más propensas a contener errores de secuenciamiento por lo cual incrementará artificialmente la diversidad observada y tenderá a subrepresentar las secuencias altamente duplicadas.
 
-Para datos del *Whole Genome Shotgun* se espera que cerca del 100% de las lecturas sean únicas (una sola vez en los datos de secuencia). La mayoría de las secuencias deberían caer hacia la izquierda del gráfico para ambas líneas. Esto indica una librería altamente diversa que no esta sobre secuenciada. Si la profundidad del secuenciamento es extremadamente alta (p. ej. >100x el tamaño del genoma) es inevitable que aparezcan duplicaciones de secuencias: en teoría solo hay un número finito de lecturas de secuencia completamente únicas las cuales pueden ser obtenidas de cualquier muestra de DNA ingresada.
+>Para datos del *Whole Genome Shotgun* se espera que cerca del 100% de las lecturas sean únicas (una sola vez en los datos de secuencia). La mayoría de las secuencias deberían caer hacia la izquierda del gráfico para ambas líneas. Esto indica una librería altamente diversa que no esta sobre secuenciada. Si la profundidad del secuenciamento es extremadamente alta (p. ej. >100x el tamaño del genoma) es inevitable que aparezcan duplicaciones de secuencias: en teoría solo hay un número finito de lecturas de secuencia completamente únicas las cuales pueden ser obtenidas de cualquier muestra de DNA ingresada.
 
-Subconjuntos de enriquecimiento más específicos, o la presencia de contaminantes de baja complejidad tenderán a producir picos hacia la derecha del gráfico. Estos picos de altos niveles de duplicación aparecerán más frecuentemente en la línea azul ya que conforman una mayor proporción de la librería original, pero usualmente desaparecen en el trazo rojo, ya que consiste de una porporción no significante del conjunto deduplicado. Si los picos persisten en la línea roja, entonces esto sugiere que hay un alto número de secuencias diferentes altamente duplicado lo que podría indicar ya sea un conjunto de contaminantes o una duplicación técnica severa.
+>Subconjuntos de enriquecimiento más específicos, o la presencia de contaminantes de baja complejidad tenderán a producir picos hacia la derecha del gráfico. Estos picos de altos niveles de duplicación aparecerán más frecuentemente en la línea azul ya que conforman una mayor proporción de la librería original, pero usualmente desaparecen en el trazo rojo, ya que consiste de una porporción no significante del conjunto deduplicado. Si los picos persisten en la línea roja, entonces esto sugiere que hay un alto número de secuencias diferentes altamente duplicado lo que podría indicar ya sea un conjunto de contaminantes o una duplicación técnica severa.
 
-Es usualmente el caso para RNA seq donde existen algunos transcritos altamente abundantes y algunos con baja abundancia. Se espera que las lecturas duplicadas sean observadas para los transcritos de alta abundancia.
+>Es usualmente el caso para RNA seq donde existen algunos transcritos altamente abundantes y algunos con baja abundancia. Se espera que las lecturas duplicadas sean observadas para los transcritos de alta abundancia.
 
 
 ## 5.1.10. Secuencias sobre representadas
@@ -535,18 +535,32 @@ En el caso de este módulo:
 
 ![Sobrerrepresentación R1 P69](https://user-images.githubusercontent.com/13104654/210641941-b7fb8d5a-2bce-4183-afa8-bf31b0cf0096.png)
 
-Una librería normal contendrá un conjunto diverso de secuencias, ninguna de las cuales individualmente hace una fracción del completo. Encontrar que una sola secuencia se encuentra sobre representada en el conjunto o significa que es altamente significativa biológicamente, que la librería está contaminada o bien que no es tan diversa como se esperaba.
+En el presente análisis no se presentaron secuencias sobre-representadas.
 
-FastQC enlista todas las secuencias que hacen más del 0.1% del total y por cada secuencia busca coincidencias en una base de datos de contaminantes comunes y reportará el mejor *Hit*. Los *Hits* deben ser de al menos 20pb en longitud y tener máximo un *mismatch*. Encontar uno no necesariamente significa que sea la fuente de contaminación pero puede apuntar en la dirección correcta. Muchas secuencias de adapadores son muy similares entre sí, por lo que podría tenerse una coincidencia técnicamente incorrecta.
 
-Los datos de RNAseq pueden tener algunos transcritos que son tan abundantes que se registran como secuencias sobre-representadas. 
+> Una librería normal contendrá un conjunto diverso de secuencias, ninguna de las cuales individualmente hace una fracción del completo. Encontrar que una sola secuencia se encuentra sobre representada en el conjunto o significa que es altamente significativa biológicamente, que la librería está contaminada o bien que no es tan diversa como se esperaba.
+
+> FastQC enlista todas las secuencias que hacen más del 0.1% del total y por cada secuencia busca coincidencias en una base de datos de contaminantes comunes y reportará el mejor *Hit*. Los *Hits* deben ser de al menos 20pb en longitud y tener máximo un *mismatch*. Encontar uno no necesariamente significa que sea la fuente de contaminación pero puede apuntar en la dirección correcta. Muchas secuencias de adapadores son muy similares entre sí, por lo que podría tenerse una coincidencia técnicamente incorrecta.
+
+> Los datos de RNAseq pueden tener algunos transcritos que son tan abundantes que se registran como secuencias sobre-representadas. 
 Con los datos de DNA seq, ninguna secuencia debería presentarse con suficientemente alta frecuencia para ser listada, pero algunas ocasiones podemos encontrar un pequeño porcentaje de lecturas de adaptadores.
 
+> Podemos hacer BLAST de la secuencia sobre representada, si blastn no nos proporciona respuesta, podemos utilizar 
+
+[![BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi)](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome)
+> 
+> [VecScreen](https://www.ncbi.nlm.nih.gov/tools/vecscreen/)
 
 ## 5.1.11. Contenido de adaptadores 
 
 ![Captura de pantalla 2023-01-02 a la(s) 20 10 33](https://user-images.githubusercontent.com/13104654/210295352-5c134059-dc4a-4e72-bee1-18e3ee3eadbb.png)
 
+Este módulo busca secuencias específicas de adaptadores.
+
+   - Una secuencia que representa más del 5% del total causará un warning en este módulo.
+   - Una secuencia que represente más del 10% del total causará un fail.
+
+Nuestro ejemplo no muestra contaminación con secuencias de adaptadores, lo cual es ideal. Si existiera un número significativo de secuencias de adaptadores, se debe utilizar un programa para recortarlos y realizar el análisis de calidad nuevamente.
 
 
 
