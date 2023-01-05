@@ -568,10 +568,37 @@ Más información se puede encontrar en el [repositorio](https://github.com/Open
 
 A comparación de FASTQC, fastp ofrece resultados tanto para los datos de prefiltrado como para los datos de post-filtrado, permitiendo una evaluación del efecto del filtro comparando directamente las gráficas y reporta sus resultados tanto en formato HTML como en formato JSON, siendo este último manualmente optimizado para facilitar su lectura (más acerca de la descripción en el [artículo](https://academic.oup.com/bioinformatics/article/34/17/i884/5093234)).
  
-Para correr Fastp en los archivos de secuencias dentro de google colab usamos el siguiente bloque de código:
+Para correr Fastp en los archivos de secuencias (con los datos para filtrado por defecto) dentro de google colab usamos el siguiente bloque de código:
 
 ```python
 # Control de calidad y reporte 
 !fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz
 
 ```
+Si se requiere establecer un límite de longitud para filtrado se utiliza -l, para establecer el nombre de los archivos de salida -j -h, más opciones [aquí](https://github.com/OpenGene/fastp#all-options)
+
+```python
+# Control de calidad y reporte 
+!fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz -j content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/ -h content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/
+
+#o también de esta forma
+# Control de calidad y reporte 
+!fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz --dont_overwrite -j content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1.json -h content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1.html -l 150 --detect_adapter_for_pe -c --cut_right --cut_front -p -dedup
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
