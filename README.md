@@ -545,23 +545,21 @@ En el presente análisis no se presentaron secuencias sobre-representadas.
 > Los datos de RNAseq pueden tener algunos transcritos que son tan abundantes que se registran como secuencias sobre-representadas. 
 Con los datos de DNA seq, ninguna secuencia debería presentarse con suficientemente alta frecuencia para ser listada, pero algunas ocasiones podemos encontrar un pequeño porcentaje de lecturas de adaptadores.
 
-> Podemos hacer BLAST de la secuencia sobre representada, si blastn no nos proporciona respuesta, podemos utilizar 
+> Podemos hacer BLAST de la secuencia sobre representada, si [Blastn](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome) no nos proporciona respuesta, podemos utilizar [VecScreen](https://www.ncbi.nlm.nih.gov/tools/vecscreen/).
 
-[![BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi)](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome)
-> 
-> [VecScreen](https://www.ncbi.nlm.nih.gov/tools/vecscreen/)
 
 ## 5.1.11. Contenido de adaptadores 
 
-![Captura de pantalla 2023-01-02 a la(s) 20 10 33](https://user-images.githubusercontent.com/13104654/210295352-5c134059-dc4a-4e72-bee1-18e3ee3eadbb.png)
-
 Este módulo busca secuencias específicas de adaptadores.
 
-   - Una secuencia que representa más del 5% del total causará un warning en este módulo.
-   - Una secuencia que represente más del 10% del total causará un fail.
+   - Una secuencia que representa más del 5% del total causará un :warning: **warning** en este módulo.
+   - Una secuencia que represente más del 10% del total causará un :x: **fail**.
 
-Nuestro ejemplo no muestra contaminación con secuencias de adaptadores, lo cual es ideal. Si existiera un número significativo de secuencias de adaptadores, se debe utilizar un programa para recortarlos y realizar el análisis de calidad nuevamente.
+![Contenido de adaptadores R1 P69](https://user-images.githubusercontent.com/13104654/210295352-5c134059-dc4a-4e72-bee1-18e3ee3eadbb.png)
 
+Nuestro análisis no muestra contaminación con secuencias de adaptadores, lo cual es ideal. 
+Si existiera un número significativo de secuencias de adaptadores, se debe utilizar un programa para recortarlos y realizar el análisis de calidad nuevamente.
 
+Otros gráficos relacionados pueden consultarse en [Documentación Contenido de K-mer FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/11%20Kmer%20Content.html) y más problemáticas en [QC Fail](https://sequencing.qcfail.com/).
 
 
