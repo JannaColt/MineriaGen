@@ -560,6 +560,18 @@ Este módulo busca secuencias específicas de adaptadores.
 Nuestro análisis no muestra contaminación con secuencias de adaptadores, lo cual es ideal. 
 Si existiera un número significativo de secuencias de adaptadores, se debe utilizar un programa para recortarlos y realizar el análisis de calidad nuevamente.
 
-Otros gráficos relacionados pueden consultarse en [Documentación Contenido de K-mer FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/11%20Kmer%20Content.html) y más problemáticas en [QC Fail](https://sequencing.qcfail.com/).
+Otros gráficos relacionados pueden consultarse en [Documentación Contenido de K-mer FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/11%20Kmer%20Content.html) y más problemáticas en [![QC Fail]](https://sequencing.qcfail.com/).
 
+# 5.2 Fastp
+Fastp es una herramienta que realiza el preprocesamiento y filtrado de calidad de forma paralela y soporta lecturas Single end y Paired end.
+Más información se puede encontrar en el [repositorio](https://github.com/OpenGene/fastp#simple-usage) de los desarrolladores.
 
+A comparación de FASTQC, fastp ofrece resultados tanto para los datos de prefiltrado como para los datos de post-filtrado, permitiendo una evaluación del efecto del filtro comparando directamente las gráficas y reporta sus resultados tanto en formato HTML como en formato JSON, siendo este último manualmente optimizado para facilitar su lectura (más acerca de la descripción en el [artículo](https://academic.oup.com/bioinformatics/article/34/17/i884/5093234)).
+ 
+Para correr Fastp en los archivos de secuencias dentro de google colab usamos el siguiente bloque de código:
+
+```python
+# Control de calidad y reporte 
+!fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz
+
+```
