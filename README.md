@@ -579,12 +579,58 @@ Si se requiere establecer un límite de longitud para filtrado se utiliza -l, pa
 
 ```python
 # Control de calidad y reporte 
-!fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz -j content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/ -h content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/
+!fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz -R content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/fastp_report
 
 #o también de esta forma
 # Control de calidad y reporte 
-!fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz --dont_overwrite -j content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1.json -h content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1.html -l 150 --detect_adapter_for_pe -c --cut_right --cut_front -p -dedup
+!fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz --json="HA1AB3SS04_S4_L1.json" --html="HA1AB3SS04_S4_L1.html" -l 150 --detect_adapter_for_pe -c --cut_right --cut_front -p --failed_out="failed_seqsPR69.fastq.gz"
 ```
+En este caso Fastp puede detectar adaptadores y cortarlos lo que nos ahora tiempo, sin embargo esto se puede realizar con un script aparte utilizando trimmomatic 
+para el filtrado de calidad, en este caso habría que correr nuevamente los análisis de calidad con Fastqc para ver como quedaron las secuencias.
+
+
+#5.3 Trimmomatic
+
+Para el filtrado y corte de adaptadores con trimommatic, se puede usar el siguiente bloque de código 
+```python
+# Trimming 
+!trimmomatic PE -phred33 R1.fastq R2.fastq R1\_paired.fq.gz R1\_unpaired.fq.gz R2\_paired.fq.gz R2\_unpaired.fq.gz ILLUMINACLIP:contams\_forward\_rev.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+```
+
+o bien podemos señalarle la secuencia de adaptadores. En el caso de PR69, las secuencias no tienen adaptador (o eso creemos) y tienen la misma longitud. 
+En el presente caso no conozco la secuencia de adaptadores de la plataforma pero si se requiere, aqui podemos encontrar algunos adaptadores [https://github.com/ATGenomics/adapters](https://github.com/ATGenomics/adapters)
+
+El siguiente bloque de código se aplica en una máquina local y no en google colab como hemos utilizado hasta ahora, podría funcionar si llamamos el shell y le indicamos alguna ruta específica para clonar las secuencias del repositorio. 
+
+*Para secuencias Paired End:
+
+```shell
+cd $HOME/ git clone https://github.com/ATGenomics/adapters.git $HOME/bin/adapters
+
+adapters="$HOME/bin/adapters/NexteraPE-PE.fa"
+```
+
+adaptándolo para colab podría ser de la siguiente manera:
+
+```shell
+%%shell
+#Primero creamos el directorio adaptadores
+mkdir -p /content/drive/MyDrive/Analisis_Posdoc/PR69/adapters
+
+#luego clonamos el repositorio dentro de esta carpeta
+cd /content/drive/MyDrive/Analisis_Posdoc/PR69/adapters git clone https://github.com/ATGenomics/adapters.git $HOME/bin/adapters
+
+#una vez clonado se define como una variable a la secuencia de adaptadores que corresponda la plataforma que estemos usando
+adapters="/content/drive/MyDrive/Analisis_Posdoc/PR69/adapters/NexteraPE-PE.fa"
+```
+
+Activamos el entorno qc source activate qc
+
+```shell
+trimmomatic PE -phred33 -threads 16 \ 00_raw/Salbidoflavus_S01_R1.fastq.gz  00_raw/Salbidoflavus_S01_R2.fastq.gz  \ 01_qc/Salbidoflavus_S01_R1.trim.fastq.gz 01_qc/Salbidoflavus_S01_1U.trim.fq.gz \ 01_qc/Salbidoflavus_S01_R2.trim.fastq.gz 01_qc/Salbidoflavus_S01_2U.trim.fq.gz \ ILLUMINACLIP:${adapters}:2:30:10 SLIDINGWINDOW:4:20 MINLEN:90 CROP:150
+```
+
+## 6. Ensamble *De Novo*
 
 
 
