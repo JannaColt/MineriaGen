@@ -562,6 +562,24 @@ Si existiera un número significativo de secuencias de adaptadores, se debe util
 
 Otros gráficos relacionados pueden consultarse en [Documentación Contenido de K-mer FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/3%20Analysis%20Modules/11%20Kmer%20Content.html) y más problemáticas en [![QC Fail]](https://sequencing.qcfail.com/).
 
+
+Lo anterior hay que correrlo para las lecturas R2. Luego podemos utilizar Multiqc para tomar ambos resultados de calidad o bien podemos usar fastp para realizarlo en un solo paso.
+
+## 5.1.12 Multiqc
+
+El siguiente bloque de código nos sirve para correr multiqc en colab.
+
+```python
+# Pre-alignment Multiqc summary file 
+!multiqc .
+
+import multiqc
+#El análisis se hace sobre los archivos de fastqc para que te entregue un reporte conteniendo todo
+multiqc.run('/content/drive/MyDrive/códigos/Secuencias_UADY/50-3_S19_L001_R2_001_fastqc.zip')
+
+```
+
+
 # 5.2 Fastp
 Fastp es una herramienta que realiza el preprocesamiento y filtrado de calidad de forma paralela y soporta lecturas Single end y Paired end.
 Más información se puede encontrar en el [repositorio](https://github.com/OpenGene/fastp#simple-usage) de los desarrolladores.
@@ -614,6 +632,13 @@ adaptándolo para colab podría ser de la siguiente manera:
 
 ```shell
 %%shell
+
+###Para no poner toda la dirección asignamos una variable, probar si esto funciona
+#### Asignar nombres de archivos de lecturas
+#fwd="/content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz"
+#rev="/content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz"
+#name="PR69"
+
 #Primero creamos el directorio adaptadores
 mkdir -p /content/drive/MyDrive/Analisis_Posdoc/PR69/adapters
 
@@ -624,11 +649,53 @@ cd /content/drive/MyDrive/Analisis_Posdoc/PR69/adapters git clone https://github
 adapters="/content/drive/MyDrive/Analisis_Posdoc/PR69/adapters/NexteraPE-PE.fa"
 ```
 
-Activamos el entorno qc source activate qc
+En una máquina local se activa el entorno qc 
+`source activate qc`
+
+Sin embargo en google colab esto no parece ser necesario puesto que simplemente se llama el shell o bash con la correspondiente función
+
 
 ```shell
-trimmomatic PE -phred33 -threads 16 \ 00_raw/Salbidoflavus_S01_R1.fastq.gz  00_raw/Salbidoflavus_S01_R2.fastq.gz  \ 01_qc/Salbidoflavus_S01_R1.trim.fastq.gz 01_qc/Salbidoflavus_S01_1U.trim.fq.gz \ 01_qc/Salbidoflavus_S01_R2.trim.fastq.gz 01_qc/Salbidoflavus_S01_2U.trim.fq.gz \ ILLUMINACLIP:${adapters}:2:30:10 SLIDINGWINDOW:4:20 MINLEN:90 CROP:150
+%%shell
+trimmomatic PE -phred33 -threads 16 \ fwd \ rev  \ /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.trim.fq.gz \ /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.trim.fastq.gz /Analisis_Posdoc/PR69/HA1AB3SS04_S4.trim.fq.gz \ ILLUMINACLIP:${adapters}:2:30:10 SLIDINGWINDOW:4:20 MINLEN:90 CROP:150
 ```
+Es muy importante señalar que en este caso hay que tomar en cuenta el orden en el que se colocan los parámetros.
+
+Trimmomatic realiza un *trimming* de calidad adaptativo, cortado de cabeza y cola y remoción de adaptadores. Se puede revisar la documentación y bajar el programa [aquí](http://www.usadellab.org/cms/index.php?page=trimmomatic).
+
+Una de las ventajas del programa es que permite trabajar con secuencias *Paired end*, reteniendo solamente pares coincidentes.
+Otra ventaja es que permite coincidencias parciales y *overlapping* para la búsqueda de adaptadores.
+
+Las opciones que podemos utilizar son las siguientes:
+
+
+
+## 5.3.1 Eficiencia y formato
+
+>Las siguientes se usan siempre antes de la invocación de los archivos de entrada y salida
+
+- *threads*: este ajuste modifica el número de "hilos" de CPU que Trimmomatic debería usar en las computaciones. Una computadora típicamente tiene cerca de 2 núcleos. los cuales deberían corresponder a una cantidad de 4 hilos disponibles. 
+- *phred*:  [-phred33 	-phred64]:  Este ajuste le dice al programa que codifique el archivo
+
+> A partir de aquí son las opciones que van después de la invocación de *Inputs/Outputs* (estas opciones se presentan en mayúsculas) 
+
+Opciones para cambiar la codificación (ver en [Apartado 5](#5-pre-procesamiento-analisis-de-calidad-usando-fastqc-y-fastp)):
+Si se requiere leer la codificación de un tipo y sacar la codificación de uno diferente, éstas opciones son las que se necesitan utilizar.
+
+- TOPHRED33: Convierte *scores* de calidad a Phred-33
+- TOPHRED64: Convierte *scores* de calidad a Phred-64 
+
+
+ILLUMINACLIP:${adapters} eliminamos adaptadores con cierta frecuencia
+
+![trimmomatic_adapter](https://user-images.githubusercontent.com/13104654/211375856-b34becba-e0e4-450d-8d0b-06552b13b296.png)
+
+
+ SLIDINGWINDOW: 4:20 cuatro nucleótidos en promedio tienen una calidad menor a 20 se elimina la secuencia (incluyendo el par).
+ MINLEN: mínimo de largo 130.
+ CROP: Cortar la lectura a una longitud determinada
+
+
 
 ## 6. Ensamble *De Novo*
 
