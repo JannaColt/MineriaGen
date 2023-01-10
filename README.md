@@ -685,6 +685,35 @@ Si se requiere leer la codificación de un tipo y sacar la codificación de uno 
 - TOPHRED33: Convierte *scores* de calidad a Phred-33
 - TOPHRED64: Convierte *scores* de calidad a Phred-64 
 
+### 5.3.1.1 Cortado (*Cropping*)
+
+Trimmomatic cuenta con varias opciones que pueden ser usadas simultáneamente o no:
+
+-LEADING: Corta bases del inicio de una lectura, si está por debajo del umbral de calidad - adaptativa
+-TRAILING: Corta bases del final de una lectura, si está por debajo del umbral de calidad - adaptativa
+-CROP: Corta la lectura a una longitud específica
+-HEADCROP: Corta el número específicado de bases del inicio de una lectura.
+
+LEADING y TRAILING son cortado adaptativo, lo que significa que cortarán el inicio/fin de las lecturas si fallan la calidad especificada. Lo anterior difiere de CROP y HEADCROP, los cuales podrían cortar a una longitud o número de bases específicas (respectivamente), en este caso, el programa realizara el corte para todas las lecturas.
+
+-MINLEN: se deshará de todas las lecturas que caen bajo una longitud especificada.
+
+### 5.3.1.2 *Trimming* de calidad adaptativo
+
+-SLIDINGWINDOW: realiza un trimming en una ventana de deslizamiento, cortando una vez la calidad promedio dentro de u
+    SLIDINGWINDOW: Perform a sliding window trimming, cutting once the average quality within the window falls below a threshold.
+
+It takes two values like SLIDINGWINDOW:4:15 which means “Scan the read with a 4-base wide sliding window, cutting when the average quality per base drops below 15”
+Adapter trimming
+
+Finally, trimmomatic will take a file with the sequences of your adapters and will trimm them out. It follows the following call: ILLUMINACLIP:<fastaWithAdaptersEtc>:<seed mismatches>:<palindrome clip threshold>:<simple clip threshold>. From their docs:
+
+        fastaWithAdaptersEtc: specifies the path to a fasta file containing all the adapters, PCR sequences etc. The naming of the various sequences within this file determines how they are used. See the section below or use one of the provided adapter files
+        seedMismatches: specifies the maximum mismatch count which will still allow a full match to be performed.
+        palindromeClipThreshold: specifies how accurate the match between the two ‘adapter ligated’ reads must be for PE palindrome read alignment.
+        simpleClipThreshold: specifies how accurate the match between any adapter etc. sequence must be against a read.
+
+
 
 ILLUMINACLIP:${adapters} eliminamos adaptadores con cierta frecuencia
 
