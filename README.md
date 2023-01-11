@@ -1,8 +1,18 @@
 # MINERÍA GENÓMICA 
 ## CALIDAD, ENSAMBLE Y ANOTACIÓN
+
 Contiene pipeline para ensamble y minería genómica de shotgun sequence con google colab
 
-Desde el cuaderno establecido primeramente se instalan todos los paquetes que se usarán y al final se monta el drive en el que se estará trabajando. Es preferible que esto se haga desde el inicio ya que cuando se instala un nuevo paquete se reinicia el entorno y lo que anteriormente llamamos ya no estará disponible. 
+El protocolo de manera general:
+
+![Diagrama de flujo_Análisis](https://user-images.githubusercontent.com/13104654/211899391-66c4a856-e193-44f2-baae-0ad84895b78a.png)
+
+![PipelineA](https://user-images.githubusercontent.com/13104654/211914431-9c9197e0-58b6-4e54-a068-221093935a43.png)
+
+![PipelineB](https://user-images.githubusercontent.com/13104654/211915131-852fbab8-fc34-4ba3-a3f7-d91135098e47.png)
+
+Antes que nada tenemos que instalar las herramientas que usaremos en la nube.
+Desde el cuaderno establecido primeramente se instalan todos los paquetes que se usarán y al final se monta el drive en el que se estará trabajando. Es preferible que esto se haga desde el inicio ya que cuando se instala un nuevo paquete se reinicia el entorno y lo que anteriormente llamamos ya no estará disponible (cada vez que se quiera hacer el procedimiento ya que el cuaderno/entorno se ha cerrado hay que instalar todo de nuevo y hacer el montaje del drive). 
 
 ## 1. Instalación de Herramientas
 
@@ -125,6 +135,7 @@ drive.mount('/content/drive')
 
 ```
 Ya establecida toda la paquetería e instalados todos los pipelines podemos comenzar, teniendo en cuenta que nuestros archivos de secuencias (Pair-End o Single-End) deben estar guardados en nuestro drive.
+
 
 ## 4. Comencemos explorando las reads:
 
