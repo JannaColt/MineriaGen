@@ -672,14 +672,21 @@ trimmomatic PE -phred33 -threads 16 \ fwd \ rev  \ /content/drive/MyDrive/Analis
 ```
 Es muy importante señalar que en este caso hay que tomar en cuenta el orden en el que se colocan los parámetros.
 
+>ILLUMINACLIP:${adapters} eliminamos adaptadores con cierta frecuencia (2:30:10)
+
+>SLIDINGWINDOW: 4:20 cuatro nucleótidos en promedio tienen una calidad menor a 20 se elimina la secuencia (incluyendo el par).
+
+>MINLEN: mínimo de largo 90
+
+>CROP: Cortar la lectura a una longitud de 150
+
+
 Trimmomatic realiza un *trimming* de calidad adaptativo, cortado de cabeza y cola y remoción de adaptadores. Se puede revisar la documentación y bajar el programa [aquí](http://www.usadellab.org/cms/index.php?page=trimmomatic).
 
 Una de las ventajas del programa es que permite trabajar con secuencias *Paired end*, reteniendo solamente pares coincidentes.
 Otra ventaja es que permite coincidencias parciales y *overlapping* para la búsqueda de adaptadores.
 
 Las opciones que podemos utilizar son las siguientes:
-
-
 
 ## 5.3.1 Eficiencia y formato
 
@@ -711,11 +718,19 @@ LEADING y TRAILING son cortado adaptativo, lo que significa que cortarán el ini
 
 ### 5.3.1.2 *Trimming* de calidad adaptativo
 
--SLIDINGWINDOW: realiza un trimming en una ventana de deslizamiento, cortando una vez la calidad promedio dentro de u
-    SLIDINGWINDOW: Perform a sliding window trimming, cutting once the average quality within the window falls below a threshold.
-
+-SLIDINGWINDOW: realiza un trimming en una ventana de deslizamiento, cortando una vez que la calidad promedio caiga de un umbral especificado.
+Toma dos valores como `SLIDINGWINDOW:4:15` lo que significa "Escanear la lectura con una amplitud de ventana de 4 bases, cortando cuando la calidad promedio por base caiga debajo de 5"   
+   
+   
 It takes two values like SLIDINGWINDOW:4:15 which means “Scan the read with a 4-base wide sliding window, cutting when the average quality per base drops below 15”
-Adapter trimming
+
+### 5.3.1.3 *Trimming* de adaptadores
+
+Finalmente, trimmomatic tomará un archivo con las secuencias de los adaptadores y las cortará. Siguiendo por ejemplo la llamada: `ILLUMINACLIP:<fastaWithAdaptersEtc>:<seed mismatches>:<palindrome clip treshold>:<simple clip treshold>` dónde:
+
+-fastaWithAdaptersEtc: Especifica el *path* a un archivo fasta conteniendo todos los adaptadores, secuencias PCR etc. El nombre de las diferentes secuencias dentro de este archivo determina como serán usadas.
+-seedMismatches: Especifica la cuenta máxima de *mismatches* 
+
 
 Finally, trimmomatic will take a file with the sequences of your adapters and will trimm them out. It follows the following call: ILLUMINACLIP:<fastaWithAdaptersEtc>:<seed mismatches>:<palindrome clip threshold>:<simple clip threshold>. From their docs:
 
@@ -725,15 +740,14 @@ Finally, trimmomatic will take a file with the sequences of your adapters and wi
         simpleClipThreshold: specifies how accurate the match between any adapter etc. sequence must be against a read.
 
 
-
-ILLUMINACLIP:${adapters} eliminamos adaptadores con cierta frecuencia
-
-![trimmomatic_adapter](https://user-images.githubusercontent.com/13104654/211375856-b34becba-e0e4-450d-8d0b-06552b13b296.png)
+  ![trimmomatic_adapter](https://user-images.githubusercontent.com/13104654/211375856-b34becba-e0e4-450d-8d0b-06552b13b296.png)
 
 
- SLIDINGWINDOW: 4:20 cuatro nucleótidos en promedio tienen una calidad menor a 20 se elimina la secuencia (incluyendo el par).
- MINLEN: mínimo de largo 130.
- CROP: Cortar la lectura a una longitud determinada
+
+
+
+
+ 
 
 
 
