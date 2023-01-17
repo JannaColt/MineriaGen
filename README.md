@@ -191,7 +191,7 @@ zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.g
 si queremos saber cual es el número de secuencias usamos el siguiente (aunque es inespecífico), de nuevo usamos zgrep por que es un archivo comprimido.
 
 ```bash
-##Explorar la cantidad de secuencias (debería ser 3949727, número de líneas/4)
+##Explorar la cantidad de secuencias (debería ser #####, número de líneas/4)
 %%bash
 zgrep '^@' /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz | wc -l
 zgrep '^@' /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz | wc -l
@@ -792,7 +792,7 @@ zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001_Trim.fa
 si queremos saber cual es el número de secuencias usamos el siguiente bloque de código, de nuevo usamos zgrep por que es un archivo comprimido y ahora usaremos los archivos de salida del trimming.
 
 ```bash
-##Hay que ser más específicos para revisar la cantidad de secuencias
+##revisar nuevamente la cantidad de secuencias
 %%bash
 zgrep '^@M02521' /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001_Trim.fastq.gz | wc -l
 zgrep '^@M02521' /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001_Trim.fastq.gz | wc -l
@@ -800,35 +800,34 @@ zgrep '^@M02521' /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2
 
 Exploramos la longitud de secuencias. Para ello podemos usar awk de nuevo.
 
-Para cada línea de secuencia podemos contar cada caracter usando el parámetro NR (número de registros) y usando el contador.
+Para cada línea de secuencia podemos contar cada caracter usando el parámetro NR (número de registros) y usando el contador y añadiendo para imprimir en txt.
 
 ```bash
 %%bash
-zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz | awk 'NR%4 == 2 {lengths[length($0)]++ ; counter++} END {for (l in lengths){print l, lengths[l]}; print "total reads: " counter}'
+zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001_Trim.fastq.gz | awk 'NR%4 == 2 {lengths[length($0)]++ ; counter++} END {for (l in lengths){print l, lengths[l]}}' | sort -n | uniq -c > /content/drive/MyDrive/Analisis_Posdoc/read_length1Trim.txt
 
-```
-y podemos añadir parámetros para imprimir en txt
+zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001_Trim.fastq.gz | awk 'NR%4 == 2 {lengths[length($0)]++ ; counter++} END {for (l in lengths){print l, lengths[l]}}' | sort -n | uniq -c > /content/drive/MyDrive/Analisis_Posdoc/read_length2Trim.txt
 
-```bash
-%%bash
-zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz | awk 'NR%4 == 2 {lengths[length($0)]++ ; counter++} END {for (l in lengths){print l, lengths[l]}}' | sort -n | uniq -c > /content/drive/MyDrive/Analisis_Posdoc/read_length1.txt
+
 ```
 
 el txt generado lo podemos importar y transformar a csv para después graficarlo en matplotlib, para lo cual se pueden aplicar los siguientes bloques:
 
 ```python
-read_file = pd.read_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_length1.txt',header=None)
-read_file.to_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_lengthR1.csv', index=None,header=None)
+read_file = pd.read_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_length1Trim.txt',header=None)
+read_file.to_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_lengthR1Trim.csv', index=None,header=None)
+
+read_file = pd.read_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_length2Trim.txt',header=None)
+read_file.to_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_lengthR2Trim.csv', index=None,header=None)
+
 ```
-
-
 
 # 5.6 PhiX 
 
 para control de calidad interno 
 
 
-
+https://github.com/Microfred/IntroBioinfo/blob/main/Unidad_3/Readme.md
 
   
 
