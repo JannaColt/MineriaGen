@@ -824,7 +824,10 @@ read_file.to_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_lengthR2Trim.csv
 
 # 5.6 PhiX 
 
-para control de calidad interno 
+Para control de calidad interno 
+Phix o la librería de control v3 PhiX (FC-110-3001) es derivada del genoma del bacteriófago, bien caracterizado, PhiX. Es una librería concentrada de Illumina (10 nM en 10 µl) que tiene un tamaño promedio de 500 pb y cuenta con una composición balanceada de bases a ~45% GC y ~55% AT.
+
+Puede servir como un control de calibración y puede ser secuenciado solo,  para usarlo en: Cálculos de phasing y prephasing, generación de matrices Cross talk (ref cruzada) y examinar el desempeño promedio de las plataformas de secuenciación Illumina. 
 
 
 https://github.com/Microfred/IntroBioinfo/blob/main/Unidad_3/Readme.md
