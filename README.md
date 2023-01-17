@@ -116,6 +116,11 @@ mamba env create --quiet --prefix ./envs/metawrap -f envs/metaWRAP_env.yml
 mamba env create --quiet --prefix ./envs/prokkaroary -f envs/prokkaroary_env.yml 
 ```
 
+```python
+#Para instalar megahit
+!conda install -c bioconda megahit
+```
+
 ## 2. Paquetería Python
 
 En caso de que necesitemos utilizar paquetes para graficar y para trabajar con archivos csv debemos importar los paquetes matplotlib y pandas
@@ -621,7 +626,7 @@ En este caso Fastp puede detectar adaptadores y cortarlos lo que nos ahora tiemp
 para el filtrado de calidad, en este caso habría que correr nuevamente los análisis de calidad con Fastqc para ver como quedaron las secuencias.
 
 
-#5.3 Trimmomatic
+# 5.3 Trimmomatic
 
 Para el filtrado y corte de adaptadores con trimommatic, se puede usar el siguiente bloque de código 
 ```python
@@ -811,7 +816,7 @@ zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001_Trim.fa
 
 ```
 
-el txt generado lo podemos importar y transformar a csv para después graficarlo en matplotlib, para lo cual se pueden aplicar los siguientes bloques:
+el txt generado lo podemos importar y transformar nuevamente a csv para después graficarlo en matplotlib, se aplican los siguientes bloques:
 
 ```python
 read_file = pd.read_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_length1Trim.txt',header=None)
@@ -824,25 +829,100 @@ read_file.to_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_lengthR2Trim.csv
 
 # 5.6 PhiX 
 
+> Es posible usar esta librería y aplicar este código, sin embargo, en este caso no se hizo una corrida por lo que este código queda en stand by y se podría usar para futuras secuenciaciones
+
 Para control de calidad interno 
-Phix o la librería de control v3 PhiX (FC-110-3001) es derivada del genoma del bacteriófago, bien caracterizado, PhiX. Es una librería concentrada de Illumina (10 nM en 10 µl) que tiene un tamaño promedio de 500 pb y cuenta con una composición balanceada de bases a ~45% GC y ~55% AT.
+[Phix](https://support.illumina.com/bulletins/2017/02/what-is-the-phix-control-v3-library-and-what-is-its-function-in-.html) o la librería de control v3 PhiX (FC-110-3001) es derivada del genoma del bacteriófago, bien caracterizado, PhiX. Es una librería concentrada de Illumina (10 nM en 10 µl) que tiene un tamaño promedio de 500 pb y cuenta con una composición balanceada de bases a ~45% GC y ~55% AT.
 
 Puede servir como un control de calibración y puede ser secuenciado solo,  para usarlo en: Cálculos de phasing y prephasing, generación de matrices Cross talk (ref cruzada) y examinar el desempeño promedio de las plataformas de secuenciación Illumina. 
 
+Se puede bajar un programa [BWA](https://github.com/lh3/bwa#type), para realizar el index de la referencia.
+BWA: es un paquete de software para el mapeo de secuencias de ADN contra un gran genoma de referencia, como el genoma humano. A mayor número de lecturas de Phix, mayor probabilidad de tener un Profago en el genoma problema. Evidentemente me quedaría con las secuencias que no mapearon vs PhiX.
+
+El siguiente bloque de código es SOLAMENTE para aplicarse en el entorno local de una máquina (no en colab)
+
+```bash
+#qc corresponde en este caso a la carpeta de trabajo donde se encuentran todas las secuencias en el presente bloque de código, dependerá de cada  persona y máquina donde se trabaje (es el nombre que cada quien decide)
+
+cd $HOME/Ensamble #Este comando va a corresponder con la carpeta en la que nos encontremos trabajando localmente, en el caso de colab esto no se realiza 
+source activate qc #En este comando estamos activando la carpeta qc como la fuente para trabajar
+tar -zxvf PhiX_Illumina_RTA.tar.gz && rm PhiX_Illumina_RTA.tar.gz # Este archivo se encuentra dentro de la carpeta qc, nosotros no contamos con este 
+bwa index PhiX/Illumina/RTA/Sequence/Chromosomes/phix.fa -p ´01_qc/phix´ # Este es el comando que corresponde al programa BWA para hacer el index
+conda deactivate
+```
+El siguiente bloque se utiliza para Mapear (por Alineamiento) las *lecturas* versus la referencia, en este caso PhiX:
+Consta de tres pasos
+
+1. script usando | Indexar y alinear vs esa referencia
+2. Selecciona las secuencias que no mapean vs PhiX
+3. Sort=ordenar esas secuencias no mapeadas
+
+
+```bash 
+#De igual forma primero nos movemos a la carpeta ensamble y activamos el entorno del archivo qc
+cd $HOME/Ensamble 
+source activate qc
+
+#busca el alineamiento, selecciona las secuencias que no mapean y se ordenan dichas secuencias 
+
+bwa mem -t 8 01_qc/phix \
+    01_qc/R1.trim.fastq.gz \
+    01_qc/R2.trim.fastq.gz | \
+    samtools view -bS -f4 - | \
+    samtools sort -@ 4 - -o 01_qc/PB69.phix.sorted.bam
+
+samtools fastq \
+    -1 01_qc/R1.trim.clean.fastq.gz \
+    -2 01_qc/R2.trim.clean.fastq.gz \
+    -s 01_qc/S.trim.clean.fastq.gz \
+    01_qc/PB69.phix.sorted.bam
+```
+
+Se puede realizar el Conteo de las secuencias, NUEVAMENTE.
+.clean son archivos de salida después de mapear vs PHIX (nosotros establecemos el nombre)
+
+```bash
+zcat R1.trim.clean.fastq.gz | awk 'END{ print NR/4 }'
+zcat R2.trim.clean.fastq.gz | awk 'END{ print NR/4 }'
+```
+Si no se encuentran secuencias de Phix entonces se puede realizar el ensamble con las secuencias ya trimmeadas
 
 https://github.com/Microfred/IntroBioinfo/blob/main/Unidad_3/Readme.md
 
   
-
-
- 
-
-
-
 ## 6. Ensamble *De Novo*
-kmergenie (contar k meros)
+Para el Ensamble es posible aplicar diferentes estrategias 
+
+![4 estrategias de ensamble](https://user-images.githubusercontent.com/13104654/212998923-3620318d-7258-49da-838f-3e63274b195f.png)
+[Estrategias de ensamble *De Novo* en secuencias de lectura corta](https://academic.oup.com/bib/article/11/5/457/1746253?login=true)
+
+kmergenie (contar k meros, para modificar ciertos parámetros para el ensamble)
 Puede usarse Megahit, velvet, spades
  
+[Megahit](https://github.com/voutcn/megahit#basic-usage)
+[Li *et al.*, 2015](https://pubmed.ncbi.nlm.nih.gov/25609793/)
+ 
+ Básicamente, para el ensamble se usa el siguiente bloque de código para lecturas *Paired end* 
+ 
+ ```Phyton
+# !megahit -1 pe_1.fq -2 pe_2.fq -o out #Revisar como se realizará el output en colab
+!megahit -1 /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz -2 /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/ensamble/HA1AB3SS041.megahit_asm
+ ```
+ 
+ Los contigs pueden encontrarse en el directorio de salida (para colab tenemos que establecerlo) como `final.contigs.fa`
+
+para observar la gráfica de contigs
+
+https://github.com/voutcn/megahit/wiki/An-example-of-real-assembly
+
+
+```Phyton
+!megahit_toolkit contig2fastg 99 k99.contigs.fa > k99.fastg
+ ```
+ 
+Algunos tips acerca del ensamble lo podemos encontrar [aquí](https://github.com/voutcn/megahit/wiki/Assembly-Tips)
+
+
  
  
  pipeline: TORMES https://github.com/nmquijada/tormes
