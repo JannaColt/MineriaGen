@@ -380,8 +380,9 @@ El primer apartado de estadística simple contiene el nombre del archivo, el nú
 
 ![Panorama general y vista de los estadísticos iniciales](https://user-images.githubusercontent.com/13104654/205708653-93a21bca-be14-44e7-839a-fba67d08786e.png)
 
-## 5.1.2.  Calidad de secuencias
+## 5.1.2.  Calidad de secuencias pot base
 
+Este es el valor de confianza de base con base en el Phred score que designa las series de score de calidad de las bases completas en su respectica locación en el archivo. un valor más allá de Q30 es considerado bueno, mientras que uno arriba de Q20 es generalmente aceptado.
 En este apartado se muestra una revisión del rango de los valores de calidad a través de todas las bases en cada posición en los archivos FASTQ. 
 En cada posición se muestra una boxplot con bigotes. En la gráfica podemos definir una mediana (línea roja central), rangos intercuartiles 25-75%(cajas amarillas), los bigotes representan los puntos del 10 y 90% y la calidad media (línea azul). 
 
@@ -397,6 +398,8 @@ Se observa en la última parte solo la mediana de una caja en el umbral de 20, y
 
 
 ## 5.1.3.  Calidad de secuencias por pozo (*flowcell*) 
+
+![illumina_flowcell](https://user-images.githubusercontent.com/13104654/212420432-e0c77336-d557-4a28-a25e-6e03ef1ab5a8.png)
 
 En este apartado se muestra un heatmap de las pérdidas de calidad posicional, es decir se grafica la calidad de las llamadas de bases contra la posición física del secuenciador de la cual provienen. En los secuenciadores illumina, el área del *flowcell* se divide artificialmente en franjas (superficie superior e inferior) y 
 estas se subdividen en mosaicos (áreas arbitrarias que se analizan por separado en la canalización de llamadas). Observar la calidad por mosaico identificará este tipo de errores. Se espera siempre la pérdida de calidad conforme los ciclos se incrementan, por ello resulta útil realizar una normalización para representar la calidad. Así un buen gráfico se observará en blanco (sólido azul rey brillante). 
@@ -729,22 +732,60 @@ It takes two values like SLIDINGWINDOW:4:15 which means “Scan the read with a 
 Finalmente, trimmomatic tomará un archivo con las secuencias de los adaptadores y las cortará. Siguiendo por ejemplo la llamada: `ILLUMINACLIP:<fastaWithAdaptersEtc>:<seed mismatches>:<palindrome clip treshold>:<simple clip treshold>` dónde:
 
 -fastaWithAdaptersEtc: Especifica el *path* a un archivo fasta conteniendo todos los adaptadores, secuencias PCR etc. El nombre de las diferentes secuencias dentro de este archivo determina como serán usadas.
--seedMismatches: Especifica la cuenta máxima de *mismatches* 
-
-
-Finally, trimmomatic will take a file with the sequences of your adapters and will trimm them out. It follows the following call: ILLUMINACLIP:<fastaWithAdaptersEtc>:<seed mismatches>:<palindrome clip threshold>:<simple clip threshold>. From their docs:
-
-        fastaWithAdaptersEtc: specifies the path to a fasta file containing all the adapters, PCR sequences etc. The naming of the various sequences within this file determines how they are used. See the section below or use one of the provided adapter files
-        seedMismatches: specifies the maximum mismatch count which will still allow a full match to be performed.
-        palindromeClipThreshold: specifies how accurate the match between the two ‘adapter ligated’ reads must be for PE palindrome read alignment.
-        simpleClipThreshold: specifies how accurate the match between any adapter etc. sequence must be against a read.
-
+-seedMismatches: Especifica la cuenta máxima de *mismatches*, lo cuál podría seguir permitiendo una coincidencia completa.
+-palindromeClipTreshold: especifica que tan precisa es la coincidencia entre las dos lecturas 'ligadas por adaptador' que deben ser palíndromo para las lecturas *PE*
+-simpleClipTreshold: especifica que tan precisa debe ser la coincidencia entre cualquier adaptador, etc contra una lectura.
 
   ![trimmomatic_adapter](https://user-images.githubusercontent.com/13104654/211375856-b34becba-e0e4-450d-8d0b-06552b13b296.png)
 
+Existen 4 posibles escenarios que Trimmomatic puede cubrir:
+A. Una secuencia técnica es completamente cubierta por la lectura y así, un alineamiento simple podrá identificarla.
+B. Solamente existe una coincidencia parcial entre la secuencia técnica y la lectura y así, es necesariio un alineamiento corto.
+C. y D. Ambos pares son probados a la vez, permitiendo que suceda lo siguiente: "es mucho más confiable que un alineamiento corto (B.) y permite que se detecte la lectura del adaptador incluso cuando solo se ha secuenciado una base de este."
+
+El umbral de clip palindrómico escencialmente dice que tan preciso debe ser el alineamiento de adaptadores. Esto es la probabilidad log10 de obtener una coincidencia por una posibilidad aleatoria, y así, los valores alrededor de 30 son recomendados.
+
+Referencias: https://jshleap.github.io/bioinformatics/writting-jNGS_tutorial/#encoding
+[Bolger *et al.*, 2014](https://academic.oup.com/bioinformatics/article/30/15/2114/2390096)
+
+# 5.4 Otras herramientas
+## 5.4.1 Cutadapt
+
+Cutadapt busca el adaptador en todas las lecturas y lo remueve cuando lo encuentra. A menos que se use la opción de filtrado, todas las lecturas que están presentes en el archivo *input* estarán presentes en el *output*, algunas de ellas ya con trimm, otras no. Incluso las lecturas que fueron coradas a una longitud de 0 son un output. Esto puede ser modificado en el comando (opciones).
+Puede detectar múltiples tipos de adaptadores. Adaptadores 5' preceden la secuencia de interés mientras que los 3' la siguen. Las distinciones se hacen dependiendo de donde se presenta la secuencia en la lectura. Además también permite el procesamiento de lecturas *Paired End*.
+
+
+![imagen](https://user-images.githubusercontent.com/13104654/212785938-7cfd92e4-acfd-4e47-86af-cc90123776c3.png)
+
+
+Con lo anterior en mente, es una herramienta versátil para remover *primers* o en general oligos de las regiones que flanquean el DNA. La guía de uso se puede encontrar en su [página](https://cutadapt.readthedocs.io/en/stable/guide.html).
+
+con el siguiente bloque de código se puede utilizar
+
+```bash
+
+cutadapt -a ADAPTER_FWD -A ADAPTER_REV -o out.1.fastq -p out.2.fastq reads.1.fastq reads.2.fastq
+
+```
+Referencia: https://jshleap.github.io/bioinformatics/writting-jNGS_tutorial/#encoding
+
+## 5.4.2 Seqkit
+
+
+🦖 :t-rex: :t-rex: :t-rex: :t-rex: :t-rex: :t-rex: :t-rex: :t-rex: :t-rex: :t-rex: :t-rex: :t-rex: :t-rex:
+
+Una vez realizado el filtrado se pueden correr de nuevo los análisis de calidad (usando fastqc/multiqc o fastp). Además podemos utilizar nuevamente los comandos de bash para analizar longitudes de lecturas, etc.
+
+El bloque de código para estas revisiones sería el siguiente
+
+# 5.5 PhiX 
+
+para control de calidad interno 
 
 
 
+
+  
 
 
  
@@ -752,6 +793,12 @@ Finally, trimmomatic will take a file with the sequences of your adapters and wi
 
 
 ## 6. Ensamble *De Novo*
+kmergenie (contar k meros)
+Puede usarse Megahit, velvet, spades
+ 
+ 
+ 
+ pipeline: TORMES https://github.com/nmquijada/tormes
 
 
 
@@ -760,8 +807,9 @@ Finally, trimmomatic will take a file with the sequences of your adapters and wi
 
 
 
-
-
+Ejemplo Metodología artículo
+ExperimentalDesign,MaterialsandMethods
+B.australimarisB28Awaspreviouslyisolatedandidentifiedwith16SrRNAwithGenBankac-cessionnumberMT010836.GenomicDNAwasextractedusingtheMonarch® GenomicDNAPu-rificationKit(NewEnglandBiolabs.).IlluminaHiSeq4000paired-end(2×151bp)sequencingofB.australimarisB28AwasperformedbyMacrogenInc.(Seoul,Korea).ThelibrarywasprocessedusingtheNexteraXTDNALibraryPreparationKit(96samples)(Illumina,Inc.,SanDiego,CA,USA).Totalsequencingreads5,130,218of4,447,316weremapped.Aftermapping,Sambamba[10]andSAMTools[11]wererespectivelyusedtoremoveduplicatedreadsandidentifyvari-ants.Thereadswereassembledinto58contigs,aGCcontentof41.60%usingGCEAssembler(version1.2;https://cge.cbs.dtu.dk/services/Assembler/)[12].TheassembleddatawasannotatedusingRASTrapidannotationusingsubsystemtechnologyversion2.0[6–8].BacterialsecondarymetabolitebiosynthesisgeneclusterswereidentifiedandannotatedbyantiSMASHversion5.0and6.0usingassembledfastafileoutput[
 
 
 
