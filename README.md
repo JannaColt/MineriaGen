@@ -597,6 +597,10 @@ import multiqc
 multiqc.run('/content/drive/MyDrive/códigos/Secuencias_UADY/50-3_S19_L001_R2_001_fastqc.zip')
 
 ```
+Es una herramienta que busca todos los archivos de control de calidad de nuestras secuencias y las resume en un solo reporte, además nos permite subrayar, por ejemplo,
+ciertas muestras dentro del reporte, cambiar nombres o bien bajar las gráficas (interactivas) generadas a diferentes resoluciones. 
+(es mejor, de momento, tratar de correr esta herramienta en entorno local (de preferencia en linux, unix o wsl) por que no he averiguado como correrla desde colab y que no la coloque en la ventana del cuaderno de trabajo si no que entregue el output externo).
+
 
 
 # 5.2 Fastp
@@ -622,8 +626,28 @@ Si se requiere establecer un límite de longitud para filtrado se utiliza -l, pa
 # Control de calidad y reporte 
 !fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz --json="HA1AB3SS04_S4_L1.json" --html="HA1AB3SS04_S4_L1.html" -l 150 --detect_adapter_for_pe -c --cut_right --cut_front -p --failed_out="failed_seqsPR69.fastq.gz"
 ```
+
+## 5.2.1 Summary
+
+En la salida primeramente podemos observar un resumen general antes y después del filtrado, así como el resultado del filtro
+aplicado, esto lo muestra para los dos archivos de lecturas:
+
+![fastp_summary](https://user-images.githubusercontent.com/13104654/213575454-29eaae55-82c1-4637-b1a5-895cd369057a.png)
+
+En el caso de PR69, con los filtros por defecto, podemos observar que las lecturas de baja calidad contaron para un 3.6% del total, 
+sin un porcentaje significativo de N ni lecturas cortas.
+
+## 5.2.2 Adaptadores o mal ligado 
+
+La siguiente sección muestra las ocurrencias de adaptadores de ambos archivos de lecturas.
+
+![adapters_fastp](https://user-images.githubusercontent.com/13104654/213586493-70e52e97-87c2-465c-b510-8b91969bd51b.png)
+
+Para PR69 muestra un bajo porcentaje de adaptadores (0.04%
+
 En este caso Fastp puede detectar adaptadores y cortarlos lo que nos ahora tiempo, sin embargo esto se puede realizar con un script aparte utilizando trimmomatic 
 para el filtrado de calidad, en este caso habría que correr nuevamente los análisis de calidad con Fastqc para ver como quedaron las secuencias.
+
 
 
 # 5.3 Trimmomatic
