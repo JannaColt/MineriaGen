@@ -385,7 +385,7 @@ El primer apartado de estadística simple contiene el nombre del archivo, el nú
 
 ![Panorama general y vista de los estadísticos iniciales](https://user-images.githubusercontent.com/13104654/205708653-93a21bca-be14-44e7-839a-fba67d08786e.png)
 
-## 5.1.2.  Calidad de secuencias pot base
+## 5.1.2.  Calidad de secuencias por base
 
 Este es el valor de confianza de base con base en el Phred score que designa las series de score de calidad de las bases completas en su respectica locación en el archivo. un valor más allá de Q30 es considerado bueno, mientras que uno arriba de Q20 es generalmente aceptado.
 En este apartado se muestra una revisión del rango de los valores de calidad a través de todas las bases en cada posición en los archivos FASTQ. 
@@ -639,7 +639,7 @@ sin un porcentaje significativo de N ni lecturas cortas.
 
 ## 5.2.2 Adaptadores o mal ligado 
 
-La siguiente sección muestra las ocurrencias de adaptadores de ambos archivos de lecturas.
+La siguiente sección muestra las ocurrencias de adaptadores de **ambos** archivos de lecturas.
 
 ![adapters_fastp](https://user-images.githubusercontent.com/13104654/213586493-70e52e97-87c2-465c-b510-8b91969bd51b.png)
 
@@ -652,9 +652,38 @@ para el filtrado de calidad, en este caso, habría que correr nuevamente los an�
 
 En este apartado se muestra la distribución del porcentaje de lecturas (eje y) contra el tamaño de las lecturas (eje x) en un gráfico interactivo,
 podemos modificar el tamaño de los ejes y hacer zoom.
-Esta estimación toma en cuenta el overlap de las lecturas *Paired end*
+Esta estimación toma en cuenta el overlap de las lecturas *Paired end*.
+
+En el caso de PR69 se encuentran 56.33% de lecturas no sobrelapadas por lo que podrían ser de tamaño <30 o >572 o bien con gran cantidad de errores de secuenciación.
 
 ![Insert Size Distribution](https://user-images.githubusercontent.com/13104654/213606759-021f3824-8b43-470b-917c-17cecc3d64d9.png)
+
+## 5.2.4 Antes del Filtrado
+Las secciones siguientes muestran gráficos interactivos, antes del filtrado de calidad,  correspondiendo primero a la **calidad**, 
+la gráfica es equivalente a la mostrada por fastqc en la sección 5.1.2 [Calidad de secuencias por base](#512-calidad-de-secuencias-por-base), 
+
+![Calidad_R1](https://user-images.githubusercontent.com/13104654/213797876-82e8a084-a316-42d6-9d73-8d938506a170.png)
+
+
+luego se muestra el gráfico de los índices del contenido de bases contra la posición, incluido el contenido de Ns
+
+![Contenido de bases_R1](https://user-images.githubusercontent.com/13104654/213798468-0381814c-c3a1-4790-ab4d-3a4e5edf345e.png)
+
+ y finalmente un heatmap con el conteo de Kmeros, 
+donde las áreas más oscuras representan cuentas mayores. Lo anterior primero para R1 y después para R2.
+
+![Conteo de Kmer](https://user-images.githubusercontent.com/13104654/213798539-eacad1b7-1c3e-4d40-88aa-85b0d4932ea2.png)
+
+La idea de los *K meros* es simple, se crea una ventana de longitud *k* y se desliza tomando un caracter al tiempo. Si la longitud de una secuencia de DNA dada es N, entonces tendremos:
+
+
+
+![k-mer](https://user-images.githubusercontent.com/13104654/213822121-8dacf7ca-1e63-4d6d-9094-e6a807141c37.png)
+
+
+El html se encuentra en la carpeta de Drive que se indicó en colab, y la salida de archivos ya filtrados también se encontraran donde se indico, con este archivo fastq podemos continuar con los siguientes análisis Downstream. 
+
+fastp también cuenta con una *flag* para realizar el *merge* de las dos lecturas.
 
 
 # 5.3 Trimmomatic
