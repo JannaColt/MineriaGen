@@ -643,11 +643,18 @@ La siguiente sección muestra las ocurrencias de adaptadores de ambos archivos d
 
 ![adapters_fastp](https://user-images.githubusercontent.com/13104654/213586493-70e52e97-87c2-465c-b510-8b91969bd51b.png)
 
-Para PR69 muestra un bajo porcentaje de adaptadores (0.04%
+Para PR69 muestra un bajo porcentaje de adaptadores (0.04% R1 y 0.4% R2). 
 
-En este caso Fastp puede detectar adaptadores y cortarlos lo que nos ahora tiempo, sin embargo esto se puede realizar con un script aparte utilizando trimmomatic 
-para el filtrado de calidad, en este caso habría que correr nuevamente los análisis de calidad con Fastqc para ver como quedaron las secuencias.
+En este caso Fastp puede detectar adaptadores y cortarlos lo que nos ahorra tiempo, sin embargo esto se puede realizar con un script aparte utilizando [Trimmomatic](#53-trimmomatic) (o con [cutadapt](#541-cutadapt)) 
+para el filtrado de calidad, en este caso, habría que correr nuevamente los análisis de calidad con Fastqc para ver como quedaron las secuencias.
 
+## 5.2.3 Estimación del tamaño de inserto
+
+En este apartado se muestra la distribución del porcentaje de lecturas (eje y) contra el tamaño de las lecturas (eje x) en un gráfico interactivo,
+podemos modificar el tamaño de los ejes y hacer zoom.
+Esta estimación toma en cuenta el overlap de las lecturas *Paired end*
+
+![Insert Size Distribution](https://user-images.githubusercontent.com/13104654/213606759-021f3824-8b43-470b-917c-17cecc3d64d9.png)
 
 
 # 5.3 Trimmomatic
