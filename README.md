@@ -676,7 +676,11 @@ donde las áreas más oscuras representan cuentas mayores. Lo anterior primero p
 
 La idea de los *K meros* es simple, se crea una ventana de longitud *k* y se desliza tomando un caracter al tiempo. Si la longitud de una secuencia de DNA dada es N, entonces tendremos:
 
-
+```math
+No. total de K-mer = N - k + 1               
+```
+Usualmente se buscan tres tipos de frecuencias, la cuenta total (que tantas veces aparece un *k-mero* en una secuencia dada), la cuenta diferida (si ha aparecido o no sin importar cuantas veces) y la cuenta única (aquellas que solo han aparecido una vez). 
+El conteo de *k-meros* es útil para el ensamble, clustering y alineamientos, así como para la corrección de errores en secuenciado, la estimación del tamaño del genoma y la identificación de repeticiones. Computacionalmente es un proceso exigente.
 
 ![k-mer](https://user-images.githubusercontent.com/13104654/213822121-8dacf7ca-1e63-4d6d-9094-e6a807141c37.png)
 
