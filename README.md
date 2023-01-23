@@ -669,7 +669,7 @@ luego se muestra el gráfico de los índices del contenido de bases contra la po
 
 ![Contenido de bases_R1](https://user-images.githubusercontent.com/13104654/213798468-0381814c-c3a1-4790-ab4d-3a4e5edf345e.png)
 
- y finalmente un heatmap con el conteo de Kmeros, 
+ y finalmente un heatmap con el conteo de K-meros, 
 donde las áreas más oscuras representan cuentas mayores. Lo anterior primero para R1 y después para R2.
 
 ![Conteo de Kmer](https://user-images.githubusercontent.com/13104654/213798539-eacad1b7-1c3e-4d40-88aa-85b0d4932ea2.png)
@@ -677,7 +677,7 @@ donde las áreas más oscuras representan cuentas mayores. Lo anterior primero p
 La idea de los *K meros* es simple, se crea una ventana de longitud *k* y se desliza tomando un caracter al tiempo. Si la longitud de una secuencia de DNA dada es N, entonces tendremos:
 
 ```math
-No. total de K-mer = N - k + 1               
+Total K-mer = N - k + 1               
 ```
 Usualmente se buscan tres tipos de frecuencias, la cuenta total (que tantas veces aparece un *k-mero* en una secuencia dada), la cuenta diferida (si ha aparecido o no sin importar cuantas veces) y la cuenta única (aquellas que solo han aparecido una vez). 
 El conteo de *k-meros* es útil para el ensamble, clustering y alineamientos, así como para la corrección de errores en secuenciado, la estimación del tamaño del genoma y la identificación de repeticiones. Computacionalmente es un proceso exigente.
@@ -687,7 +687,7 @@ El conteo de *k-meros* es útil para el ensamble, clustering y alineamientos, as
 
 El html se encuentra en la carpeta de Drive que se indicó en colab, y la salida de archivos ya filtrados también se encontraran donde se indico, con este archivo fastq podemos continuar con los siguientes análisis Downstream. 
 
-fastp también cuenta con una *flag* para realizar el *merge* de las dos lecturas.
+fastp también cuenta con una *flag* para realizar el *merge* de las dos lecturas. Esto una vez que se cuenta con las secuencias ya filtradas.
 
 
 # 5.3 Trimmomatic
@@ -893,7 +893,7 @@ read_file.to_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_lengthR2Trim.csv
 
 # 5.6 PhiX 
 
-> Es posible usar esta librería y aplicar este código, sin embargo, en este caso no se hizo una corrida por lo que este código queda en stand by y se podría usar para futuras secuenciaciones
+> Es posible usar esta librería y aplicar este código, sin embargo, en este caso no se hizo una corrida por lo que este código queda en stand by y se podría usar para futuras secuenciaciones (no me queda muy claro si solo podemos usar la secuencia para ver si hay contaminación por fagos en la librería)
 
 Para control de calidad interno 
 [Phix](https://support.illumina.com/bulletins/2017/02/what-is-the-phix-control-v3-library-and-what-is-its-function-in-.html) o la librería de control v3 PhiX (FC-110-3001) es derivada del genoma del bacteriófago, bien caracterizado, PhiX. Es una librería concentrada de Illumina (10 nM en 10 µl) que tiene un tamaño promedio de 500 pb y cuenta con una composición balanceada de bases a ~45% GC y ~55% AT.
@@ -955,7 +955,37 @@ https://github.com/Microfred/IntroBioinfo/blob/main/Unidad_3/Readme.md
 
   
 ## 6. Ensamble *De Novo*
-Para el Ensamble es posible aplicar diferentes estrategias 
+
+Una vez se ha evaluado el control de calidad de las secuencias, éstas se encuentran mezcladas y, como si de un rompecabezas se tratara, hay que armarlo en el orden correcto. El método de alineamiento utilizado para realizar esta tarea se denomina ensamble. Una parte esencial del ensamble es el alineamiento, que involucra disponer de una cantidad masiva de lecturas de DNA, buscando regiones que coincidan unas con otras (regiones de alineamiento) y eventualmente unir el rompecabezas.
+
+Para el Ensamble *De novo*, dependiendo de la plataforma de secuenciación es posible aplicar diferentes estrategias de ensamble:
+
+![4 estrategias de ensamble](https://user-images.githubusercontent.com/13104654/212998923-3620318d-7258-49da-838f-3e63274b195f.png)
+[Estrategias de ensamble *De Novo* en secuencias de lectura corta](https://academic.oup.com/bib/article/11/5/457/1746253?login=true)
+
+
+
+Los algoritmos de ensamble son la colección de procesos para construir, a partir de cantidades de lecturas de secuencias cortas,  secuencias de DNA original. Las secuencias son alineadas unas con otras y las partes que se superponen son combinadas en una secuencia estrecha. Actualmente, existen dos métodos de algoritmos de ensamble, que diferiran de acuerdo a la complejidad de los datos de secuenciación. 
+
+
+4.2.1 The overlap-layout-consensus/string graph assemblers
+This algorithm recognizes intersects among combinations of reads to construct a graph of the connections between the
+sequencing reads (Li et al., 2012). The overlap-layout-consensus (OLC) is computational intensive approach where the
+complexity of computation increases with the total sequencing data used during assembling. Due to which this algorithm
+of assembly becomes inexcusable with the sequencers like Illumina where millions of short sequence reads will be needed
+for an assembly. After generating the graph, it visits through the each node using path called as Hamiltonian path, to construct
+the final assembly. The layout stage of the algorithm reduces the complexity of the preliminary graph by condensing
+the areas that unambiguously arose from the same genomic loci to the node where the line diverges with several potential
+paths. It is far from straight forward to decide such a path. This gives subgraphs to make contigs that can be described as
+unambiguously assembled unitig sequences that have high sequencing depth and linked to large numbers of other contigs.
+Now, the unitig is then paired with other unitigs to form a scaffolds sequence (Bresler, Sheehan, Chan, & Song, 2012).
+The last step of making the consensus process includes reading through the contiguous subgraphs and extracting the
+sequence of consensus for reads from each subgraph. Another string graph algorithm involves same overlap graph theory
+but slightly differs as it simplifies the graph by removing transitive edges that have redundant details (Chang et al., 2012).
+
+
+
+Para el Ensamble *De novo* es posible aplicar diferentes estrategias 
 
 ![4 estrategias de ensamble](https://user-images.githubusercontent.com/13104654/212998923-3620318d-7258-49da-838f-3e63274b195f.png)
 [Estrategias de ensamble *De Novo* en secuencias de lectura corta](https://academic.oup.com/bib/article/11/5/457/1746253?login=true)
