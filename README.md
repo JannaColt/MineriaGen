@@ -626,6 +626,8 @@ Si se requiere establecer un límite de longitud para filtrado se utiliza -l, pa
 # Control de calidad y reporte 
 !fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz --json="HA1AB3SS04_S4_L1.json" --html="HA1AB3SS04_S4_L1.html" -l 150 --detect_adapter_for_pe -c --cut_right --cut_front -p --failed_out="failed_seqsPR69.fastq.gz"
 ```
+> Cut_right equivale a SLIDING WINDOW en Trimmomatic mueve una ventana deslizante desde el frente al final, si encuentra una ventana con calidad media < *Threshold*, se deshace de las bases en la ventana y la parte derecha, luego para. 
+
 
 ## 5.2.1 Summary
 
