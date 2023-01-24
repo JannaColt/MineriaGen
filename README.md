@@ -685,7 +685,10 @@ El conteo de *k-meros* es útil para el ensamble, clustering y alineamientos, as
 ![k-mer](https://user-images.githubusercontent.com/13104654/213822121-8dacf7ca-1e63-4d6d-9094-e6a807141c37.png)
 
 
-El html se encuentra en la carpeta de Drive que se indicó en colab, y la salida de archivos ya filtrados también se encontraran donde se indico, con este archivo fastq podemos continuar con los siguientes análisis Downstream. 
+## 5.2.5 Después del Filtrado
+Luego aparece una sección con grñaficos para después del filtrado (que puede ser por defecto o definido de acuerdo a lo que se observe en los datos).
+
+El html se encuentra en la carpeta de Drive que se indicó en *colab*, y la salida de archivos ya filtrados también se encontraran donde se indico, con este archivo fastq podemos continuar con los siguientes análisis *Downstream*. 
 
 fastp también cuenta con una *flag* para realizar el *merge* de las dos lecturas. Esto una vez que se cuenta con las secuencias ya filtradas.
 
