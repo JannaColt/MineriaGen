@@ -740,7 +740,7 @@ adapters="/content/drive/MyDrive/Analisis_Posdoc/PR69/adapters/NexteraPE-PE.fa"
 En una máquina local se activa el entorno qc 
 `source activate qc`
 
-Sin embargo en google colab esto no parece ser necesario puesto que simplemente se llama el shell o bash con la correspondiente función
+Sin embargo en google colab esto no parece ser necesario puesto que simplemente se llama el shell o bash con la correspondiente función (me falta investigar más a fondo este aspecto). 
 
 
 ```shell
@@ -844,6 +844,10 @@ cutadapt -a ADAPTER_FWD -A ADAPTER_REV -o out.1.fastq -p out.2.fastq reads.1.fas
 Referencia: https://jshleap.github.io/bioinformatics/writting-jNGS_tutorial/#encoding
 
 ## 5.4.2 Seqkit
+
+[Seqkit](https://bioinf.shenwei.me/seqkit/) es un programa o línea de comandos, que permite, no solo eliminar duplicados, si no también manipular secuencias (solamente en formato fastq) eficientemente. El código fuente se puede encontrar [aquí](https://github.com/shenwei356/seqkit).  
+
+> (formatos BAM y SAM tienen que ser convertidos a fastq antes de utilizarse con seqkit).
 
 
 :alien: 👽 :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien:
@@ -968,25 +972,21 @@ Para el Ensamble *De novo*, dependiendo de la plataforma de secuenciación es po
 ![4 estrategias de ensamble](https://user-images.githubusercontent.com/13104654/212998923-3620318d-7258-49da-838f-3e63274b195f.png)
 [Estrategias de ensamble *De Novo* en secuencias de lectura corta](https://academic.oup.com/bib/article/11/5/457/1746253?login=true)
 
+Los algoritmos de ensamble son la colección de procesos para construir, a partir de cantidades de lecturas de secuencias cortas,  secuencias de DNA original. Las secuencias son alineadas unas con otras y las partes que se superponen son combinadas en una secuencia estrecha. Actualmente, existen dos métodos de algoritmos de ensamble, que diferirán de acuerdo a la complejidad de los datos de secuenciación. 
+### 6.1 OLC (Overlap Layout Consensus) - Ensambladores gráficos de caracteres
 
+Este algoritmo reconoce intersectos entre combinaciones de lecturas para construir una gràfica de las conexiones entre las Lecturas de secuenciación. Es una aproximación computacionalmente intensiva donde la complejidad de la computación incrementa con el total de los datos de secuenciación usados durante el ensamblaje. Debido a lo cual este algoritmo se vuelve inexcusable con los secuenciadores como Ilumina, donde millones de lecturas de secuencia corta son necesarias para el ensamble. Después de generado el gráfico, visita cada nodo usando un método de la teoría de grafos llamado camino Hamiltoniano, para construir el ensamble final.
+La etapa de diseño del algoritmo reduce la complejidad del gráfico preliminar, por condensación de las áreas que surgen sin amigüedad del mismo loci genómico al nodo donde la línea diverge con varios caminos potenciales. 
+Es bastante difícil la selección de ese camino. Esto arroja subgrafos para hacer contigs que se pueden describir como secuencias unitig ensambladas inequívocamente que tienen una alta profundidad de secuenciación y están vinculadas a un gran número de otros contigs. Ahora, el unitig se empareja con otros unitigs para formar una secuencia de andamios (Scaffolds).
 
-Los algoritmos de ensamble son la colección de procesos para construir, a partir de cantidades de lecturas de secuencias cortas,  secuencias de DNA original. Las secuencias son alineadas unas con otras y las partes que se superponen son combinadas en una secuencia estrecha. Actualmente, existen dos métodos de algoritmos de ensamble, que diferiran de acuerdo a la complejidad de los datos de secuenciación. 
+El último paso para realizar el proceso de consenso incluye la lectura a través  de subgrafos contiguos y extraer la secuencia de consenso para lecturas de cada subgrafo. Otro algoritmo de caracteres
 
-
-4.2.1 The overlap-layout-consensus/string graph assemblers
-This algorithm recognizes intersects among combinations of reads to construct a graph of the connections between the
-sequencing reads (Li et al., 2012). The overlap-layout-consensus (OLC) is computational intensive approach where the
-complexity of computation increases with the total sequencing data used during assembling. Due to which this algorithm
-of assembly becomes inexcusable with the sequencers like Illumina where millions of short sequence reads will be needed
-for an assembly. After generating the graph, it visits through the each node using path called as Hamiltonian path, to construct
-the final assembly. The layout stage of the algorithm reduces the complexity of the preliminary graph by condensing
-the areas that unambiguously arose from the same genomic loci to the node where the line diverges with several potential
-paths. It is far from straight forward to decide such a path. This gives subgraphs to make contigs that can be described as
-unambiguously assembled unitig sequences that have high sequencing depth and linked to large numbers of other contigs.
-Now, the unitig is then paired with other unitigs to form a scaffolds sequence (Bresler, Sheehan, Chan, & Song, 2012).
-The last step of making the consensus process includes reading through the contiguous subgraphs and extracting the
-sequence of consensus for reads from each subgraph. Another string graph algorithm involves same overlap graph theory
+Another string graph algorithm involves same overlap graph theory
 but slightly differs as it simplifies the graph by removing transitive edges that have redundant details (Chang et al., 2012).
+
+Referencias: Li et al., 2012 
+### 6.2 Gráficos De Brujin 
+ 
 
 
 
