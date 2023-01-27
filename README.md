@@ -849,6 +849,20 @@ Referencia: https://jshleap.github.io/bioinformatics/writting-jNGS_tutorial/#enc
 
 > (formatos BAM y SAM tienen que ser convertidos a fastq antes de utilizarse con seqkit).
 
+El siguiente bloque de código funciona localmente para eliminar duplicados
+
+```Bash
+seqkit rmdup -s -o clean.fastq input.fastq 
+#Remueve secuencias duplicadas del input.fastq y las guarda en clean.fastq 
+```
+
+Posiblemente en google colab
+```Bash
+!seqkit rmdup -s -o ./sec_limpias.fastq ./archivo_salida_dePreproc/PR69.fastq
+```
+> Se tendría que tomar como input el archivo de salida del último paso del preprocesamiento, que podría ser el de salida de cutadap.
+
+
 
 :alien: 👽 :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien:
 
@@ -867,7 +881,7 @@ El siguiente bloque permite revisar si los archivos están pareados
 zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001_Trim.fastq.gz | wc -l
 zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001_Trim.fastq.gz | wc -l
 ```
-si queremos saber cual es el número de secuencias usamos el siguiente bloque de código, de nuevo usamos zgrep por que es un archivo comprimido y ahora usaremos los archivos de salida del trimming.
+si queremos saber cual es el número de secuencias usamos el siguiente bloque de código, de nuevo usamos zgrep por que es un archivo comprimido y ahora usaremos los archivos de salida del trimming (o + cutadapt + seqkit).
 
 ```bash
 ##revisar nuevamente la cantidad de secuencias
@@ -970,21 +984,23 @@ Una vez se ha evaluado el control de calidad de las secuencias, éstas se encuen
 Para el Ensamble *De novo*, dependiendo de la plataforma de secuenciación es posible aplicar diferentes estrategias de ensamble:
 
 ![4 estrategias de ensamble](https://user-images.githubusercontent.com/13104654/212998923-3620318d-7258-49da-838f-3e63274b195f.png)
+
 [Estrategias de ensamble *De Novo* en secuencias de lectura corta](https://academic.oup.com/bib/article/11/5/457/1746253?login=true)
 
 Los algoritmos de ensamble son la colección de procesos para construir, a partir de cantidades de lecturas de secuencias cortas,  secuencias de DNA original. Las secuencias son alineadas unas con otras y las partes que se superponen son combinadas en una secuencia estrecha. Actualmente, existen dos métodos de algoritmos de ensamble, que diferirán de acuerdo a la complejidad de los datos de secuenciación. 
+
 ### 6.1 OLC (Overlap Layout Consensus) - Ensambladores gráficos de caracteres
 
-Este algoritmo reconoce intersectos entre combinaciones de lecturas para construir una gràfica de las conexiones entre las Lecturas de secuenciación. Es una aproximación computacionalmente intensiva donde la complejidad de la computación incrementa con el total de los datos de secuenciación usados durante el ensamblaje. Debido a lo cual este algoritmo se vuelve inexcusable con los secuenciadores como Ilumina, donde millones de lecturas de secuencia corta son necesarias para el ensamble. Después de generado el gráfico, visita cada nodo usando un método de la teoría de grafos llamado camino Hamiltoniano, para construir el ensamble final.
+Este algoritmo reconoce intersectos entre combinaciones de lecturas para construir una gràfica de las conexiones entre las Lecturas de secuenciación. 
+Es una aproximación computacionalmente intensiva donde la complejidad de la computación incrementa con el total de los datos de secuenciación usados durante el ensamblaje. Debido a lo cual este algoritmo se vuelve inexcusable con los secuenciadores como Ilumina, donde millones de lecturas de secuencia corta son necesarias para el ensamble. 
+
+Después de generado el gráfico, visita cada nodo usando un método de la teoría de grafos llamado camino Hamiltoniano, para construir el ensamble final.
 La etapa de diseño del algoritmo reduce la complejidad del gráfico preliminar, por condensación de las áreas que surgen sin amigüedad del mismo loci genómico al nodo donde la línea diverge con varios caminos potenciales. 
-Es bastante difícil la selección de ese camino. Esto arroja subgrafos para hacer contigs que se pueden describir como secuencias unitig ensambladas inequívocamente que tienen una alta profundidad de secuenciación y están vinculadas a un gran número de otros contigs. Ahora, el unitig se empareja con otros unitigs para formar una secuencia de andamios (Scaffolds).
+Es bastante difícil la selección de ese camino. Esto arroja subgrafos para hacer *contigs* que se pueden describir como secuencias *unitig* ensambladas inequívocamente que tienen una alta profundidad de secuenciación y están vinculadas a un gran número de otros *contigs*. Ahora, el unitig se empareja con otros unitigs para formar una secuencia de andamios (*Scaffolds*).
 
-El último paso para realizar el proceso de consenso incluye la lectura a través  de subgrafos contiguos y extraer la secuencia de consenso para lecturas de cada subgrafo. Otro algoritmo de caracteres
+El último paso para realizar el proceso de **consenso** incluye la lectura a través de subgrafos contiguos y extraer la secuencia de consenso para lecturas de cada subgrafo. Otro algoritmo de caracteres involucra la misma teoría de sobrelape de grafos, pero difiere ligeramente ya que simplifica el gráfico removiendo bordes transitivos que tienen detalles redundantes.
 
-Another string graph algorithm involves same overlap graph theory
-but slightly differs as it simplifies the graph by removing transitive edges that have redundant details (Chang et al., 2012).
-
-Referencias: Li et al., 2012 
+Referencias: Li et al., 2012; Chang et al. 2012 
 ### 6.2 Gráficos De Brujin 
  
 
