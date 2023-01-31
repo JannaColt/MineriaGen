@@ -385,7 +385,7 @@ El primer apartado de estadística simple contiene el nombre del archivo, el nú
 
 ![Panorama general y vista de los estadísticos iniciales](https://user-images.githubusercontent.com/13104654/205708653-93a21bca-be14-44e7-839a-fba67d08786e.png)
 
-## 5.1.2.  Calidad de secuencias por base
+## 5.1.2. Calidad de secuencias por base
 
 Este es el valor de confianza de base con base en el Phred score que designa las series de score de calidad de las bases completas en su respectica locación en el archivo. un valor más allá de Q30 es considerado bueno, mientras que uno arriba de Q20 es generalmente aceptado.
 En este apartado se muestra una revisión del rango de los valores de calidad a través de todas las bases en cada posición en los archivos FASTQ. 
@@ -693,17 +693,17 @@ En el caso del filtrado utilizando fastp podemos realizar lo siguiente.
 Si se requiere establecer un límite de longitud para filtrado se utiliza -l, para establecer el nombre de los archivos de salida -j -h, más opciones [aquí](https://github.com/OpenGene/fastp#all-options)
 
 ### Longitud mínima de lectura
-El valor más apropiado para este parámetro dependerá de los resultados del reporte de FastQC/Fastp, específicamente la longitud de alta calidad en el gráfico de la sección *[Per Base Sequence Quality](#512-calidad-de-secuencias-por-base)* y segunda y quintas gráficas en la sección de [](#524-antes-del-filtrado) de Fastp.
+El valor más apropiado para este parámetro dependerá de los resultados del reporte de FastQC/Fastp, específicamente la longitud de alta calidad en el gráfico de la sección [Per Base Sequence Quality](#512-calidad-de-secuencias-por-base) y segunda y quintas gráficas en la sección de [Antes del filtrado](#524-antes-del-filtrado) de Fastp.
 
 De nuestros resultados, podemos establecer este mínimo en 36
 
 ```python
 # Control de calidad y reporte 
-#!fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz -R content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/fastp_report
+#!fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz -R content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/fastp_report -a --detect_adapter_for_pe
 
 #o también de esta forma
 # Preprocesamiento 
-!fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz --json="HA1AB3SS04_S4_L1.json" --html="HA1AB3SS04_S4_L1.html" -l 36 --length_limit 285 --cut_right --cut_front -c -m --merged_out /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_mer.fastq.gz --unpaired1 /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_up1.fastq.gz --unpaired2 /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_up2.fastq.gz --failed_out /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_fout.fastq.gz
+!fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz --json="HA1AB3SS04_S4_L1.json" --html="HA1AB3SS04_S4_L1.html" -l 36 --cut_right --cut_front -c -m --merged_out /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_mer.fastq.gz --unpaired1 /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_up1.fastq.gz --unpaired2 /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_up2.fastq.gz --failed_out /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_fout.fastq.gz
 ```
 > Podemos usar --detect_adapter_for_pe antes de -- cut right por si hay adaptadores 
 
@@ -711,9 +711,14 @@ De nuestros resultados, podemos establecer este mínimo en 36
 
 > Cut_front se mueve del frente 5' a la cola, cortando las bases en la ventana que no alcanzan la calidad media.
 
-> 
+> -c activa la corrección de bases en regiones sobrelapadas (solo para lecturas PE). 
 
+> -m para inputs *paired end*, combina cada par de lecturas en una sola si se encuentran sobrelapadas. Las lecturas que se combinan serán escritas en el archivo dado por --merged_out, las lecturas sin combinar se especifican en --out1 y --out2. El modo combinado por defecto se encuentra desactivado.
 
+> En el caso de unpaired1 y unpaired2 para PE, si la lectura1 pasa QC pero la lectura2 no será escrita en unpaired1, viceversa para unpaired2. Si unpaired1 y unpaired2 son la misma, ambas serán escritas en el mismo archivo.
+
+>  en el flag de Failed_out se escriben las lecturas que no pasan los filtros.
+      
 
 # 6.2 Trimmomatic
 
