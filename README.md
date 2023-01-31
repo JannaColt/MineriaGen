@@ -594,17 +594,25 @@ El siguiente bloque de código nos sirve para correr multiqc en colab.
 
 import multiqc
 #El análisis se hace sobre los archivos de fastqc para que te entregue un reporte conteniendo todo
-multiqc.run('/content/drive/MyDrive/códigos/Secuencias_UADY/50-3_S19_L001_R2_001_fastqc.zip')
+multiqc.run('/content/drive/MyDrive/códigos/*_fastqc.zip') #Recorar actualizar la dirección de donde se encuentren los archivos de salida de qc
 
 ```
+Para observar el html es con el siguiente bloque:
+```python
+import IPython
+
+# Best if using Google Colab
+IPython.display.HTML(filename='./multiqc_report.html')
+#IPython.display.HTML(filename='/content/drive/MyDrive/códigos/Secuencias_UADY/multiqc_report.html') #Para dirección específica, marcando error de momento 
+
+```
+
 Es una herramienta que busca todos los archivos de control de calidad de nuestras secuencias y las resume en un solo reporte, además nos permite subrayar, por ejemplo,
 ciertas muestras dentro del reporte, cambiar nombres o bien bajar las gráficas (interactivas) generadas a diferentes resoluciones. 
-(es mejor, de momento, tratar de correr esta herramienta en entorno local (de preferencia en linux, unix o wsl) por que no he averiguado como correrla desde colab y que no la coloque en la ventana del cuaderno de trabajo si no que entregue el output externo).
-
-
-
+(es mejor, de momento, tratar de correr esta herramienta en entorno local (de preferencia en linux, unix o wsl) por que no he averiguado como correrla desde colab y que no la coloque en la ventana del cuaderno de trabajo si no que entregue el output externo  ❗📥 ☺️ ***Actualización: el código funciona adecuadamente y el html también se guarda en el entorno del drive.***).
+ 
 # 5.2 Fastp
-Fastp es una herramienta que realiza el preprocesamiento y filtrado de calidad de forma paralela y soporta lecturas Single end y Paired end.
+Fastp es una herramienta que realiza el preprocesamiento y filtrado de calidad de forma paralela y soporta lecturas *Single end* y *Paired end*.
 Más información se puede encontrar en el [repositorio](https://github.com/OpenGene/fastp#simple-usage) de los desarrolladores.
 
 A comparación de FASTQC, fastp ofrece resultados tanto para los datos de prefiltrado como para los datos de post-filtrado, permitiendo una evaluación del efecto del filtro comparando directamente las gráficas y reporta sus resultados tanto en formato HTML como en formato JSON, siendo este último manualmente optimizado para facilitar su lectura (más acerca de la descripción en el [artículo](https://academic.oup.com/bioinformatics/article/34/17/i884/5093234)).
@@ -635,7 +643,7 @@ La siguiente sección muestra las ocurrencias de adaptadores de **ambos** archiv
 
 Para PR69 muestra un bajo porcentaje de adaptadores (0.04% R1 y 0.4% R2). 
 
-En este caso Fastp puede detectar adaptadores y cortarlos lo que nos ahorra tiempo, sin embargo esto se puede realizar con un script aparte utilizando [Trimmomatic](#53-trimmomatic) (o con [cutadapt](#541-cutadapt)) 
+En este caso Fastp puede detectar adaptadores y cortarlos lo que nos ahorra tiempo, sin embargo esto se puede realizar con un script aparte utilizando [Trimmomatic](#62-trimmomatic) (o con [cutadapt](#631-cutadapt)) 
 para el filtrado de calidad, en este caso, habría que correr nuevamente los análisis de calidad con Fastqc para ver como quedaron las secuencias.
 
 ## 5.2.3 Estimación del tamaño de inserto
@@ -676,16 +684,16 @@ El conteo de *k-meros* es útil para el ensamble, clustering y alineamientos, as
 
 
 ## 5.2.5 Después del Filtrado
-Luego aparece una sección con grñaficos para después del filtrado (que puede ser por defecto o definido de acuerdo a lo que se observe en los datos).
+Luego aparece una sección con gráficos para después del filtrado (que puede ser por defecto o definido de acuerdo a lo que se observe en los datos).
 
-El html se encuentra en la carpeta de Drive que se indicó en *colab*, y la salida de archivos ya filtrados también se encontraran donde se indico, con este archivo fastq podemos continuar con los siguientes análisis *Downstream*. 
+El html se encuentra en la carpeta de Drive que se indicó en *colab*, y la salida de archivos ya filtrados también se encontraran donde se indicó, con este archivo fastq podemos continuar con los siguientes análisis *Downstream*. 
 
 fastp también cuenta con una *flag* para realizar el *merge* de las dos lecturas. Esto una vez que se cuenta con las secuencias ya filtradas.
 
 # 6. Pre-procesamiento: Filtrado de calidad 
 
-Ahora que se tiene conocimiento acerca de los datos crudos, es importante usar estaa información para limpiar y *Trimmear* las lecturas para mejorar la calidad general antes del ensamble. Hay cierto número de herramientas disponibles para esta tarea (a varios grados), pero necesitamos lidiar con lecturas pareadas (en caso de tener lecturas *paired end*, como es el presente caso). Si uno de los *ends* de un par es removido, la lectura huérfana necesita colocarse en un archivo separado de "Lecturas huérfanas", lo cual mantiene el orden de parado de las lecutras en los archivos para que el programa de ensamble las pueda usar correctamente.
-Entre las herramientas más comunes disponiles son Trimmomatic, cutadapt, PRINSEQ, QC Chain entre otras, esta tarea también la puede realizar fastp modificando ciertos parámetros.
+Ahora que se tiene conocimiento acerca de los datos crudos, es importante usar estaa información para limpiar y *Trimmear* las lecturas para mejorar la calidad general antes del ensamble. Hay cierto número de herramientas disponibles para esta tarea (a varios grados), pero necesitamos lidiar con lecturas pareadas (en caso de tener lecturas *paired end*, como es el presente caso). Si uno de los *ends* de un par es removido, la lectura huérfana necesita colocarse en un archivo separado de "Lecturas huérfanas", lo cual mantiene el orden de pareado de las lecturas en los archivos para que el programa de ensamble las pueda usar correctamente.
+Entre las herramientas más comunes disponibles son Trimmomatic, cutadapt, PRINSEQ, QC Chain entre otras, esta tarea también la puede realizar fastp modificando las flags correspondientes.
 
 # 6.1 Fastp (filtrado)
 
@@ -821,10 +829,7 @@ LEADING y TRAILING son cortado adaptativo, lo que significa que cortarán el ini
 ### 6.2.1.2 *Trimming* de calidad adaptativo
 
 -SLIDINGWINDOW: realiza un trimming en una ventana de deslizamiento, cortando una vez que la calidad promedio caiga de un umbral especificado.
-Toma dos valores como `SLIDINGWINDOW:4:15` lo que significa "Escanear la lectura con una amplitud de ventana de 4 bases, cortando cuando la calidad promedio por base caiga debajo de 5"   
-   
-   
-It takes two values like SLIDINGWINDOW:4:15 which means “Scan the read with a 4-base wide sliding window, cutting when the average quality per base drops below 15”
+Toma dos valores como `SLIDINGWINDOW:4:15` lo que significa "Escanear la lectura con una amplitud de ventana de 4 bases, cortando cuando la calidad promedio por base caiga debajo de 5'   
 
 ### 6.2.1.3 *Trimming* de adaptadores
 
