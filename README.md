@@ -616,18 +616,6 @@ Para correr Fastp en los archivos de secuencias (con los datos para filtrado por
 !fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz
 
 ```
-Si se requiere establecer un límite de longitud para filtrado se utiliza -l, para establecer el nombre de los archivos de salida -j -h, más opciones [aquí](https://github.com/OpenGene/fastp#all-options)
-
-```python
-# Control de calidad y reporte 
-!fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz -R content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/fastp_report
-
-#o también de esta forma
-# Control de calidad y reporte 
-!fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz --json="HA1AB3SS04_S4_L1.json" --html="HA1AB3SS04_S4_L1.html" -l 150 --detect_adapter_for_pe -c --cut_right --cut_front -p --failed_out="failed_seqsPR69.fastq.gz"
-```
-> Cut_right equivale a SLIDING WINDOW en Trimmomatic mueve una ventana deslizante desde el frente al final, si encuentra una ventana con calidad media < *Threshold*, se deshace de las bases en la ventana y la parte derecha, luego para. 
-
 
 ## 5.2.1 Summary
 
@@ -694,8 +682,40 @@ El html se encuentra en la carpeta de Drive que se indicó en *colab*, y la sali
 
 fastp también cuenta con una *flag* para realizar el *merge* de las dos lecturas. Esto una vez que se cuenta con las secuencias ya filtradas.
 
+# 6. Pre-procesamiento: Filtrado de calidad 
 
-# 5.3 Trimmomatic
+Ahora que se tiene conocimiento acerca de los datos crudos, es importante usar estaa información para limpiar y *Trimmear* las lecturas para mejorar la calidad general antes del ensamble. Hay cierto número de herramientas disponibles para esta tarea (a varios grados), pero necesitamos lidiar con lecturas pareadas (en caso de tener lecturas *paired end*, como es el presente caso). Si uno de los *ends* de un par es removido, la lectura huérfana necesita colocarse en un archivo separado de "Lecturas huérfanas", lo cual mantiene el orden de parado de las lecutras en los archivos para que el programa de ensamble las pueda usar correctamente.
+Entre las herramientas más comunes disponiles son Trimmomatic, cutadapt, PRINSEQ, QC Chain entre otras, esta tarea también la puede realizar fastp modificando ciertos parámetros.
+
+# 6.1 Fastp (filtrado)
+
+En el caso del filtrado utilizando fastp podemos realizar lo siguiente.
+Si se requiere establecer un límite de longitud para filtrado se utiliza -l, para establecer el nombre de los archivos de salida -j -h, más opciones [aquí](https://github.com/OpenGene/fastp#all-options)
+
+### Longitud mínima de lectura
+El valor más apropiado para este parámetro dependerá de los resultados del reporte de FastQC/Fastp, específicamente la longitud de alta calidad en el gráfico de la sección *[Per Base Sequence Quality](#512-calidad-de-secuencias-por-base)* y segunda y quintas gráficas en la sección de [](#524-antes-del-filtrado) de Fastp.
+
+De nuestros resultados, podemos establecer este mínimo en 36
+
+```python
+# Control de calidad y reporte 
+#!fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz -R content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/fastp_report
+
+#o también de esta forma
+# Preprocesamiento 
+!fastp -i /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz  -O /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz --json="HA1AB3SS04_S4_L1.json" --html="HA1AB3SS04_S4_L1.html" -l 36 --length_limit 285 --cut_right --cut_front -c -m --merged_out /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_mer.fastq.gz --unpaired1 /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_up1.fastq.gz --unpaired2 /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_up2.fastq.gz --failed_out /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_fout.fastq.gz
+```
+> Podemos usar --detect_adapter_for_pe antes de -- cut right por si hay adaptadores 
+
+> Cut_right equivale a SLIDING WINDOW en Trimmomatic mueve una ventana deslizante desde el frente al final, si encuentra una ventana con calidad media < *Threshold*, se deshace de las bases en la ventana y la parte derecha, luego para, este valor lo podemos establecer a 4:20 (4pb/20 Phred) en Trimmomatic, aquí dichos valores se establecen por defecto, a menos que especifiquemos lo contrario con otros flags (--cut_right_window_size y --cut_right_mean_quality). 
+
+> Cut_front se mueve del frente 5' a la cola, cortando las bases en la ventana que no alcanzan la calidad media.
+
+> 
+
+
+
+# 6.2 Trimmomatic
 
 Para el filtrado y corte de adaptadores con trimommatic, se puede usar el siguiente bloque de código 
 ```python
@@ -765,7 +785,7 @@ Otra ventaja es que permite coincidencias parciales y *overlapping* para la bús
 
 Las opciones que podemos utilizar son las siguientes:
 
-## 5.3.1 Eficiencia y formato
+## 6.2.1 Eficiencia y formato
 
 >Las siguientes se usan siempre antes de la invocación de los archivos de entrada y salida
 
@@ -780,7 +800,7 @@ Si se requiere leer la codificación de un tipo y sacar la codificación de uno 
 - TOPHRED33: Convierte *scores* de calidad a Phred-33
 - TOPHRED64: Convierte *scores* de calidad a Phred-64 
 
-### 5.3.1.1 Cortado (*Cropping*)
+### 6.2.1.1 Cortado (*Cropping*)
 
 Trimmomatic cuenta con varias opciones que pueden ser usadas simultáneamente o no:
 
@@ -793,7 +813,7 @@ LEADING y TRAILING son cortado adaptativo, lo que significa que cortarán el ini
 
 -MINLEN: se deshará de todas las lecturas que caen bajo una longitud especificada.
 
-### 5.3.1.2 *Trimming* de calidad adaptativo
+### 6.2.1.2 *Trimming* de calidad adaptativo
 
 -SLIDINGWINDOW: realiza un trimming en una ventana de deslizamiento, cortando una vez que la calidad promedio caiga de un umbral especificado.
 Toma dos valores como `SLIDINGWINDOW:4:15` lo que significa "Escanear la lectura con una amplitud de ventana de 4 bases, cortando cuando la calidad promedio por base caiga debajo de 5"   
@@ -801,7 +821,7 @@ Toma dos valores como `SLIDINGWINDOW:4:15` lo que significa "Escanear la lectura
    
 It takes two values like SLIDINGWINDOW:4:15 which means “Scan the read with a 4-base wide sliding window, cutting when the average quality per base drops below 15”
 
-### 5.3.1.3 *Trimming* de adaptadores
+### 6.2.1.3 *Trimming* de adaptadores
 
 Finalmente, trimmomatic tomará un archivo con las secuencias de los adaptadores y las cortará. Siguiendo por ejemplo la llamada: `ILLUMINACLIP:<fastaWithAdaptersEtc>:<seed mismatches>:<palindrome clip treshold>:<simple clip treshold>` dónde:
 
@@ -822,8 +842,8 @@ El umbral de clip palindrómico escencialmente dice que tan preciso debe ser el 
 Referencias: https://jshleap.github.io/bioinformatics/writting-jNGS_tutorial/#encoding
 [Bolger *et al.*, 2014](https://academic.oup.com/bioinformatics/article/30/15/2114/2390096)
 
-# 5.4 Otras herramientas
-## 5.4.1 Cutadapt
+# 6.3 Otras herramientas
+## 6.3.1 Cutadapt
 
 Cutadapt busca el adaptador en todas las lecturas y lo remueve cuando lo encuentra. A menos que se use la opción de filtrado, todas las lecturas que están presentes en el archivo *input* estarán presentes en el *output*, algunas de ellas ya con trimm, otras no. Incluso las lecturas que fueron coradas a una longitud de 0 son un output. Esto puede ser modificado en el comando (opciones).
 Puede detectar múltiples tipos de adaptadores. Adaptadores 5' preceden la secuencia de interés mientras que los 3' la siguen. Las distinciones se hacen dependiendo de donde se presenta la secuencia en la lectura. Además también permite el procesamiento de lecturas *Paired End*.
@@ -843,7 +863,7 @@ cutadapt -a ADAPTER_FWD -A ADAPTER_REV -o out.1.fastq -p out.2.fastq reads.1.fas
 ```
 Referencia: https://jshleap.github.io/bioinformatics/writting-jNGS_tutorial/#encoding
 
-## 5.4.2 Seqkit
+## 6.3.2 Seqkit
 
 [Seqkit](https://bioinf.shenwei.me/seqkit/) es un programa o línea de comandos, que permite, no solo eliminar duplicados, si no también manipular secuencias (solamente en formato fastq) eficientemente. El código fuente se puede encontrar [aquí](https://github.com/shenwei356/seqkit).  
 
@@ -866,7 +886,7 @@ Posiblemente en google colab
 
 :alien: 👽 :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien:
 
-# 5.5 Número y longitud de secuencias después del filtrado de calidad
+## 6.4 Número y longitud de secuencias después del filtrado de calidad
 
 Una vez realizado el filtrado se pueden correr de nuevo los análisis de calidad (usando fastqc/multiqc o fastp). Además podemos utilizar nuevamente los comandos de bash para analizar longitudes de lecturas, etc.
 
@@ -914,7 +934,7 @@ read_file.to_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_lengthR2Trim.csv
 
 ```
 
-# 5.6 PhiX 
+## 6.5 PhiX 
 
 > Es posible usar esta librería y aplicar este código, sin embargo, en este caso no se hizo una corrida por lo que este código queda en stand by y se podría usar para futuras secuenciaciones (no me queda muy claro si solo podemos usar la secuencia para ver si hay contaminación por fagos en la librería)
 
@@ -977,7 +997,7 @@ Si no se encuentran secuencias de Phix entonces se puede realizar el ensamble co
 https://github.com/Microfred/IntroBioinfo/blob/main/Unidad_3/Readme.md
 
   
-## 6. Ensamble *De Novo*
+# 7. Ensamble *De Novo*
 
 Una vez se ha evaluado el control de calidad de las secuencias, éstas se encuentran mezcladas y, como si de un rompecabezas se tratara, hay que armarlo en el orden correcto. El método de alineamiento utilizado para realizar esta tarea se denomina ensamble. Una parte esencial del ensamble es el alineamiento, que involucra disponer de una cantidad masiva de lecturas de DNA, buscando regiones que coincidan unas con otras (regiones de alineamiento) y eventualmente unir el rompecabezas.
 
@@ -989,7 +1009,7 @@ Para el Ensamble *De novo*, dependiendo de la plataforma de secuenciación es po
 
 Los algoritmos de ensamble son la colección de procesos para construir, a partir de cantidades de lecturas de secuencias cortas,  secuencias de DNA original. Las secuencias son alineadas unas con otras y las partes que se superponen son combinadas en una secuencia estrecha. Actualmente, existen dos métodos de algoritmos de ensamble, que diferirán de acuerdo a la complejidad de los datos de secuenciación. 
 
-### 6.1 OLC (Overlap Layout Consensus) - Ensambladores gráficos de caracteres
+## 7.1 OLC (Overlap Layout Consensus) - Ensambladores gráficos de caracteres
 
 Este algoritmo reconoce intersectos entre combinaciones de lecturas para construir una gràfica de las conexiones entre las Lecturas de secuenciación. 
 Es una aproximación computacionalmente intensiva donde la complejidad de la computación incrementa con el total de los datos de secuenciación usados durante el ensamblaje. Debido a lo cual este algoritmo se vuelve inexcusable con los secuenciadores como Ilumina, donde millones de lecturas de secuencia corta son necesarias para el ensamble. 
@@ -1001,7 +1021,7 @@ Es bastante difícil la selección de ese camino. Esto arroja subgrafos para hac
 El último paso para realizar el proceso de **consenso** incluye la lectura a través de subgrafos contiguos y extraer la secuencia de consenso para lecturas de cada subgrafo. Otro algoritmo de caracteres involucra la misma teoría de sobrelape de grafos, pero difiere ligeramente ya que simplifica el gráfico removiendo bordes transitivos que tienen detalles redundantes.
 
 Referencias: Li et al., 2012; Chang et al. 2012 
-### 6.2 Gráficos De Brujin 
+## 7.2 Gráficos De Brujin 
  
 
 
