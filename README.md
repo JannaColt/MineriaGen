@@ -1071,10 +1071,16 @@ Es bastante difícil la selección de ese camino. Esto arroja subgrafos para hac
 
 El último paso para realizar el proceso de **consenso** incluye la lectura a través de subgrafos contiguos y extraer la secuencia de consenso para lecturas de cada subgrafo. Otro algoritmo de caracteres involucra la misma teoría de sobrelape de grafos, pero difiere ligeramente ya que simplifica el gráfico removiendo bordes transitivos que tienen detalles redundantes.
 
-Referencias: Li et al., 2012; Chang et al. 2012 
+Referencias: Li et al., 2012; Chang et al. 2012
+
+![Hamiltonian Path y Consenso](https://user-images.githubusercontent.com/13104654/215958857-f462cfc2-9155-494b-ac6a-13cf6e8d525a.png)
+Commins *et al.*, 2009  
+
 
 ## 7.2 Gráficos De Brujin 
- 
+
+Esencialmente los ensambladores con gráficas De Brujin rompe las lecturas en subsecuencias de longitud-*k* (*k-meros*), usándolos posteriormente para construir una gráfica.
+
 De Bruijn graph assemblers break down the reads into k-length subsequences (termed as k-mers) and used to build a
 graph. Since the graph nodes represent k-mers in this case, the edges denote neighboring k-mers that overlap with k-1
 bases (Healy, 2010). The reads are not depicted in the graph directly and are represented by paths. Since this structure
@@ -1083,6 +1089,8 @@ reduce the length of the paths. Assemblers usually monitor each node’s k-mer c
 cleaned up by eliminating tips for low coverage (Heydari, Miclotte, Van de Peer, & Fostier, 2019). Usually, De Bruijn
 graph-based assemblers are very memory intensive, although various other methods are being used to minimize the use
 of memory (Chaisson & Pevzner, 2008).
+
+
 
 Para el Ensamble *De novo* es posible aplicar diferentes estrategias 
 
