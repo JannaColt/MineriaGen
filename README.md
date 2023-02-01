@@ -115,7 +115,16 @@ source /root/miniconda/bin/deactivate && source /root/miniconda/bin/activate env
 mamba env create --quiet --prefix ./envs/metawrap -f envs/metaWRAP_env.yml
 mamba env create --quiet --prefix ./envs/prokkaroary -f envs/prokkaroary_env.yml 
 ```
+## Instalacion de BWA y SAMtools
 
+```python
+
+!conda install -c bioconda bwa -y
+!conda install -c bioconda samtools -y
+
+```
+
+## Instalacion de Megahit
 ```python
 #Para instalar megahit
 !conda install -c bioconda megahit
@@ -345,6 +354,7 @@ Hay que considerar además el método de codificado dependiendo de plataforma:
 Así, podemos además, aplicar otro código para determinarr si el score de nuestras lecturas corresponde a Phred+33, Phre+64 o Solexa+64
 
 ```bash
+%%bash
 zcat /content/drive/MyDrive/Analisis_Posdoc/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz | head -n 10000 |\
   awk '{if(NR%4==0) printf("%s",$0);}' |  od -A n -t u1 | \
   awk 'BEGIN{min=100;max=0;} \
@@ -594,7 +604,7 @@ El siguiente bloque de código nos sirve para correr multiqc en colab.
 
 import multiqc
 #El análisis se hace sobre los archivos de fastqc para que te entregue un reporte conteniendo todo
-multiqc.run('/content/drive/MyDrive/códigos/*_fastqc.zip') #Recorar actualizar la dirección de donde se encuentren los archivos de salida de qc
+multiqc.run('/content/drive/MyDrive/códigos/*_fastqc.zip') #Recordar actualizar la dirección de donde se encuentren los archivos de salida de qc
 
 ```
 Para observar el html es con el siguiente bloque:
@@ -946,7 +956,7 @@ read_file.to_csv (r'/content/drive/MyDrive/Analisis_Posdoc/read_lengthR2Trim.csv
 
 ## 6.5 PhiX 
 
-> Es posible usar esta librería y aplicar este código, sin embargo, en este caso no se hizo una corrida por lo que este código queda en stand by y se podría usar para futuras secuenciaciones (no me queda muy claro si solo podemos usar la secuencia para ver si hay contaminación por fagos en la librería)
+> Es posible usar esta librería y aplicar este código, sin embargo, en este caso no se hizo una corrida por lo que este código queda en stand by y se podría usar para futuras secuenciaciones (podemos usar el código para evitar remanentes de un control interno de la secuenciación)
 
 Para control de calidad interno 
 [Phix](https://support.illumina.com/bulletins/2017/02/what-is-the-phix-control-v3-library-and-what-is-its-function-in-.html) o la librería de control v3 PhiX (FC-110-3001) es derivada del genoma del bacteriófago, bien caracterizado, PhiX. Es una librería concentrada de Illumina (10 nM en 10 µl) que tiene un tamaño promedio de 500 pb y cuenta con una composición balanceada de bases a ~45% GC y ~55% AT.
@@ -963,11 +973,18 @@ El siguiente bloque de código es SOLAMENTE para aplicarse en el entorno local d
 
 cd $HOME/Ensamble #Este comando va a corresponder con la carpeta en la que nos encontremos trabajando localmente, en el caso de colab esto no se realiza 
 source activate qc #En este comando estamos activando la carpeta qc como la fuente para trabajar
-tar -zxvf PhiX_Illumina_RTA.tar.gz && rm PhiX_Illumina_RTA.tar.gz # Este archivo se encuentra dentro de la carpeta qc, nosotros no contamos con este 
+tar -zxvf PhiX_Illumina_RTA.tar.gz && rm PhiX_Illumina_RTA.tar.gz # hay que definir el directorio
 bwa index PhiX/Illumina/RTA/Sequence/Chromosomes/phix.fa -p ´01_qc/phix´ # Este es el comando que corresponde al programa BWA para hacer el index
 conda deactivate
 ```
-El siguiente bloque se utiliza para Mapear (por Alineamiento) las *lecturas* versus la referencia, en este caso PhiX:
+Para colab, primeramente hay que tener considerada la [instalación](#instalacion-de-bwa-y-samtools) y definir el [directorio de las secuencias de la librería Phix](https://drive.google.com/drive/folders/1FqceccL4vIdQRCtta0eGVS_NZiBX55Kz). Podríamos usar el siguiente bloque:
+
+```python
+!bwa index /content/drive/MyDrive/Analisis_Posdoc/PhiX/Illumina/RTA/Sequence/Chromosomes/phix.fa -p *./calidad1/phix
+
+```
+
+El siguiente bloque (local) se utiliza para Mapear (por Alineamiento) las *lecturas* versus la referencia, en este caso PhiX:
 Consta de tres pasos
 
 1. script usando | Indexar y alinear vs esa referencia
@@ -994,6 +1011,30 @@ samtools fastq \
     -s 01_qc/S.trim.clean.fastq.gz \
     01_qc/PB69.phix.sorted.bam
 ```
+El bloque en colab correspondería a:
+
+```python 
+
+#busca el alineamiento, selecciona las secuencias que no mapean y se ordenan dichas secuencias 
+#estableceremos threads en 2 (colab utiliza al menos 2 cores)
+
+!bwa mem -t 2 *./calidad1/phix \
+    ./R1.filtrado.fastq.gz \
+    ./R2.filtrado.fastq.gz | \
+    samtools view -bS -f4 - | \
+    samtools sort -@ 2 - -o salidas/PR69.phix.sorted.bam
+
+!samtools fastq \
+    -1 salidas/R1.filtradas.clean.fastq.gz \
+    -2 salidas/R2.filtradas.clean.fastq.gz \
+    -s salidas/S.filtradas.clean.fastq.gz \
+    salidas/PR69.phix.sorted.bam
+```
+> index sirve para indexar la base de datos de la secuencia con el flag -p que define la base de datos de salida
+
+> mem es el algoritmo (Maximal Exact Matches) para el alineamiento contra la referencia, las flags: -t define el número de hilos a usar, luego hay que incluir los archivos del mapeo (fwd y reverse, es importante tomar las secuencias ya filtradas), samtools nos sirve para interactuar con las secuencias, seleccionando y ordenando aquellas que no mapean contra phix y las escribe en el archivo (-o) sorted.bam (cambia el formato), comparando  bam (-b) contra fa (-f), y ordenando (sort) usando 4 hilos (-@). 
+
+> fastq transforma las secuencias bam no mapeadas a fastq en archivos específicos (-1 y -2), así como definir las salidas de lecturas de singletones (-s)
 
 Se puede realizar el Conteo de las secuencias, NUEVAMENTE.
 .clean son archivos de salida después de mapear vs PHIX (nosotros establecemos el nombre)
@@ -1002,7 +1043,7 @@ Se puede realizar el Conteo de las secuencias, NUEVAMENTE.
 zcat R1.trim.clean.fastq.gz | awk 'END{ print NR/4 }'
 zcat R2.trim.clean.fastq.gz | awk 'END{ print NR/4 }'
 ```
-Si no se encuentran secuencias de Phix entonces se puede realizar el ensamble con las secuencias ya trimmeadas
+Si no se encuentran secuencias de Phix entonces se puede realizar el ensamble con las secuencias filtradas (trimmeadas), de lo contrario se usarán las establecidas en -1 y -2.
 
 https://github.com/Microfred/IntroBioinfo/blob/main/Unidad_3/Readme.md
 
@@ -1031,10 +1072,17 @@ Es bastante difícil la selección de ese camino. Esto arroja subgrafos para hac
 El último paso para realizar el proceso de **consenso** incluye la lectura a través de subgrafos contiguos y extraer la secuencia de consenso para lecturas de cada subgrafo. Otro algoritmo de caracteres involucra la misma teoría de sobrelape de grafos, pero difiere ligeramente ya que simplifica el gráfico removiendo bordes transitivos que tienen detalles redundantes.
 
 Referencias: Li et al., 2012; Chang et al. 2012 
+
 ## 7.2 Gráficos De Brujin 
  
-
-
+De Bruijn graph assemblers break down the reads into k-length subsequences (termed as k-mers) and used to build a
+graph. Since the graph nodes represent k-mers in this case, the edges denote neighboring k-mers that overlap with k-1
+bases (Healy, 2010). The reads are not depicted in the graph directly and are represented by paths. Since this structure
+is based on the precise identity between k-mers. In graph, divergent paths are generated by sequencing errors that
+reduce the length of the paths. Assemblers usually monitor each node’s k-mer coverage, enabling the graph to be
+cleaned up by eliminating tips for low coverage (Heydari, Miclotte, Van de Peer, & Fostier, 2019). Usually, De Bruijn
+graph-based assemblers are very memory intensive, although various other methods are being used to minimize the use
+of memory (Chaisson & Pevzner, 2008).
 
 Para el Ensamble *De novo* es posible aplicar diferentes estrategias 
 
@@ -1080,8 +1128,9 @@ Algunos tips acerca del ensamble lo podemos encontrar [aquí](https://github.com
 
 
 Ejemplo Metodología artículo
-ExperimentalDesign,MaterialsandMethods
-B.australimarisB28Awaspreviouslyisolatedandidentifiedwith16SrRNAwithGenBankac-cessionnumberMT010836.GenomicDNAwasextractedusingtheMonarch® GenomicDNAPu-rificationKit(NewEnglandBiolabs.).IlluminaHiSeq4000paired-end(2×151bp)sequencingofB.australimarisB28AwasperformedbyMacrogenInc.(Seoul,Korea).ThelibrarywasprocessedusingtheNexteraXTDNALibraryPreparationKit(96samples)(Illumina,Inc.,SanDiego,CA,USA).Totalsequencingreads5,130,218of4,447,316weremapped.Aftermapping,Sambamba[10]andSAMTools[11]wererespectivelyusedtoremoveduplicatedreadsandidentifyvari-ants.Thereadswereassembledinto58contigs,aGCcontentof41.60%usingGCEAssembler(version1.2;https://cge.cbs.dtu.dk/services/Assembler/)[12].TheassembleddatawasannotatedusingRASTrapidannotationusingsubsystemtechnologyversion2.0[6–8].BacterialsecondarymetabolitebiosynthesisgeneclusterswereidentifiedandannotatedbyantiSMASHversion5.0and6.0usingassembledfastafileoutput[
+Experimental Design, Materials and Methods
+PR69 was previously isolated and identified with 16SrRNA with GenBank accessionnumber #####. Genomic DNA was extracted using the GenomicDNA Purification Kit(NewEnglandBiolabs.). IlluminaHiSeq4000 paired-end (2×151bp) sequencing of PR69 was performed by Langebio (CINVESTAV). The library was processed using the XXXX Library Preparation Kit (96samples (Illumina,Inc.,SanDiego,CA,USA). Total sequencing reads 5,130,218 of 4,447,316 were mapped. Aftermapping, Sambamba[10] and SAMTools[11] were respectively used to remove duplicated reads and identify variants. 
+Thereadswereassembledinto58contigs,aGCcontentof41.60%usingGCEAssembler(version1.2;https://cge.cbs.dtu.dk/services/Assembler/)[12].TheassembleddatawasannotatedusingRASTrapidannotationusingsubsystemtechnologyversion2.0[6–8].BacterialsecondarymetabolitebiosynthesisgeneclusterswereidentifiedandannotatedbyantiSMASHversion5.0and6.0usingassembledfastafileoutput[
 
 
 
