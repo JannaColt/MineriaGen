@@ -1012,7 +1012,7 @@ samtools fastq \
     -s 01_qc/S.trim.clean.fastq.gz \
     01_qc/PB69.phix.sorted.bam
 ```
-El bloque en colab correspondería a:
+El bloque en colab (9min) correspondería a:
 
 ```python 
 
