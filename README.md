@@ -983,6 +983,7 @@ Para colab, primeramente hay que tener considerada la [instalación](#instalacio
 !bwa index /content/drive/MyDrive/Analisis_Posdoc/PhiX/Illumina/RTA/Sequence/Chromosomes/phix.fa -p *./calidad1/phix
 
 ```
+![image](https://user-images.githubusercontent.com/13104654/216114543-cd5f515e-eb53-4024-9d96-9e2421b34902.png)
 
 El siguiente bloque (local) se utiliza para Mapear (por Alineamiento) las *lecturas* versus la referencia, en este caso PhiX:
 Consta de tres pasos
