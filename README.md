@@ -736,7 +736,15 @@ De nuestros resultados, podemos establecer este mínimo en 36
 > En el caso de unpaired1 y unpaired2 para PE, si la lectura1 pasa QC pero la lectura2 no será escrita en unpaired1, viceversa para unpaired2. Si unpaired1 y unpaired2 son la misma, ambas serán escritas en el mismo archivo.
 
 >  en el flag de Failed_out se escriben las lecturas que no pasan los filtros.
-      
+
+CH606 Fastp bloque
+
+```python
+
+!fastp -i fwd.fq.gz -I Reverse.fq.gz -o fwdR1_filtrada.fq.gz  -O RvR2_filtrada.fastq.gz -l 100 --cut_right --cut_front -c -D --dedup -m --merged_out salida_merge.fq.gz --unpaired1 up1.fq.gz --unpaired2 up2.fq.gz --failed_out fout.fq.gz
+
+```
+
 
 # 6.2 Trimmomatic
 
@@ -1079,6 +1087,14 @@ Referencias: Li et al., 2012; Chang et al. 2012
 ![Hamiltonian Path y Consenso](https://user-images.githubusercontent.com/13104654/215958857-f462cfc2-9155-494b-ac6a-13cf6e8d525a.png)
 Commins *et al.*, 2009  
 
+![Layout1](https://user-images.githubusercontent.com/13104654/216516419-c8c0b76a-8eae-45cc-ae15-78e1038a0e28.png)
+
+![Layout2](https://user-images.githubusercontent.com/13104654/216521652-b3a7185c-baff-45c0-8531-add7d2a25cb6.png)
+
+![Layout3](https://user-images.githubusercontent.com/13104654/216521784-3320bf35-4111-40f9-9b08-e063bb5363c2.png)
+
+![Consenso](https://user-images.githubusercontent.com/13104654/216521977-9021f8ac-a19a-4ec4-9e85-ff382baa3324.png)
+
 
 ## 7.2 Gráficos De Brujin 
 
@@ -1088,12 +1104,16 @@ limpiado eliminando las puntas de baja cobertura. Por lo general, los ensamblado
 ![De Brujin](https://user-images.githubusercontent.com/13104654/216419942-5f37e8ee-c7ea-4fa9-a346-a7b9bdaf6811.png)
 Ayling *et al.*, 2019
 
+Existen algunas limitaciones inherentes al ensamble con dBg, como la selección inicial del tamaño del *k-mero* con el cuál se construirá la gráfica. Elegir un tamaño inapropiado pordría afectar enormemente la calidad de un ensamble. Pequeños *k-meros* llevan a gráficas más conectadas; los más largos proporcionan mayor especificidad y pocos loops, pero más desconectados como resultado de los gaps o errores dentro de los datos de las lecturas o la falta de cobertura del genoma. Una limitación adicional es que el el tamaño del *k-mero* no puede exceder prácticamente dos menos que la longitud de lectura para generar al menos dos bordes.
+
+![Repeats_ assembly](https://user-images.githubusercontent.com/13104654/216512545-b062af0b-e4e9-4ebd-836f-57ca4ff8974d.png)
 
 
-Para el Ensamble *De novo* es posible aplicar diferentes estrategias 
+![dBGexample](https://user-images.githubusercontent.com/13104654/216523981-95ea24d8-b5a9-4cab-a7f9-1f8256287c0e.png)
 
-![4 estrategias de ensamble](https://user-images.githubusercontent.com/13104654/212998923-3620318d-7258-49da-838f-3e63274b195f.png)
-[Estrategias de ensamble *De Novo* en secuencias de lectura corta](https://academic.oup.com/bib/article/11/5/457/1746253?login=true)
+![dBGErrorCorrect](https://user-images.githubusercontent.com/13104654/216524134-cacb944c-5fd1-4a42-920c-fea52911c0ce.png)
+
+
 
 kmergenie (contar k meros, para modificar ciertos parámetros para el ensamble)
 Puede usarse Megahit, velvet, spades
