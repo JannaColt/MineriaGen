@@ -124,10 +124,20 @@ mamba env create --quiet --prefix ./envs/prokkaroary -f envs/prokkaroary_env.yml
 
 ```
 
-## Instalacion de Megahit
+## Instalacion de Megahit y SPAdes
 ```python
 #Para instalar megahit
 !conda install -c bioconda megahit
+
+#para instalar SPAdes
+!conda install -c bioconda spades
+```
+
+## Instalacion de Quast
+
+```python
+#Para instalar Quast
+!conda install -c bioconda quast
 ```
 
 ## 2. Paquetería Python
@@ -1020,6 +1030,13 @@ samtools fastq \
     -s 01_qc/S.trim.clean.fastq.gz \
     01_qc/PB69.phix.sorted.bam
 ```
+
+```bash
+ls -ltrh 01_qc/
+zcat *./R1.trim.clean.fastq.gz | awk 'END{ print NR/4 }'
+zcat *./R2.trim.clean.fastq.gz | awk 'END{ print NR/4 }'
+```
+
 El bloque en colab (9min) correspondería a:
 
 ```python 
@@ -1051,6 +1068,7 @@ Se puede realizar el Conteo de las secuencias, NUEVAMENTE.
 ![BAM formato](https://user-images.githubusercontent.com/13104654/216114543-cd5f515e-eb53-4024-9d96-9e2421b34902.png)
 
 ```bash
+%%bash
 zcat R1.trim.clean.fastq.gz | awk 'END{ print NR/4 }'
 zcat R2.trim.clean.fastq.gz | awk 'END{ print NR/4 }'
 ```
@@ -1058,7 +1076,42 @@ Si no se encuentran secuencias de Phix entonces se puede realizar el ensamble co
 
 https://github.com/Microfred/IntroBioinfo/blob/main/Unidad_3/Readme.md
 
-  
+
+## 6.6 Determinacion de distribucion de *K-meros*
+
+Aunque hoy en día los ensambladores pueden trabajar distintos tamaños de k-meros, hay que tener en cuenta que elegir un tamaño inapropiado pordría afectar enormemente la calidad de un ensamble. Para ello podemos realizar un escaneo antes, tal como lo vimos en el [apartado 5.2.4 Antes del Filtrado](#524-antes-del-filtrado) de Fastp, este realiza y proporciona un heatmap con un conteo de distribución de 5-meros, lo que en primera instancia nos podría servir para tener una idea de la distribución de *k-meros*. 
+
+(contar k meros, para modificar ciertos parámetros para el ensamble)
+
+Existen otras herramientas que podemos usar  para esta tarea, entre ellas:
+
+### 6.6.1 Kmergenie
+[kmergenie](http://kmergenie.bx.psu.edu/) estima la mejor longitud de *K-mero* para en ensamble *De Novo*. Dado un conjunto de lecturas, KmerGenie primero cálcula un histograma de abundancias para muchos valores de *K*. Entonces, para cada valor de *k*, predice el número de distintos *k-meros* genómicos en el dataset y entrega la longitud que maximiza este número. Las precicciones pueden ser aplicadas a ensambles single-k (Velvet, SOAPdenovo 2, ABySS, Minia). Sin embargo ensambladores multi-k se desempeñan mejor, generalmente, con los parámetros por defecto, usando múltiples, más que solo el mejor k predicho. 
+
+El bloque de código de kmergenie en colab, será difícil de aplicar puesto que utiliza instancias de R, lo cual no sé si dificulte la computación. Es posible llamar directamente el repositorio de github para que use esas dependencias. 
+
+> se puede aplicar el ensamble directamente con SPAdes o megahit con los valores por defecto.
+
+### 6.6.2 Velvetadvisor
+
+[Velvet advisor](https://dna.med.monash.edu/~torsten/velvet_advisor/) es una herramienta de cálculo de K-meros, en la cuál, basado en el total de lecturas arroja el valor de K que podría funcionar para el ensamble.
+En el caso de PR69 este valor podría ser 287 con 20 veces el *k-mer* coverage para mi ensamble (sugiere entre 10 y 30) 
+En el caso de CH606 podría ser de 147 con 20 veces el *k-mer* coverage para mi ensamble (sugiere entre 10 y 30) 
+
+Todos los valores de cobertura en Velvet son proporcionados en cobertura de *k-mer*, por ejemplo que tantas veces tiene que ser visto un *k-mero* entre las lecturas. El índice entre la cobertura de *k-mer* (Ck) y la cobertura estándar (amplitud de nucleótido) (C) es: 
+
+```math
+Ck = C * (L - k + 1) / L
+```
+Dónde `k` es la longitud de hash (pica, trocea, mezcla) y `L` la longitud de la lectura.
+La elección de k es un intercambio entre especificidad y sensibilidad. La experiencia muestra que Ck debería encontrarse por encima de 10 para empezar a tener buenos resultados, arriba de 20 se podría estar desperdiciando cobertura. Además, también por experiencia, las pruebas empíricas con diferentes valores de k no son costosas de correr.
+
+![velvet advisor ej](https://user-images.githubusercontent.com/13104654/217328508-8cc231bd-7e81-4355-9312-e773e6278f70.png)
+
+o bien correr las opciones velvetk y [velvet optimizer](https://github.com/tseemann/VelvetOptimiser) para elegir el mejor set.
+
+Además, en caso de utilizar velvet, advisor recomienda usar `-exp_cov auto ` y `-cov_cutoff auto ` en velvetg cuando se exploren los datos por primera vez. 
+
 # 7. Ensamble *De Novo*
 
 Una vez se ha evaluado el control de calidad de las secuencias, éstas se encuentran mezcladas y, como si de un rompecabezas se tratara, hay que armarlo en el orden correcto. El método de alineamiento utilizado para realizar esta tarea se denomina ensamble. Una parte esencial del ensamble es el alineamiento, que involucra disponer de una cantidad masiva de lecturas de DNA, buscando regiones que coincidan unas con otras (regiones de alineamiento) y eventualmente unir el rompecabezas.
@@ -1071,7 +1124,8 @@ Para el Ensamble *De novo*, dependiendo de la plataforma de secuenciación es po
 
 Los algoritmos de ensamble son la colección de procesos para construir, a partir de cantidades de lecturas de secuencias cortas,  secuencias de DNA original. Las secuencias son alineadas unas con otras y las partes que se superponen son combinadas en una secuencia estrecha. Actualmente, existen dos métodos de algoritmos de ensamble, que diferirán de acuerdo a la complejidad de los datos de secuenciación. 
 
-## 7.1 OLC (Overlap Layout Consensus) - Ensambladores gráficos de caracteres
+# 7.1 Métodos
+## 7.1.1 OLC (Overlap Layout Consensus) - Ensambladores gráficos de caracteres
 
 Este algoritmo reconoce intersectos entre combinaciones de lecturas para construir una gràfica de las conexiones entre las Lecturas de secuenciación. 
 Es una aproximación computacionalmente intensiva donde la complejidad de la computación incrementa con el total de los datos de secuenciación usados durante el ensamblaje. Debido a lo cual este algoritmo se vuelve inexcusable con los secuenciadores como Ilumina, donde millones de lecturas de secuencia corta son necesarias para el ensamble. 
@@ -1096,7 +1150,7 @@ Commins *et al.*, 2009
 ![Consenso](https://user-images.githubusercontent.com/13104654/216521977-9021f8ac-a19a-4ec4-9e85-ff382baa3324.png)
 
 
-## 7.2 Gráficos De Brujin 
+## 7.1.2 Gráficos De Brujin 
 
 Esencialmente, los ensambladores con gráficas De Brujin, rompen las lecturas en subsecuencias de longitud-*k* (*k-meros*), usándolos posteriormente para construir una gráfica. Los nodos de la gráfica representan *k-meros* en este caso, los bordes indican los *k-meros* vecinos que sobrelapan con k-1 base. Las lecturas no se representan como tal si no que se representan por paths. Esta estructura esta basada en la identidad precisa entre los *k-meros*. En la gráfica, los caminos divergentes son generados por errores de secuenciación que reducen la longitud de los *paths*. Los ensambladores usualmente monitorean la cobertura k-mer de cada nodo, lo que permite que el gráfico sea
 limpiado eliminando las puntas de baja cobertura. Por lo general, los ensambladores basados en gráficos De Brujin consumen mucha memoria, aunque se utilizan otros métodos para eficientarlo.
@@ -1113,20 +1167,33 @@ Existen algunas limitaciones inherentes al ensamble con dBg, como la selección 
 
 ![dBGErrorCorrect](https://user-images.githubusercontent.com/13104654/216524134-cacb944c-5fd1-4a42-920c-fea52911c0ce.png)
 
-
-
-kmergenie (contar k meros, para modificar ciertos parámetros para el ensamble)
+# 7.2 Ensambladores
+> Los siguientes ensambladores pueden aplicarse en el entorno de colaboratory (megahit ya hay reportes de aplicación, SPAdes no pero es un script de python)
 Puede usarse Megahit, velvet, spades
- 
+
+## 7.2.1 SPAdes
+
+## 7.2.2 Megahit
 [Megahit](https://github.com/voutcn/megahit#basic-usage)
 [Li *et al.*, 2015](https://pubmed.ncbi.nlm.nih.gov/25609793/)
  
  Básicamente, para el ensamble se usa el siguiente bloque de código para lecturas *Paired end* 
  
  ```Phyton
+#Probar lo siguiente para la dirección de las lecturas
+Lectura1=/content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz
+Lectura2=/content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz
+
+echo $Lectura1
+echo $Lectura2
+
 # !megahit -1 pe_1.fq -2 pe_2.fq -o out #Revisar como se realizará el output en colab
 !megahit -1 /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz -2 /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/ensamble/HA1AB3SS041.megahit_asm
- ```
+
+#en caso de que funcione la asignación de variables 
+!megahit -1 $Lectura1 -2 $Lectura2 -o ensamble_megahit_res
+
+```
  
  Los contigs pueden encontrarse en el directorio de salida (para colab tenemos que establecerlo) como `final.contigs.fa`
 
@@ -1141,8 +1208,17 @@ https://github.com/voutcn/megahit/wiki/An-example-of-real-assembly
  
 Algunos tips acerca del ensamble lo podemos encontrar [aquí](https://github.com/voutcn/megahit/wiki/Assembly-Tips)
 
+```bash
 
+%%bash
+head contigs.fa
+grep '>' ./directorio_salida/contigs.fa | wc -l 
+
+```
  
+## 7.2.3 ALGA 
+
+Las herramientas de ensamble basadas en las gráficas de De Brujin son las preferidas para lecturas cortas
  
  pipeline: TORMES https://github.com/nmquijada/tormes
 
