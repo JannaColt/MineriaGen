@@ -1181,11 +1181,19 @@ Puede usarse Megahit, velvet, spades
  
  ```Phyton
 #Probar lo siguiente para la dirección de las lecturas
-Lectura1=/content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz
-Lectura2=/content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz
+#En shell es posible asignar así
+#Lectura1=/content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz
+#Lectura2=/content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz
 
-echo $Lectura1
-echo $Lectura2
+#echo $Lectura1
+#echo $Lectura2
+
+#en python podría ser 
+lectura1 = path
+lectura2 = path
+
+print(lectura1)
+print(lectura2)
 
 # !megahit -1 pe_1.fq -2 pe_2.fq -o out #Revisar como se realizará el output en colab
 !megahit -1 /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz -2 /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o /content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/ensamble/HA1AB3SS041.megahit_asm
