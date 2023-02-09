@@ -1185,11 +1185,11 @@ Puede usarse Megahit, velvet, spades
  ```Phyton
 #Probar lo siguiente para la dirección de las lecturas
 #En shell es posible asignar así
-#Lectura1=/content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz
-#Lectura2=/content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz
+#!Lectura1=/content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R1_001.fastq.gz
+#!Lectura2=/content/drive/MyDrive/Analisis_Posdoc/PR69/salidas/HA1AB3SS04_S4_L1_R2_001.fastq.gz
 
-#echo $Lectura1
-#echo $Lectura2
+#!echo $Lectura1
+#!echo $Lectura2
 
 #en python podría ser 
 lectura1 = path
