@@ -1168,10 +1168,13 @@ Existen algunas limitaciones inherentes al ensamble con dBg, como la selección 
 ![dBGErrorCorrect](https://user-images.githubusercontent.com/13104654/216524134-cacb944c-5fd1-4a42-920c-fea52911c0ce.png)
 
 # 7.2 Ensambladores
-> Los siguientes ensambladores pueden aplicarse en el entorno de colaboratory (megahit ya hay reportes de aplicación, SPAdes no pero es un script de python)
+> Los siguientes ensambladores pueden aplicarse en el entorno de colaboratory (megahit ya hay reportes de aplicación, SPAdes no está reportado pero es un script de python)
 Puede usarse Megahit, velvet, spades
 
 ## 7.2.1 SPAdes
+
+
+
 
 ## 7.2.2 Megahit
 [Megahit](https://github.com/voutcn/megahit#basic-usage)
