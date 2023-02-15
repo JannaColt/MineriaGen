@@ -1235,7 +1235,19 @@ La superioridad de los ensambladores basados en dBG de acuerdo a tiempo y uso de
  
  
  
+ ## 7.2.4 Unicycler
  
+ ![image](https://user-images.githubusercontent.com/13104654/218617669-7611046b-f3e8-48d2-ad03-46a095c42621.png)
+
+ https://github.com/rrwick/Unicycler
+ 
+ 
+ ## 7.2.5 SGA
+ ## 7.2.6 Velvet
+ ## 7.2.7 Platanus
+ 
+ 
+ ## 7.2.8 MeDuSa
  
  
  pipeline: TORMES https://github.com/nmquijada/tormes
