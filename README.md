@@ -1249,6 +1249,31 @@ La superioridad de los ensambladores basados en dBG de acuerdo a tiempo y uso de
  
  ## 7.2.8 MeDuSa
  
+ # 8 ANOTACION
+ 
+ ## 8.1 Prokka
+ 
+ ### 8.1.1 Archivos de salida
+ Una vez que Prokka ha terminado de anotar, se examina cada uno de los archivos, lo cual se puede realizar utilizando comandos básicos de python.
+ Los archivos de salida son los siguientes:
+ 
+ Los archivos GFF y GBK contienen toda la información acerca de las características anotadas (en diferentes formatos).
+ El .txt contiene un resumen del número de características anotadas
+ El archivo .faa contiene las secuencias de proteínas de los genes anotados
+ El archivo .ffn contiene las secuencias nucleotídicas de los genes anotados
+ 
+ 
+### 8.1.2 Visualización de características anotadas usando JBrowse
+
+Una forma de visualizar el draft del genoma es utilizando herramientas como *JBrowse genome viewer*
+
+First, we have to make a JBrowse file. Then, we can view it within Galaxy.
+
+## 8.2 BUSCO 
+
+ [BUSCO](https://busco.ezlab.org/) es una herramienta con base en expectativas evolutivamente-informadas del contenido de genes de ortólogos single-copy casi-universales, la métrica BUSCO es complementaria a las métricas técnicas como N50.
+
+
  
  pipeline: TORMES https://github.com/nmquijada/tormes
 
