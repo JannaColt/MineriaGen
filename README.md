@@ -1242,12 +1242,27 @@ La superioridad de los ensambladores basados en dBG de acuerdo a tiempo y uso de
  https://github.com/rrwick/Unicycler
  
  
- ## 7.2.5 SGA
+ ## 7.2.5 IDBA
  ## 7.2.6 Velvet
- ## 7.2.7 Platanus
+ ## 7.2.7 PlatanusB
  
  
  ## 7.2.8 MeDuSa
+ 
+ # 7.3 Calidad de Ensamble
+ 
+ ## 7.3.1 QUAST
+ ## 7.3.2 CheckM
+ 
+ # 7.4 Metaensamblado
+ 
+ ## 7.4.1 MAC
+ ## 7.4.2 Metassembler
+ 
+ # 7.5 Mejoramiento del Ensamble
+ 
+ ## 7.6 
+ 
  
  # 8 ANOTACION
  
