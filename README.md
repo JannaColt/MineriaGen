@@ -1268,7 +1268,7 @@ La superioridad de los ensambladores basados en dBG de acuerdo a tiempo y uso de
  ## 7.5.4 Figbird
  
  
- # 8 ANOTACION
+ # 8. ANOTACION
  
  ## 8.1 Prokka
  
@@ -1292,6 +1292,7 @@ First, we have to make a JBrowse file. Then, we can view it within Galaxy.
 
  [BUSCO](https://busco.ezlab.org/) es una herramienta con base en expectativas evolutivamente-informadas del contenido de genes de ortólogos single-copy casi-universales, la métrica BUSCO es complementaria a las métricas técnicas como N50.
 
+# 9. MINERÍA GENÓMICA
 
  
  pipeline: TORMES https://github.com/nmquijada/tormes
