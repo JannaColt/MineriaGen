@@ -1261,7 +1261,11 @@ La superioridad de los ensambladores basados en dBG de acuerdo a tiempo y uso de
  
  # 7.5 Mejoramiento del Ensamble
  
- ## 7.6 
+ ## 7.5.1 SASpector
+ ## 7.5.1 Gap predict
+ ## 7.5.2 Gap closer
+ ## 7.5.3 Improvement assembly
+ ## 7.5.4 Figbird
  
  
  # 8 ANOTACION
