@@ -1168,7 +1168,7 @@ Existen algunas limitaciones inherentes al ensamble con dBg, como la selección 
 ![dBGErrorCorrect](https://user-images.githubusercontent.com/13104654/216524134-cacb944c-5fd1-4a42-920c-fea52911c0ce.png)
 
 # 7.2 Ensambladores
-> Los siguientes ensambladores pueden aplicarse en el entorno de colaboratory (megahit ya hay reportes de aplicación, SPAdes no está reportado pero es un script de python)
+> Los siguientes ensambladores pueden aplicarse en el entorno de colaboratory (megahit ya hay reportes de aplicación, SPAdes no está reportado pero es un script de python: ya se aplicaron en colaboratory, ALGA se realizó solo en WSL, Unicycler no ha funcionado en Colab; Abyss se instaló con conda y se realizó el ensamble sin problema, velvet se pudo instalar con conda pero no se compiló para Kmeros >31, Clover se instalo pero al parecer no funciona)
 Puede usarse Megahit, velvet, spades
 
 ## 7.2.1 SPAdes
@@ -1248,6 +1248,8 @@ La superioridad de los ensambladores basados en dBG de acuerdo a tiempo y uso de
  
  
  ## 7.2.8 MeDuSa
+ ## 7.2.9 Abyss
+ 
  
  # 7.3 Calidad de Ensamble
  
@@ -1292,7 +1294,12 @@ First, we have to make a JBrowse file. Then, we can view it within Galaxy.
 
  [BUSCO](https://busco.ezlab.org/) es una herramienta con base en expectativas evolutivamente-informadas del contenido de genes de ortólogos single-copy casi-universales, la métrica BUSCO es complementaria a las métricas técnicas como N50.
 
+## 8.3 PATRIC
+
 # 9. MINERÍA GENÓMICA
+
+## 9.1 AntiSMASH
+## 9.2 DeepBCG
 
  
  pipeline: TORMES https://github.com/nmquijada/tormes
