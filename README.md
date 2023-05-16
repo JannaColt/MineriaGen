@@ -755,6 +755,18 @@ CH606 Fastp bloque
 
 ```
 
+Ejemplos 
+```python
+!fastp -i /content/drive/MyDrive/PR69/HA1AB3SS04_S4_L1_R1_001.fastq.gz -I /content/drive/MyDrive/PR69/HA1AB3SS04_S4_L1_R2_001.fastq.gz -o /content/drive/MyDrive/PR69/Salidas/FastPR1filtrado.fastq.gz -O /content/drive/MyDrive/PR69/Salidas/FastPR2filtrado.fastq.gz -l 36 --cut_right --cut_front -c -m --merged_out /content/drive/MyDrive/PR69/Salidas/mergedPR69.fastq.gz --unpaired1 /content/drive/MyDrive/PR69/Salidas/Up1PR69.fastq.gz --unpaired2 /content/drive/MyDrive/PR69/Salidas/Up2PR69.fastq.gz --failed_out /content/drive/MyDrive/PR69/Salidas/failedPR69
+
+##Filtrado desduplicado
+!fastp -i /content/drive/MyDrive/PR69/Salidas/FastPR1filtrado.fastq.gz -I /content/drive/MyDrive/PR69/Salidas/FastPR2filtrado.fastq.gz -o /content/drive/MyDrive/PR69/Salidas/FastPR1filtradodesduplicado.fastq.gz -O /content/drive/MyDrive/PR69/Salidas/FastPR2filtradodesduplicado.fastq.gz -D --dedup
+
+
+!fastp -i /content/drive/MyDrive/PR69/Salidas/filtered_tile1_1.fastq -I /content/drive/MyDrive/PR69/Salidas/filtered_tile2_2.fastq -o /content/drive/MyDrive/PR69/Salidas/FastPR1filtrado_bbmap.fastq.gz -O /content/drive/MyDrive/PR69/Salidas/FastPR2filtrado_bbmap.fastq.gz -l 40 --length_limit 280 --cut_right --cut_front -c -y -p -m --merged_out /content/drive/MyDrive/PR69/Salidas/mergedPR69_bbmap.fastq.gz --unpaired1 /content/drive/MyDrive/PR69/Salidas/Up1PR69_bbmap.fastq.gz --unpaired2 /content/drive/MyDrive/PR69/Salidas/Up2PR69_bbmap.fastq.gz --failed_out /content/drive/MyDrive/PR69/Salidas/failedPR69_bbmap
+
+```
+
 
 # 6.2 Trimmomatic
 
