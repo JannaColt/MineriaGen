@@ -1220,6 +1220,11 @@ print(lectura2)
  
  Los contigs pueden encontrarse en el directorio de salida (para colab tenemos que establecerlo) como `final.contigs.fa`
 
+```python
+#Crear archivo zip desde carpeta de Colab
+!zip -r /content/Ensamble_Megahit.zip /content/Ensamble_Megahit
+```
+
 para observar la gráfica de contigs
 
 https://github.com/voutcn/megahit/wiki/An-example-of-real-assembly
