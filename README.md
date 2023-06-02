@@ -14,7 +14,7 @@ El protocolo de manera general:
 Antes que nada tenemos que instalar las herramientas que usaremos en la nube.
 Desde el cuaderno establecido primeramente se instalan todos los paquetes que se usarán y al final se monta el drive en el que se estará trabajando. Es preferible que esto se haga desde el inicio ya que cuando se instala un nuevo paquete se reinicia el entorno y lo que anteriormente llamamos ya no estará disponible (cada vez que se quiera hacer el procedimiento ya que el cuaderno/entorno se ha cerrado hay que instalar todo de nuevo y hacer el montaje del drive). 
 
-## 1. Instalación de Herramientas
+## 1. Instalacion de Herramientas
 
 Instalamos conda y lo llamamos para proceder con la instalación de los demás paquetes usando conda
 ```python
@@ -1180,13 +1180,23 @@ Existen algunas limitaciones inherentes al ensamble con dBg, como la selección 
 ![dBGErrorCorrect](https://user-images.githubusercontent.com/13104654/216524134-cacb944c-5fd1-4a42-920c-fea52911c0ce.png)
 
 # 7.2 Ensambladores
-> Los siguientes ensambladores pueden aplicarse en el entorno de colaboratory (megahit ya hay reportes de aplicación, SPAdes no está reportado pero es un script de python: ya se aplicaron en colaboratory, ALGA se realizó solo en WSL, Unicycler no ha funcionado en Colab; Abyss se instaló con conda y se realizó el ensamble sin problema, velvet se pudo instalar con conda pero no se compiló para Kmeros >31, Clover se instalo pero al parecer no funciona)
-Puede usarse Megahit, velvet, spades
+> **Resumen de ensambladores en colab**: Los siguientes ensambladores pueden aplicarse en el entorno de colaboratory:  ✅Megahit se aplica sin problemas, ✅SPAdes se aplica sin problemas en colab, ☑️ALGA se realizó solo en WSL, ❌Unicycler no ha funcionado en Colab ni en WSL (probablemente por que usa instancias de SPAdes y no lo puede llamar desde el path de colab, falta revisar como se puede definir el path); ✅Abyss se instaló con conda y se realizó el ensamble sin problema, ✅velvet se pudo instalar con conda pero no se compiló para Kmeros >31 (‼️revisar si es posible compilarlo para mayor número de K-meros), ❌Clover se instaló pero al parecer no funciona. ✅IDBA funcionó sin problema, aunque su desempeño no fue tan bueno. Revisar el ensamble con ‼️Grasshoper, ‼️SOAP de novo y ‼️PlatanusB  en colab. 
+
 
 ## 7.2.1 SPAdes
 
+La información de uso de [SPAdes](https://github.com/ablab/spades) se puede encontrar en el repositorio señalado. Así mismo el artículo que hace referencia a todos los pipelines que involucran el uso de SPAdes es el siguiente: [Prjibelski *et al.*, 2020](https://currentprotocols.onlinelibrary.wiley.com/doi/abs/10.1002/cpbi.102)
+ 
+ De manera similar a cualquier otro ensamblador, el objetivo de SPAdes es construir secuencias continuas y precisas (Contigs y Scaffolds) a partir de secuencias cortas. 
 
-
+SPAdes inicia el pipeline de ensamble construyendo una DBg a partir de las secuencias cortas. Después, la gráfica construida pasa por un procedimiento de simplificación que involucra la eliminación de filos (edges) erróneos. Tales filos son típicamente ocasionados por errores o artefactos de secuenciación. Una vez que la gráfica es simplificada, SPAdes mapea *short paired* y/o *long reads* de nuevo a la gráfica de ensamble usando esta información de alineamiento para realizar resolución repetida o scaffolding usando el módulo exSPAder, el cual construirá paths correctos y continuos para el genoma, siendo ensamblados en la gráfica de ensamble. 
+ El protocolo básico 1 es para aislamientos, mientras el protocolo 5 (que puede ser usado más adelante) esta detdicado al descubrimiento de cluster de genes biosintéticos putativos. 
+ 
+ En el caso de colab, primeramente se realiza la instalación pertinente usando conda, tal como en la sección de [instalación de paquetes](#1-instalacion-de-herramientas) en el apartado de [Instalacion de Megahit y SPAdes](#instalacion-de-megahit-y-spades).
+ 
+ La línea de código simplificada para hacer un primer ensamble en colab puede ser:
+ 
+ 
 
 ## 7.2.2 Megahit
 [Megahit](https://github.com/voutcn/megahit#basic-usage)
