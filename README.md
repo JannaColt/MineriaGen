@@ -1225,11 +1225,9 @@ Megahit utiliza gráficos succintos DB (SdBG), los cuales son una representació
 
 A pesar de las ventajas que estas gráficas representan, no es fácil su construcción por lo que megahit cuenta con un potente algoritmo paralelo para la construcción. Es decir puede explotar el paralelilsmo de las unidades GPU adaptando un algoritmo CX1 BWT
 
-Antes de la construcción de la gráfica, todos los (k+1)-meros de las lecturas input son clasificadas y contadas y solo los (k+1)meros que se presentan al menos d (2 por defecto) veces se mantienen como kmeros sólidos. Este método remueve muchos filos espurios, pero puede ser riesgoso para el ensamble metagenómico ya que especies de muy baja abundancia pueden haber sido secuenciadas a muy baja profundidad, por lo que también se introduce una estrategia denominada mercy-kmer para recuperar dichos filos.
+Antes de la construcción de la gráfica, todos los (k+1)-meros de las lecturas input son clasificadas y contadas y solo los (k+1)meros que se presentan al menos d (2 por defecto) veces se mantienen como kmeros sólidos. Este método remueve muchos filos espurios, pero puede ser riesgoso para el ensamble metagenómico ya que especies de muy baja abundancia pueden haber sido secuenciadas a muy baja profundidad, por lo que también se introduce una estrategia denominada mercy-kmer para recuperar dichos filos (estos mercy-kmers se agregan a la gráfica para mejorar la contiguidad). 
 
- Given two solid (k + 1)-mers x and y from the same read, where x has no outdegree and y has no indegree. If all (k + 1)-mers between x and y in that read are not solid, they will be added to the de Bruijn graph as mercy-kmers. Mercy-kmers strengthen the contiguity of low-depth regions. Without this approach, many authentic low-depth edges would be incorrectly identified as tips and removed.
-
-Based on SdBG, we implemented a multiple k-mer size strategy in MEGAHIT (Peng et al., 2012). The method iteratively builds multiple SdBGs from a small k to a large k. While a small k-mer size is favourable for filtering erroneous edges and filling gaps in low-coverage regions, a large k-mer size is useful for resolving repeats. In each iteration, MEGAHIT cleans potentially erroneous edges by removing tips, merging bubbles and removing low local coverage edges. The last approach is especially useful for metagenomics, which suffers from non-uniform sequencing depths. The overall workflow of MEGAHIT is shown in Figure 1. 
+Se implementa una estrategia de mútiples tamaños de kmeros, en el cual iterativamente se construyen múltiples SdBGs de un pequeño a un mayor k. Mientras los kmeros pequeños son favorables para filtrar filos erroneos y rellenar gaps en regiones de baja cobertura, un mayor k es útil para resolver las repeticiones. En cada iteración, se limpian los filos potencialmente erróneos removiendo puntas, uniendo burbujas y removiendo filos de baja cobertura local.
 
  En el caso de colab, primeramente se realiza la instalación pertinente usando conda, tal como en la sección de [instalación de paquetes](#1-instalacion-de-herramientas) en el apartado de [Instalacion de Megahit y SPAdes](#instalacion-de-megahit-y-spades).
  
@@ -1292,7 +1290,13 @@ grep '>' ./directorio_salida/contigs.fa | wc -l
 Las herramientas de ensamble basadas en las gráficas de De Brujin son las preferidas para lecturas cortas, debido a que después de la descomposición de las lecturas hay una pérdida de información. Pero también al alto índice de error asociado con nuevas tecnologías que pobremente corresponde con las gráficas de descomposición.
 La superioridad de los ensambladores basados en dBG de acuerdo a tiempo y uso de memoria es bien conocido, pero otros ensambladores se desempeñan mejor. Los algoritmos con la estrategia OLC dan contigs más confiables pero con problemas significativos de memoria y tiempo. [ALGA](http://alga.put.poznan.pl/) ha mostrado desempeñarse bien incluso en memoria y tiempo a pesar de ser de tipo OLC ([Swat *et al.*, 2021](https://academic.oup.com/bioinformatics/article/37/12/1644/6104855)).
  
+ En el caso de este ensamblador, solo fue posible instalarlo y utilizarlo en WSL:
  
+ 
+ ```bash
+ 
+ 
+ ```
  
  
  ## 7.2.4 Unicycler
