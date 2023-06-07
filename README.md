@@ -1190,17 +1190,49 @@ La información de uso de [SPAdes](https://github.com/ablab/spades) se puede enc
  De manera similar a cualquier otro ensamblador, el objetivo de SPAdes es construir secuencias continuas y precisas (Contigs y Scaffolds) a partir de secuencias cortas. 
 
 SPAdes inicia el pipeline de ensamble construyendo una DBg a partir de las secuencias cortas. Después, la gráfica construida pasa por un procedimiento de simplificación que involucra la eliminación de filos (edges) erróneos. Tales filos son típicamente ocasionados por errores o artefactos de secuenciación. Una vez que la gráfica es simplificada, SPAdes mapea *short paired* y/o *long reads* de nuevo a la gráfica de ensamble usando esta información de alineamiento para realizar resolución repetida o scaffolding usando el módulo exSPAder, el cual construirá paths correctos y continuos para el genoma, siendo ensamblados en la gráfica de ensamble. 
- El protocolo básico 1 es para aislamientos, mientras el protocolo 5 (que puede ser usado más adelante) esta detdicado al descubrimiento de cluster de genes biosintéticos putativos. 
+ El protocolo básico 1 es para aislamientos, mientras el protocolo 5 (que puede ser usado más adelante) esta dedicado al descubrimiento de cluster de genes biosintéticos putativos. 
  
  En el caso de colab, primeramente se realiza la instalación pertinente usando conda, tal como en la sección de [instalación de paquetes](#1-instalacion-de-herramientas) en el apartado de [Instalacion de Megahit y SPAdes](#instalacion-de-megahit-y-spades).
  
  La línea de código simplificada para hacer un primer ensamble en colab puede ser:
  
+ ```python
+ #prueba de instalación
+ ! spades.py --test
  
+ #abre la ayuda para las flags
+ ! spades.py -h
+ 
+ #ensamble de aislamientos
+ !spades.py -1 /content/drive/MyDrive/Analisis_Posdoc/PB016/Salidas_Pao/FastPR1_filtrada.fastq.gz -2 /content/drive/MyDrive/Analisis_Posdoc/PB016/Salidas_Pao/FastPR2_filtrada.fastq.gz -t 2 --isolate -o /content/drive/MyDrive/Analisis_Posdoc/PB016/Ensamble_Spades
+ ```
+ Se usa el flag -isolate para indicar que son aislamientos y que hay bastante profundidad de lo contrario el proceso se detiene (en el caso de la secuenciación de lamgebio si se omite el proceso no se detiene).
+ 
+SPAdes guarda puntos de control para reiniciar desde el último, por lo que para reiniciar se puede utilizar el siguiente bloque, no se debe olvidar colocar la carpeta de salida con la que ya se cuenta para que reanude tomando la información de esta:
+
+```python
+!spades.py --restart-from last -t 12 -o /content/drive/MyDrive/Analisis_Posdoc/PB16/Ensamble_SPAdes2 
+```
+En caso de que se requiera realizar el proceso en dos partes primero se puede usar el flag --only-error-correction, para que haga primero una corrección de errores, luego se puede usar el flag --only-assembler para que realice solo el ensamble y sea menos intensivo el uso de recursos. 
+
+Existen otros flags que se pueden considerar.
 
 ## 7.2.2 Megahit
 [Megahit](https://github.com/voutcn/megahit#basic-usage)
 [Li *et al.*, 2015](https://pubmed.ncbi.nlm.nih.gov/25609793/)
+
+Megahit utiliza gráficos succintos DB (SdBG), los cuales son una representación comprimida de los DBG. Una SdBG codifica una gráfica con m filos (edges) un 0(m) bits y soporta 0(1) tiempos transversales de un vórtice a sus vecinos. La implementación de Megahit adiciona un vector-bit de una longitud m para marcar la validez de cada filo (así mismo se respalda la remoción de filos eficientemente) y un véctor auxiliar de 2kt bits (donde k es el tamaño del k-mero y t es el número de vértices zero-indegree).
+
+A pesar de las ventajas que estas gráficas representan, no es fácil su construcción por lo que megahit cuenta con un potente algoritmo paralelo para la construcción. Es decir puede explotar el paralelilsmo de las unidades GPU 
+
+Despite its advantages, constructing a SdBG efficiently is non-trivial. MEGAHIT is rooted in a fast parallel algorithm for SdBG construction; the bottleneck is sorting a set of (k+1)-mers that are the edges of an SdBG in reverse lexicographical order of their length-k prefixes (k-mers). MEGAHIT exploits the parallelism of a graphics processing unit (GPU, CUDA-enabled) by adapting the recent BWT-construction algorithm CX1 (Liu et al., 2014), which takes advantage of a GPU to sort the suffices of a set of reads very efficiently. Limited by the relatively small size of GPU’s on-board memory, we adopt a block-wise strategy that partitions the k-mers according to their length-l prefix (l = 8 in our implementation). The k-mers in consecutive partitions that fit within the GPU memory are sorted together. Leveraging the parallelism of GPU, MEGAHIT speeds up the construction by 3–5 times over its CPU-only counterpart.
+
+Notably, sequencing error is problematic, because a single base of sequencing error leads to k erroneous k-mer singletons, which increases the memory consumption of MEGAHIT significantly. To cope with the problem, before graph construction, all (k + 1)-mers from the input reads are sorted and counted, and only (k + 1)-mers that appear at least d (2 by default) times are kept as solid-kmer. This method removes many spurious edges, but may be risky for metagenomics assembly since many low-abundance species may have been sequenced at very low depth. Thus we introduce a mercy-kmer strategy to recover these low-depth edges. Given two solid (k + 1)-mers x and y from the same read, where x has no outdegree and y has no indegree. If all (k + 1)-mers between x and y in that read are not solid, they will be added to the de Bruijn graph as mercy-kmers. Mercy-kmers strengthen the contiguity of low-depth regions. Without this approach, many authentic low-depth edges would be incorrectly identified as tips and removed.
+
+Based on SdBG, we implemented a multiple k-mer size strategy in MEGAHIT (Peng et al., 2012). The method iteratively builds multiple SdBGs from a small k to a large k. While a small k-mer size is favourable for filtering erroneous edges and filling gaps in low-coverage regions, a large k-mer size is useful for resolving repeats. In each iteration, MEGAHIT cleans potentially erroneous edges by removing tips, merging bubbles and removing low local coverage edges. The last approach is especially useful for metagenomics, which suffers from non-uniform sequencing depths. The overall workflow of MEGAHIT is shown in Figure 1. 
+
+ En el caso de colab, primeramente se realiza la instalación pertinente usando conda, tal como en la sección de [instalación de paquetes](#1-instalacion-de-herramientas) en el apartado de [Instalacion de Megahit y SPAdes](#instalacion-de-megahit-y-spades).
+ 
  
  Básicamente, para el ensamble se usa el siguiente bloque de código para lecturas *Paired end* 
  
@@ -1246,6 +1278,7 @@ https://github.com/voutcn/megahit/wiki/An-example-of-real-assembly
  
 Algunos tips acerca del ensamble lo podemos encontrar [aquí](https://github.com/voutcn/megahit/wiki/Assembly-Tips)
 
+Para observar el principio del archivo de contigs y contar el número aproximado podemos utilizar el siguiente bloque
 ```bash
 
 %%bash
@@ -1276,6 +1309,8 @@ La superioridad de los ensambladores basados en dBG de acuerdo a tiempo y uso de
  
  ## 7.2.8 MeDuSa
  ## 7.2.9 Abyss
+ 
+ ## 7.2.10 GrassHopper
  
  
  # 7.3 Calidad de Ensamble
