@@ -1221,13 +1221,15 @@ Existen otros flags que se pueden considerar.
 [Megahit](https://github.com/voutcn/megahit#basic-usage)
 [Li *et al.*, 2015](https://pubmed.ncbi.nlm.nih.gov/25609793/)
 
-Megahit utiliza gráficos succintos DB (SdBG), los cuales son una representación comprimida de los DBG. Una SdBG codifica una gráfica con m filos (edges) un 0(m) bits y soporta 0(1) tiempos transversales de un vórtice a sus vecinos. La implementación de Megahit adiciona un vector-bit de una longitud m para marcar la validez de cada filo (así mismo se respalda la remoción de filos eficientemente) y un véctor auxiliar de 2kt bits (donde k es el tamaño del k-mero y t es el número de vértices zero-indegree).
+Megahit utiliza gráficos succintos DB (SdBG), los cuales son una representación comprimida de los DBG. Una SdBG codifica una gráfica con m bordes o aristas (edges) un 0(m) bits y soporta 0(1) tiempos transversales de un vórtice a sus vecinos. La implementación de Megahit adiciona un vector-bit de una longitud m para marcar la validez de cada arista (así mismo se respalda la remoción de aristas eficientemente) y un véctor auxiliar de 2kt bits (donde k es el tamaño del k-mero y t es el número de vértices zero-indegree (o aislados)).
+
+ > En teoría de grafos, un vértice o nodo es la unidad fundamental de la que están formados los grafos. Un grafo no dirigido está formado por un conjunto de vértices y un conjunto de aristas (pares no ordenados de vértices), mientras que un grafo dirigido está compuesto por un conjunto de vértices y un conjunto de arcos (pares ordenados de vértices). En este contexto, los vértices son tratados como objetos indivisibles y sin propiedades, aunque puedan tener una estructura adicional dependiendo de la aplicación por la cual se usa el grafo; por ejemplo, una red semántica es un grafo en donde los vértices representan conceptos o clases de objetos. Los dos vértices que conforman una arista se llaman puntos finales ("endpoints", en inglés), y esa arista se dice que es incidente a los vértices. Un vértice w es adyacente a otro vértice v si el grafo contiene una arista (v,w) que los une. La vecindad de un vértice v es un grafo inducido del grafo, formado por todos los vértices adyacentes a v. 
 
 A pesar de las ventajas que estas gráficas representan, no es fácil su construcción por lo que megahit cuenta con un potente algoritmo paralelo para la construcción. Es decir puede explotar el paralelilsmo de las unidades GPU adaptando un algoritmo CX1 BWT
 
-Antes de la construcción de la gráfica, todos los (k+1)-meros de las lecturas input son clasificadas y contadas y solo los (k+1)meros que se presentan al menos d (2 por defecto) veces se mantienen como kmeros sólidos. Este método remueve muchos filos espurios, pero puede ser riesgoso para el ensamble metagenómico ya que especies de muy baja abundancia pueden haber sido secuenciadas a muy baja profundidad, por lo que también se introduce una estrategia denominada mercy-kmer para recuperar dichos filos (estos mercy-kmers se agregan a la gráfica para mejorar la contiguidad). 
+Antes de la construcción de la gráfica, todos los (k+1)-meros de las lecturas input son clasificadas y contadas y solo los (k+1)meros que se presentan al menos d (2 por defecto) veces se mantienen como kmeros sólidos. Este método remueve muchas aristas espurias, pero puede ser riesgoso para el ensamble metagenómico ya que especies de muy baja abundancia pueden haber sido secuenciadas a muy baja profundidad, por lo que también se introduce una estrategia denominada mercy-kmer para recuperar dichos bordes (estos mercy-kmers se agregan a la gráfica para mejorar la contiguidad). 
 
-Se implementa una estrategia de mútiples tamaños de kmeros, en el cual iterativamente se construyen múltiples SdBGs de un pequeño a un mayor k. Mientras los kmeros pequeños son favorables para filtrar filos erroneos y rellenar gaps en regiones de baja cobertura, un mayor k es útil para resolver las repeticiones. En cada iteración, se limpian los filos potencialmente erróneos removiendo puntas, uniendo burbujas y removiendo filos de baja cobertura local.
+Se implementa también una estrategia de mútiples tamaños de kmeros, en el cual iterativamente se construyen múltiples SdBGs de un pequeño a un mayor k. Mientras los kmeros pequeños son favorables para filtrar bordes erróneos y rellenar gaps en regiones de baja cobertura, un mayor k es útil para resolver las repeticiones. En cada iteración, se limpian los bordes potencialmente erróneos removiendo puntas, uniendo burbujas y removiendo bordes de baja cobertura local.
 
  En el caso de colab, primeramente se realiza la instalación pertinente usando conda, tal como en la sección de [instalación de paquetes](#1-instalacion-de-herramientas) en el apartado de [Instalacion de Megahit y SPAdes](#instalacion-de-megahit-y-spades).
  
@@ -1292,41 +1294,182 @@ La superioridad de los ensambladores basados en dBG de acuerdo a tiempo y uso de
  
  En el caso de este ensamblador, solo fue posible instalarlo y utilizarlo en WSL:
  
- 
+ ```bash 
+ #para instalar
+wget https://github.com/swacisko/ALGA/archive/refs/tags/1.0.3.tar.gz
+tar zvxf 1.0.3.tar.gz
+
+#nos movemos a la carpeta y compilamos
+cd 1.0.3
+mkdir build
+cd build
+cmake ..
+make
+
+## para ejecutar habría que usar ./ALGA
+
+ ```
+### 7.2.3.1 Corrección de errores con Musket
+> Esta herramienta recién se ha aplicado en WSL únicamente.
+
+Antes de ensamblar con ALGA se recomienda realizar corrección de errores con musket (se podría usar la corrección de SPAdes?)
+
+Para utilizar [musket](https://musket.sourceforge.net/homepage.html) se recomienda primero su instalación y compilación (ya que esta basado en C) 
+
+```bash
+#Instalación
+wget https://sourceforge.net/projects/musket/files/musket-1.1.tar.gz/download
+tar zvxf musket-1.1.tar.gz
+
+cd musket-1.1
+
+#compilación
+mkdir build
+cd build
+cmake ..
+make
+
+#para realizar la corrección de las lecturas
+musket -omulti corrected -inorder /mnt/c/Users/adria/Downloads/PR69_Ensamble/FastPR1filtradodesduplicado.fastq /mnt/c/Users/adria/Downloads/PR69_Ensamble/FastPR2filtradodesduplicado.fastq 
+
+```
+### 7.2.3.2 Corrección de errores con SparkEC 
+> Aún no se intenta su aplicación
+
+[SparkEC](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-022-05013-1) es una herramienta que trabaja en paralelo, capaz de arreglar aquellos errores generados durante el proceso de secuenciación. Su arquitectura es la misma utilizada por CloudEC (algoritmos MSA), sin embargo se eficientó su desempeño, disminuyendo el tiempo de ejecución y mejorando su utilidad evitando realizar ciertas tareas de forma manual.
+Para su instalación y aplicación podemos dirigirnos al [repositorio SparkEC](https://github.com/UDC-GAC/SparkEC)
+
+Las lecturas ya corregidas se pueden ensamblar con ALGA:
+
  ```bash
- 
- 
+ ./ALGA 
+##Primero hay que descomprimir los archivos (ALGA no trabaja con .gz), la descompresión se puede hacer en colab
+gzip -d /mnt/c/Users/adria/Downloads/PR69_Ensamble/FastPR1filtradodesduplicado.fastq.gz
+gzip -d /mnt/c/Users/adria/Downloads/PR69_Ensamble/FastPR2filtradodesduplicado.fastq.gz
+
+##luego ensamblamos
+
+./ALGA --file1=/mnt/c/Users/adria/Downloads/PR69_Ensamble/FastPR1filtradodesduplicado.fastq --file2=/mnt/c/Users/adria/Downloads/PR69_Ensamble/FastPR2filtradodesduplicado.fastq --threads=14 --output=PR69algacontigs
+
+
+##Agregar lo siguiente si se piensa que es de baja calidad (probablemente PR69 lo sea) y que 
+##aún tiene un alto número de errores
+
+--error-rate=0.02
+
  ```
  
  
  ## 7.2.4 Unicycler
  
- ![image](https://user-images.githubusercontent.com/13104654/218617669-7611046b-f3e8-48d2-ad03-46a095c42621.png)
+❗Dado que Unicycler utiliza módulos de SPAdes, hasta este momento no se ha logrado (en colab o en WSL) que sea posible ensamblar, quizá se deba al path en el que se encuentra SPAdes 💔 se continuará intentando. 
 
- https://github.com/rrwick/Unicycler
+ ![image](https://user-images.githubusercontent.com/13104654/218617669-7611046b-f3e8-48d2-ad03-46a095c42621.png)
+ [Unicycler](https://github.com/rrwick/Unicycler)
  
  
  ## 7.2.5 IDBA
+Para instalar en colab:
+
+```python
+#Instalar IDBA (ensamblador)
+!conda install -c bioconda IDBA -y 
+``` 
+Antes de comenzar a ensamblar hay que transformar las secuencias de formato fastq a formato fasta 
+
+```python
+#Convertir a formato fasta y filtrar N's
+!fq2fa --merge --filter /content/drive/MyDrive/PR69/Salidas/MH005_filtered1.fastq /content/drive/MyDrive/PR69/Salidas/MH005_filtered2.fastq /content/drive/MyDrive/PR69/Salidas/MH005_filtered12.fa 
+
+#Ensamble IDBA
+!idba_ud -r /content/drive/MyDrive/PR69/Salidas/MH005_filtered12.fa -o /content/drive/MyDrive/PR69/Ensamble_IDBA/_idba_output --mink 51 --maxk 231 --step 10
+```
+
+
  ## 7.2.6 Velvet
- ## 7.2.7 PlatanusB
  
+ Los primeros bloques permiten la instalación de velvet pero no permiten una modificación para k > 51
+ 
+ ```python
+ #Instalar Velvet (ensamblador)
+!conda install -c bioconda Velvet -y 
+ ```
+ 
+ Para ensamblar en colab 
+ ```python
+ !velveth /content/drive/MyDrive/PR69/PR69_velvet 51 -fastq -separate -shortPaired /content/drive/MyDrive/PR69/Salidas/FastPR1filtradodesduplicado.fastq.gz /content/drive/MyDrive/PR69/Salidas/FastPR2filtradodesduplicado.fastq.gz
+ ```
+ 
+ ❗❗ Buscar la manera de instalar y compilar modificando k 
+ 
+ ## 7.2.7 PlatanusB
+ https://github.com/rkajitani/Platanus_B
  
  ## 7.2.8 MeDuSa
  ## 7.2.9 Abyss
  
+ https://github.com/bcgsc/abyss#install-abyss-using-conda-recommended
+ 
  ## 7.2.10 GrassHopper
  
+ [Grasshopper](https://sourceforge.net/projects/grasshopper-assembler/)
  
  # 7.3 Calidad de Ensamble
  
  ## 7.3.1 QUAST
+
+```python
+#Instalación de Quast
+!conda install -c bioconda quast -y
+
+#  Correr Quast para ensambles 
+!quast.py -o /content/drive/MyDrive/PR69/Estadistica_Ensamble /content/drive/MyDrive/PR69/Ensamble_SPAdes/contigs.fasta /content/drive/MyDrive/PR69/Ensamble_Megahit4/final.contigs.fa ... <dir de cada ensamble>
+```
+
  ## 7.3.2 CheckM
  
  # 7.4 Metaensamblado
  
  ## 7.4.1 MAC
+ 
+ ### MAC
+Modelo algebraico de adyacencia y clasificación.
+Considerar que hay que tener instalado [Mummer](https://colab.research.google.com/drive/1qHrgEQ-rsSG5IxC_BcHzs15cRPEcwwXs#scrollTo=OdaJWjlE0rho&line=2&uniqifier=1) antes de iniciar 
+
+```python
+%cd /content/drive/MyDrive/Analisis_Posdoc/PR69/Ensamble/Metaensamble/MACassembler
+! ls
+## Clonamos el repositorio con código, en la carpeta MACassembler creada
+
+! git clone https://github.com/bioinfomaticsCSU/MAC.git
+# Hay que vincular el directorio donde clonamos el repositorio 
+sys.path.append('/content/drive/MyDrive/Analisis_Posdoc/PR69/Ensamble/Metaensamble/MACassembler/MAC')
+
+%cd /content/drive/MyDrive/Analisis_Posdoc/PR69/Ensamble/Metaensamble/MACassembler/MAC
+!ls
+
+##compilamos usando g++
+%%bash
+#g++ MAC2.0.cpp -o MAC2
+
+#o si no funciona 
+g++ -std=c++11 -std=gnu++11 MAC2.0.cpp -o MAC2.0
+
+#Para correr el programa: 
+#Primero hay que posicionarnos en el directorio que contiene las carpetas input, output y temp (ya que no admite path), (tomar en cuenta que la carpeta
+#input debe contener los contigs de referencia y query)
+#%cd /content/drive/MyDrive/Analisis_Posdoc/PR69/Ensamble/Metaensamble/MACassembler/MAC
+%%bash
+./MAC2.0 Mh4finalcontigs.fa SPdcontigs.fa
+```
+ 
  ## 7.4.2 Metassembler
  
+ #Primero instalamos las herramientas que usará metassembler (omitir si ya están instaladas)
+! conda install -c bioconda mummer -y
+! conda install -c bioconda bowtie2 -y
+! conda install -c bioconda samtools -y
+
  # 7.5 Mejoramiento del Ensamble
  
  ## 7.5.1 SASpector
