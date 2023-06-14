@@ -1339,6 +1339,8 @@ musket -omulti corrected -inorder /mnt/c/Users/adria/Downloads/PR69_Ensamble/Fas
 [SparkEC](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-022-05013-1) es una herramienta que trabaja en paralelo, capaz de arreglar aquellos errores generados durante el proceso de secuenciación. Su arquitectura es la misma utilizada por CloudEC (algoritmos MSA), sin embargo se eficientó su desempeño, disminuyendo el tiempo de ejecución y mejorando su utilidad evitando realizar ciertas tareas de forma manual.
 Para su instalación y aplicación podemos dirigirnos al [repositorio SparkEC](https://github.com/UDC-GAC/SparkEC)
 
+> Determinar si se puede aplicar el script en colab
+
 Las lecturas ya corregidas se pueden ensamblar con ALGA:
 
  ```bash
@@ -1406,13 +1408,40 @@ Antes de comenzar a ensamblar hay que transformar las secuencias de formato fast
  https://github.com/rkajitani/Platanus_B
  
  ## 7.2.8 MeDuSa
+ 
+ 
  ## 7.2.9 Abyss
  
- https://github.com/bcgsc/abyss#install-abyss-using-conda-recommended
+ [Repositorio Abyss](https://github.com/bcgsc/abyss#install-abyss-using-conda-recommended)
  
+ ```bash
+! conda install -c bioconda abyss
+ 
+ # para ambientes dedicados 
+! conda create -n abyss-env
+! conda activate abyss-env
+! conda install -c bioconda abyss
+ 
+ export TMPDIR=/var/tmp
+ 
+ abyss-pe k=25 name=test B=1G \
+	in='test-data/reads1.fastq test-data/reads2.fastq'
+  
+  
+  abyss-pe name=ecoli k=96 B=2G in='reads1.fa reads2.fa'
+
+
+abyss-pe k=96 B=2G name=ecoli lib='pea peb' mp='mpc mpd' \
+	pea='pea_1.fa pea_2.fa' peb='peb_1.fa peb_2.fa' \
+	mpc='mpc_1.fa mpc_2.fa' mpd='mpd_1.fa mpd_2.fa'
+
+ ```
+   Long-distance mate-pair libraries may be used to scaffold an assembly. Specify the names of the mate-pair libraries using the parameter mp. The scaffolds will be stored in the file ${name}-scaffolds.fa. Here's an example of assembling a data set with two paired-end libraries and two mate-pair libraries. Note that the names of the libraries (pea, peb, mpa, mpb) are arbitrary. 
+   
  ## 7.2.10 GrassHopper
  
  [Grasshopper](https://sourceforge.net/projects/grasshopper-assembler/)
+ [Swiercz *et al.*, 2018](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0202355)
  
  # 7.3 Calidad de Ensamble
  
@@ -1428,7 +1457,9 @@ Antes de comenzar a ensamblar hay que transformar las secuencias de formato fast
 
  ## 7.3.2 CheckM
  
+ 
  # 7.4 Metaensamblado
+ 
  
  ## 7.4.1 MAC
  
@@ -1508,9 +1539,18 @@ First, we have to make a JBrowse file. Then, we can view it within Galaxy.
 # 9. MINERÍA GENÓMICA
 
 ## 9.1 AntiSMASH
-## 9.2 DeepBCG
 
+
+## 9.2 DeepBGC
+
+
+## 9.3 e-DeepBGC
  
+## 9.4 DecRippter
+
+## 9.5 DeepRipp
+
+
  pipeline: TORMES https://github.com/nmquijada/tormes
 
 
