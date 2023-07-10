@@ -1288,7 +1288,7 @@ grep '>' ./directorio_salida/contigs.fa | wc -l
 ```
  
 ## 7.2.3 ALGA 
-
+.
 Las herramientas de ensamble basadas en las gráficas de De Brujin son las preferidas para lecturas cortas, debido a que después de la descomposición de las lecturas hay una pérdida de información. Pero también al alto índice de error asociado con nuevas tecnologías que pobremente corresponde con las gráficas de descomposición.
 La superioridad de los ensambladores basados en dBG de acuerdo a tiempo y uso de memoria es bien conocido, pero otros ensambladores se desempeñan mejor. Los algoritmos con la estrategia OLC dan contigs más confiables pero con problemas significativos de memoria y tiempo. [ALGA](http://alga.put.poznan.pl/) ha mostrado desempeñarse bien incluso en memoria y tiempo a pesar de ser de tipo OLC ([Swat *et al.*, 2021](https://academic.oup.com/bioinformatics/article/37/12/1644/6104855)).
  
