@@ -1522,8 +1522,25 @@ g++ -std=c++11 -std=gnu++11 MAC2.0.cpp -o MAC2.0
  El .txt contiene un resumen del número de características anotadas
  El archivo .faa contiene las secuencias de proteínas de los genes anotados
  El archivo .ffn contiene las secuencias nucleotídicas de los genes anotados
- 
- 
+
+ ```bash
+#Instalación de Prokka
+# !conda install -c bioconda prokka -y 
+!conda install -c conda-forge -c bioconda -c defaults prokka
+```
+ ```bash
+!prokka
+```
+
+ ```bash
+#Correr Prokka 
+!prokka --prefix PR69Prokka --locustag PR69 /content/drive/MyDrive/PR69/Ensamble_SPAdes_MH005_fd/contigs.fasta
+``` 
+ ```bash
+#Crear archivo zip desde carpeta de Colab
+!zip -r /content/Prokka_PR69_mejor.zip /content/PR69Prokka
+```
+
 ### 8.1.2 Visualización de características anotadas usando JBrowse
 
 Una forma de visualizar el draft del genoma es utilizando herramientas como *JBrowse genome viewer*
@@ -1533,6 +1550,28 @@ First, we have to make a JBrowse file. Then, we can view it within Galaxy.
 ## 8.2 BUSCO 
 
  [BUSCO](https://busco.ezlab.org/) es una herramienta con base en expectativas evolutivamente-informadas del contenido de genes de ortólogos single-copy casi-universales, la métrica BUSCO es complementaria a las métricas técnicas como N50.
+
+ ```bash
+! git clone https://gitlab.com/ezlab/busco.git
+ ```
+
+ ```bash
+%cd /content/drive/MyDrive/PR69/Busco/busco
+! python3 setup.py install
+ ```
+
+ ```bash
+pd.__version__ 
+ ```
+
+ ```bash
+sys.path.append('/content/drive/MyDrive/PR69/Busco')
+ ```
+
+ ```bash
+%cd /content/drive/MyDrive/PR69/Busco/busco/src
+! busco -i /content/drive/MyDrive/PR69/Ensamble_SPAdes_MH005_fd/contigs.fasta -l bacteria_odb10 -o anotbusco_PR69 -m genome
+ ```
 
 ## 8.3 PATRIC
 
