@@ -1551,6 +1551,12 @@ First, we have to make a JBrowse file. Then, we can view it within Galaxy.
 
  [BUSCO](https://busco.ezlab.org/) es una herramienta con base en expectativas evolutivamente-informadas del contenido de genes de ortólogos single-copy casi-universales, la métrica BUSCO es complementaria a las métricas técnicas como N50.
 
+```bash
+%cd /content/drive/MyDrive/Busco 
+! ls
+```
+
+
  ```bash
 ! git clone https://gitlab.com/ezlab/busco.git
  ```
