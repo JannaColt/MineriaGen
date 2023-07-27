@@ -932,6 +932,11 @@ Posiblemente en google colab
 ```
 > Se tendría que tomar como input el archivo de salida del último paso del preprocesamiento, que podría ser el de salida de cutadap.
 
+## 6.3.3 Trim-Galore
+Para instalar se puede realizar con conda
+```bash
+conda install -c bioconda trim-galore
+```
 
 
 :alien: 👽 :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien: :alien:
