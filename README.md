@@ -1459,21 +1459,63 @@ La identificación y separación de estas repeticiones colapsadas ha sido estudi
 
 El rompecabezas del ensamble casi siempre contiene muchas piezas que son similares en color y forma (repeticiones) y sin tener una idea de como se verá al final. Los errores de ensamble pueden pensarse como piezas que son forzadas a unirse pero que no encajan al final. Se puede definir el termino encajar en el sentido categórico y probabilístico, así, en el caso categórico, los errores de ensamble pueden ser identificados por secuencias que no pueden ser colocadas en el genoma, estas representan secuencias singletones, pares cuya colocación es inconsistente con la librería o sobrelapes cuya composición difiere más de lo que puede ser explicado por errores de secuenciación. En el sentido probabilístico, los errores de ensamble corresponden a regiones del genoma donde el tejido del shotgun es inconsistente con el proceso aleatorio usado para generar  ese secuenciado. Por ejemplo las secciones de un ensamble donde las lecturas se “amontonan” más de lo esperado puede indicar el colapso (coensamblaje) de múltiples copias de una repetición genómica. Este ajuste probabilístico conduce a un elegante formulación del ensamble del genoma como la tarea de identificar un mosaico de lecturas que mejor coincidan con las propiedades del proceso aleatorio utilizado para generar los datos.
 
+El aseguramiento de la calidad aún es más difícil debido al avance continuo de las herramientas de secuenciación, así que cada vez que los datos cambian, representa un nuevo problema para la programación
+
+En ausencia de un genoma de referencia de alta calidad, los nuevos ensambles casi siempre se evaluan dependiendo del número de scaffolds y contigs requeridos para representar el genoma, la proporción de lecturas que puede ser ensamblada, la longitud absoluta de los contigs y scaffolds y la longitud de los contigs y scaffolds relativos al tamaño del genoma.
+
+## Criterios 3C
+### Contiguidad
+La métrica más comúnmente utilizada es el 💡 **N50**, si todos los contigs en un ensamble se ordenan por longitud, esta métrica es la longitud del contig  más pequeño al 50% de las bases ensambladas.
+
+![Screenshot 2023-08-07 224846](https://github.com/JannaColt/MineriaGen/assets/13104654/045c49a6-cb37-4aef-9f29-ba80db438387)
+
+🔴⚠️ Sólo indica continuidad de bases.
+🔴⚠️ Fácil de manipular, no es una medida de precisión del ensamble, debe usarse con precaución.
+🔴⚠️ No es significativa para diferentes tamaños de ensamble (no comparable entre especies incluso en el mismo genoma)
+🔴⚠️ Sesgado si se excluyen secuencias cortas (lo que casi siempre ocurre)
 
 
+Herramientas bien establecidas pueden producir ensambles con ⬆️N50, sin embargo, esto puede alcanzarse removiendo k-meros repetidos de bajo coverage (Sacrificando complejidad por contiguidad). Uno puede extender el N50 pero puede carecer de genes conservados.
+
+**NG50** por otro lado, de forma similar a N50 corresponde al contig más pequeño pero al 50% del tamaño del genoma conocido o estimado, por lo que permite comparaciones significativas entre diferentes ensambles. Se pueden filtrar contigs pequeños sin afectar el valor.
+
+Por su parte **L50** corresponde al conteo de contigs en el 50% del ensamble
+ Si graficamos la curva Nx, nos daría una mejor visualización ded la continuidad.
+
+### **C**ompletness
+- Revisando el tamaño del ensamble
+- Nucleótidos conocidos vs desconocidos (esperamos un ensamble sin N's)
+- Genes "núcleo" Aseguramiento cuantitativo del genoma ensamblado basado en expectativas evolutivas informadas de  contenidos de genes casi universaldes de ortólogos de copia única. 
+- Contenido de k-meros ensamblados
+- Mapeo de lecturas y *coverage* de ensamblado
+
+(podemos usar BUSCO y  Merqury: reference-free quality, completeness, and phasing assessment for genome assemblies)
+
+###Correctness (Fidelidad)
+Errores que se presentan en el ensamble, proporción del ensamble que está libre de errores como:
+
+✴️ Indels / SNPs
+✴️ Mis-joins
+✴️ Compresiones repetidas
+✴️ Duplicados innecesarios
+✴️ Rearreglos.
+Pero se realiza contra una referencia, y a veces no contamos con alguna adecuada. Para ello podemos usar dotplots : 
+MUMmer dotplot
+Chromeister
 
 Algunos pueden utilizar las siguientes estrategias para validar:
-BUSCO/CEGMA para la búsqueda de los genes núcleo
-Mapear lecturas RNASeq y unigenes derivados del ensamble de trasncriptoma
-Mapear proteínas de especies cercanamente relacionadas    
-Mapear lecturas constituyentes que fueron usadas para formar el ensamble y revisar su profundidad y rastreabilidad
-Distribución de NGx (10, 50, 70, 90, etc)
-Distribución de longitud de contigs
-Revisar la presencia de contigs duplicados y otros contaminantes (la forma más fácil es subir el genoma a NCBI)
-Bases constituyentes del ensamble
+▶️ BUSCO/CEGMA para la búsqueda de los genes núcleo
+▶️ Mapear lecturas RNASeq y unigenes derivados del ensamble de trasncriptoma
+▶️ Mapear proteínas de especies cercanamente relacionadas    
+▶️ Mapear lecturas constituyentes que fueron usadas para formar el ensamble y revisar su profundidad y rastreabilidad
+▶️ Distribución de NGx (10, 50, 70, 90, etc)
+▶️ Distribución de longitud de contigs
+▶️ Revisar la presencia de contigs duplicados y otros contaminantes (la forma más fácil es subir el genoma a NCBI)
+▶️ Bases constituyentes del ensamble
 
 [Artículo: *De Novo* Genome assembly: what every biologist should know](http://genetica.uab.cat/makingsensegenomicsdata/MakingSenseGenomicData_Reading.pdf)
- 
+ https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2397507/pdf/gb-2008-9-3-r55.pdf
+
  ## 7.3.1 QUAST
 
 ```python
