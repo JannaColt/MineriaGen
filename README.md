@@ -1449,6 +1449,30 @@ abyss-pe k=96 B=2G name=ecoli lib='pea peb' mp='mpc mpd' \
  [Swiercz *et al.*, 2018](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0202355)
  
  # 7.3 Calidad de Ensamble
+
+**El problema de la validación del genoma**
+Aunque se sabe que es muy posible que haya errores en un ensamble de genoma, existe una falta de programas que detecten automáticamente dichos errores o que asignen un *score* de confianza en diferentes regiones del mismo. 
+Este problema es particularmente importante ya que la aplicación de las tecnologías de secuencia pararlelas, casi siempre generan lecturas cortas y así, incrementan el riesgo de un ensamblado incorrecto (*misassembly*).
+Un gran número de estos errores son causados por repeticiones. Los ensambladores pueden ser confundidos por pseudo-sobrelapes entre estas lecturas repetidas (de diferentes copias de repeticiones casi idénticas) y colocarlas juntas. Típicamente pueden inducirse dos tipos de *misassemblies*: el colapso de repeticiones y el rearreglo a gran escala.
+
+La identificación y separación de estas repeticiones colapsadas ha sido estudiada como un problema computacionalmente independiente **el problema de separación de repeticiones** y se han propuesto diversas estrategias combinatoriales y probabilísticas para resolverlo, además el uso de lecturas pareadas puede mejorar esta separación.
+
+El rompecabezas del ensamble casi siempre contiene muchas piezas que son similares en color y forma (repeticiones) y sin tener una idea de como se verá al final. Los errores de ensamble pueden pensarse como piezas que son forzadas a unirse pero que no encajan al final. Se puede definir el termino encajar en el sentido categórico y probabilístico, así, en el caso categórico, los errores de ensamble pueden ser identificados por secuencias que no pueden ser colocadas en el genoma, estas representan secuencias singletones, pares cuya colocación es inconsistente con la librería o sobrelapes cuya composición difiere más de lo que puede ser explicado por errores de secuenciación. En el sentido probabilístico, los errores de ensamble corresponden a regiones del genoma donde el tejido del shotgun es inconsistente con el proceso aleatorio usado para generar  ese secuenciado. Por ejemplo las secciones de un ensamble donde las lecturas se “amontonan” más de lo esperado puede indicar el colapso (coensamblaje) de múltiples copias de una repetición genómica. Este ajuste probabilístico conduce a un elegante formulación del ensamble del genoma como la tarea de identificar un mosaico de lecturas que mejor coincidan con las propiedades del proceso aleatorio utilizado para generar los datos.
+
+
+
+
+Algunos pueden utilizar las siguientes estrategias para validar:
+BUSCO/CEGMA para la búsqueda de los genes núcleo
+Mapear lecturas RNASeq y unigenes derivados del ensamble de trasncriptoma
+Mapear proteínas de especies cercanamente relacionadas    
+Mapear lecturas constituyentes que fueron usadas para formar el ensamble y revisar su profundidad y rastreabilidad
+Distribución de NGx (10, 50, 70, 90, etc)
+Distribución de longitud de contigs
+Revisar la presencia de contigs duplicados y otros contaminantes (la forma más fácil es subir el genoma a NCBI)
+Bases constituyentes del ensamble
+
+[Artículo: *De Novo* Genome assembly: what every biologist should know](http://genetica.uab.cat/makingsensegenomicsdata/MakingSenseGenomicData_Reading.pdf)
  
  ## 7.3.1 QUAST
 
