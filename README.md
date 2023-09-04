@@ -1651,20 +1651,51 @@ sys.path.append('/content/drive/MyDrive/PR69/Busco')
  ```
 
 ## 8.3 PATRIC
+[Web service](https://www.bv-brc.org/)
 
-# 9. MINERÍA GENÓMICA
+# 9. ANOTACIÓN FUNCIONAL
 
-## 9.1 AntiSMASH
+## 9.1 EggNOG Mapper
+
+[Artículo](https://academic.oup.com/mbe/article/38/12/5825/6379734)
+[Servicio online](http://eggnog-mapper.embl.de/)
+[Repositorio](https://github.com/eggnogdb/eggnog-mapper)
+
+![Diagrama de *workflow*](https://github.com/JannaColt/MineriaGen/assets/13104654/96932911-9cbe-4a7d-9480-286736727738)
+
+## FunMappOne 
+
+[Artículo](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-2639-2)
+[Repositorio](https://github.com/Greco-Lab/FunMappOne)
+
+## 9.2 MicrobeAnnotator
+
+[Artículo](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03940-5)
+[Repositorio]([https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03940-5)](https://github.com/cruizperez/MicrobeAnnotator)
+
+## 9.3 Deep Learning
+[Artículo](https://pubmed.ncbi.nlm.nih.gov/37010293/)
+
+![DL-functionalAnnotation](https://github.com/JannaColt/MineriaGen/assets/13104654/6535dca0-8913-44b1-9b54-dbb45b829bc6)
+
+## 9.4 MicroScope
+
+[Artículo](https://academic.oup.com/nar/article/48/D1/D579/5606622)
+[Plataforma](https://mage.genoscope.cns.fr/microscope/home/index.php)
+
+# 10. MINERÍA GENÓMICA
+
+## 10.1 AntiSMASH
 
 
-## 9.2 DeepBGC
+## 10.2 DeepBGC
 
 
-## 9.3 e-DeepBGC
+## 10.3 e-DeepBGC
  
-## 9.4 DecRippter
+## 10.4 DecRippter
 
-## 9.5 DeepRipp
+## 10.5 DeepRipp
 
 
  pipeline: TORMES https://github.com/nmquijada/tormes
