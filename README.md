@@ -1658,7 +1658,9 @@ sys.path.append('/content/drive/MyDrive/PR69/Busco')
 ## 9.1 EggNOG Mapper
 
 [Artículo](https://academic.oup.com/mbe/article/38/12/5825/6379734)
+
 [Servicio online](http://eggnog-mapper.embl.de/)
+
 [Repositorio](https://github.com/eggnogdb/eggnog-mapper)
 
 ![Diagrama de *workflow*](https://github.com/JannaColt/MineriaGen/assets/13104654/96932911-9cbe-4a7d-9480-286736727738)
@@ -1666,12 +1668,14 @@ sys.path.append('/content/drive/MyDrive/PR69/Busco')
 ## FunMappOne 
 
 [Artículo](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-2639-2)
+
 [Repositorio](https://github.com/Greco-Lab/FunMappOne)
 
 ## 9.2 MicrobeAnnotator
 
 [Artículo](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03940-5)
-[Repositorio]([https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03940-5)](https://github.com/cruizperez/MicrobeAnnotator)
+
+[Repositorio](https://github.com/cruizperez/MicrobeAnnotator)
 
 ## 9.3 Deep Learning
 [Artículo](https://pubmed.ncbi.nlm.nih.gov/37010293/)
@@ -1687,16 +1691,47 @@ sys.path.append('/content/drive/MyDrive/PR69/Busco')
 
 ## 10.1 AntiSMASH
 
+[Artículo](https://academic.oup.com/nar/article/51/W1/W46/7151336)
+
+[Web Tool](https://antismash.secondarymetabolites.org/#!/start)
 
 ## 10.2 DeepBGC
 
+[Artículo](https://academic.oup.com/nar/article/47/18/e110/5545735)
+
+[Repositorio](https://github.com/Merck/deepbgc)
 
 ## 10.3 e-DeepBGC
- 
+
+[Artículo](https://www.sciencedirect.com/science/article/abs/pii/S0022283622001772)
+
+ []()
 ## 10.4 DecRippter
+
+[Artículo](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.3001026)
+
+[Repositorio](https://github.com/Alexamk/decRiPPter)
 
 ## 10.5 DeepRipp
 
+[Artículo](https://www.pnas.org/doi/10.1073/pnas.1901493116)
+
+[Repositorio](https://github.com/magarveylab/NLPPrecursor)
+
+## 10.6 Otros
+
+[Deep Self supervised Learning](https://www.biorxiv.org/content/10.1101/2022.07.22.500861v1.full.pdf)
+
+
+# 11. ANÁLISIS FILOGENÉTICOS
+
+## 11.1 PhaME 
+
+[Artículo](https://www.nature.com/articles/s41598-020-58356-1)
+
+[Repositorio](https://github.com/LANL-Bioinformatics/PhaME)
+
+[más...](https://phame.readthedocs.io/en/latest/)
 
  pipeline: TORMES https://github.com/nmquijada/tormes
 
