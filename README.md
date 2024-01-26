@@ -130,7 +130,7 @@ mamba env create --quiet --prefix ./envs/prokkaroary -f envs/prokkaroary_env.yml
 !conda install -c bioconda megahit
 
 #para instalar SPAdes
-!conda install -c bioconda spades
+!conda install -c bioconda spades=3.15.5 -y
 ```
 
 ## Instalacion de Quast
@@ -1451,8 +1451,11 @@ abyss-pe k=96 B=2G name=ecoli lib='pea peb' mp='mpc mpd' \
  # 7.3 Calidad de Ensamble
 
 **El problema de la validación del genoma**
+
 Aunque se sabe que es muy posible que haya errores en un ensamble de genoma, existe una falta de programas que detecten automáticamente dichos errores o que asignen un *score* de confianza en diferentes regiones del mismo. 
-Este problema es particularmente importante ya que la aplicación de las tecnologías de secuencia pararlelas, casi siempre generan lecturas cortas y así, incrementan el riesgo de un ensamblado incorrecto (*misassembly*).
+
+Este problema es particularmente importante ya que la aplicación de las tecnologías de secuencia paralelas, casi siempre generan lecturas cortas y así, incrementan el riesgo de un ensamblado incorrecto (*misassembly*).
+
 Un gran número de estos errores son causados por repeticiones. Los ensambladores pueden ser confundidos por pseudo-sobrelapes entre estas lecturas repetidas (de diferentes copias de repeticiones casi idénticas) y colocarlas juntas. Típicamente pueden inducirse dos tipos de *misassemblies*: el colapso de repeticiones y el rearreglo a gran escala.
 
 La identificación y separación de estas repeticiones colapsadas ha sido estudiada como un problema computacionalmente independiente **el problema de separación de repeticiones** y se han propuesto diversas estrategias combinatoriales y probabilísticas para resolverlo, además el uso de lecturas pareadas puede mejorar esta separación.
@@ -1470,8 +1473,11 @@ La métrica más comúnmente utilizada es el 💡 **N50**, si todos los contigs 
 ![Screenshot 2023-08-07 224846](https://github.com/JannaColt/MineriaGen/assets/13104654/045c49a6-cb37-4aef-9f29-ba80db438387)
 
 🔴⚠️ Sólo indica continuidad de bases.
+
 🔴⚠️ Fácil de manipular, no es una medida de precisión del ensamble, debe usarse con precaución.
+
 🔴⚠️ No es significativa para diferentes tamaños de ensamble (no comparable entre especies incluso en el mismo genoma)
+
 🔴⚠️ Sesgado si se excluyen secuencias cortas (lo que casi siempre ocurre)
 
 
@@ -1491,26 +1497,38 @@ Por su parte **L50** corresponde al conteo de contigs en el 50% del ensamble
 
 (podemos usar BUSCO y  Merqury: reference-free quality, completeness, and phasing assessment for genome assemblies)
 
-###Correctness (Fidelidad)
+### Correctness (Fidelidad)
 Errores que se presentan en el ensamble, proporción del ensamble que está libre de errores como:
 
 ✴️ Indels / SNPs
+
 ✴️ Mis-joins
+
 ✴️ Compresiones repetidas
+
 ✴️ Duplicados innecesarios
+
 ✴️ Rearreglos.
+
 Pero se realiza contra una referencia, y a veces no contamos con alguna adecuada. Para ello podemos usar dotplots : 
 MUMmer dotplot
 Chromeister
 
 Algunos pueden utilizar las siguientes estrategias para validar:
 ▶️ BUSCO/CEGMA para la búsqueda de los genes núcleo
+
 ▶️ Mapear lecturas RNASeq y unigenes derivados del ensamble de trasncriptoma
+
 ▶️ Mapear proteínas de especies cercanamente relacionadas    
+
 ▶️ Mapear lecturas constituyentes que fueron usadas para formar el ensamble y revisar su profundidad y rastreabilidad
+
 ▶️ Distribución de NGx (10, 50, 70, 90, etc)
+
 ▶️ Distribución de longitud de contigs
+
 ▶️ Revisar la presencia de contigs duplicados y otros contaminantes (la forma más fácil es subir el genoma a NCBI)
+
 ▶️ Bases constituyentes del ensamble
 
 [Artículo: *De Novo* Genome assembly: what every biologist should know](http://genetica.uab.cat/makingsensegenomicsdata/MakingSenseGenomicData_Reading.pdf)
@@ -1528,6 +1546,99 @@ Algunos pueden utilizar las siguientes estrategias para validar:
 
  ## 7.3.2 CheckM
  
+
+## 7.3.3 BUSCO 
+
+ [BUSCO](https://busco.ezlab.org/) es una herramienta con base en expectativas evolutivamente-informadas del contenido de genes ortólogos single-copy casi-universales, la métrica BUSCO es complementaria a las métricas técnicas como N50.
+
+Primero instalamos con conda tratando de que se instalen todos los programas por defecto que se necesiten (esta instalación no permite que se use busco).
+```bash
+! conda install -c conda-forge -c bioconda -c defaults busco -y -vv
+```
+
+Después hay que hacer lo siguiente.
+
+```bash
+%cd /content/drive/MyDrive/Busco 
+! ls
+```
+
+
+ ```bash
+! git clone https://gitlab.com/ezlab/busco.git
+ ```
+
+ ```bash
+%cd /content/drive/MyDrive/PR69/Busco/busco
+! python3 setup.py install
+ ```
+
+ ```bash
+pd.__version__ 
+ ```
+
+ ```bash
+sys.path.append('/content/drive/MyDrive/PR69/Busco')
+ ```
+
+ ```bash
+%cd /content/drive/MyDrive/PR69/Busco/busco/src
+! busco -i /content/drive/MyDrive/PR69/Ensamble_SPAdes_MH005_fd/contigs.fasta -l bacteria_odb10 -o anotbusco_PR69 -m genome
+ ```
+
+> [!IMPORTANT]
+> Una vez que se ha clonado BUSCO en el drive, y que no se ha borrado, podemos omitir el paso de clonado de repositorio y únicamente hacer los pasos de antes y después.
+
+> [!TIP]
+> :bulb: 🔆 Para los que están usando la cuenta del laboratorio, el repositorio clonado de BUSCO se encuentra en el path: `/content/drive/MyDrive/Cynthia/CH619_CC/Anotacion/BUSCO`
+
+Si resulta complicado, se puede realizar la anotación usando el web service de [Galaxy](https://usegalaxy.org/)
+
+### 7.3.3.1 Configuración en Galaxy
+
+1. En el panel de herramientas (primer panel a la izquierda), buscar **Genomic Analysis** -> **Annotation** -> **BUSCO**
+2. En el panel central de parámetros de herramientas subir el ensamble del genoma (este son los contig en formato FASTA) 
+   
+![image](https://github.com/JannaColt/MineriaGen/assets/13104654/93d5fe5e-96d9-4a49-9000-297c3a0aa1af)
+
+luego en los parámetros seleccionar 
+:red_circle: en **Lineage data source** -> **Download lineage data** 
+:red_circle: en **Mode** -> **Genome assembly (DNA)**
+:red_circle: en **Generate miniprot output** se puede dejar a su elección, si se activa tendremos un output tabular con los genes anotados y su posición (gff)
+:red_circle: en  **Use Augustus instead of Metaeuk** seleccionamos Augustus, ya que metaeuk es exclusivo de eucariotas.
+:red_circle: en **Auto-detect or select lineage?** seleccionamos auto-detect, si sabemos el linaje podemos colocarlo aquí
+
+3. asdads   
+
+Que me dice el análisis de busco? 
+
+### 7.3.3.2 Archivos de salida en Colaboratory
+
+![image](https://github.com/JannaColt/MineriaGen/assets/13104654/45d1a0b8-85ed-4757-a95b-e79b8e0ca0ac)
+
+
+![image](https://github.com/JannaColt/MineriaGen/assets/13104654/c4a0cbc3-5bfe-4cde-9566-97cc85a70832)
+
+
+### 7.3.3.3 Archivos de salida en Galaxy
+
+
+
+> [!NOTE]
+> para definir un path ya que colab no acepta export
+en entorno normal de linux-unix
+```bash
+export PATH="/path/to/AUGUSTUS/augustus-3.2.3/bin:$PATH"
+export PATH="/path/to/AUGUSTUS/augustus-3.2.3/scripts:$PATH"
+export AUGUSTUS_CONFIG_PATH="/path/to/AUGUSTUS/augustus-3.2.3/config/"
+```
+Probablemente esto sirva:
+```bash
+! echo $PYTHONPATH
+%env PYTHONPATH="$/env/python:/content/gdrive/My Drive/Colab Notebooks/path/to/AUGUSTUS/augustus-3.2.3/config/src"
+! echo $PYTHONPATH
+```
+
  
  # 7.4 Metaensamblado
  
@@ -1618,40 +1729,14 @@ Una forma de visualizar el draft del genoma es utilizando herramientas como *JBr
 
 First, we have to make a JBrowse file. Then, we can view it within Galaxy.
 
-## 8.2 BUSCO 
-
- [BUSCO](https://busco.ezlab.org/) es una herramienta con base en expectativas evolutivamente-informadas del contenido de genes de ortólogos single-copy casi-universales, la métrica BUSCO es complementaria a las métricas técnicas como N50.
-
-```bash
-%cd /content/drive/MyDrive/Busco 
-! ls
-```
-
-
- ```bash
-! git clone https://gitlab.com/ezlab/busco.git
- ```
-
- ```bash
-%cd /content/drive/MyDrive/PR69/Busco/busco
-! python3 setup.py install
- ```
-
- ```bash
-pd.__version__ 
- ```
-
- ```bash
-sys.path.append('/content/drive/MyDrive/PR69/Busco')
- ```
-
- ```bash
-%cd /content/drive/MyDrive/PR69/Busco/busco/src
-! busco -i /content/drive/MyDrive/PR69/Ensamble_SPAdes_MH005_fd/contigs.fasta -l bacteria_odb10 -o anotbusco_PR69 -m genome
- ```
+## 8.2 PRODIGAL 
 
 ## 8.3 PATRIC
+
+La anotación la podemos realizar en PATRIC o BV-BRC
 [Web service](https://www.bv-brc.org/)
+
+## 8.4 RAST
 
 # 9. ANOTACIÓN FUNCIONAL
 
