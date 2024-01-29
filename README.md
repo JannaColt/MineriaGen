@@ -1594,7 +1594,7 @@ sys.path.append('/content/drive/MyDrive/PR69/Busco')
 
 Si resulta complicado, se puede realizar la anotación usando el web service de [Galaxy](https://usegalaxy.org/)
 
-### 7.3.3.1 Configuración en Galaxy
+### 7.3.3.1 Configuracion en Galaxy
 
 1. En el panel de herramientas (primer panel a la izquierda), buscar **Genomic Analysis** -> **Annotation** -> **BUSCO**
 2. En el panel central de parámetros de herramientas subir el ensamble del genoma (este son los contig en formato FASTA) 
@@ -1602,18 +1602,44 @@ Si resulta complicado, se puede realizar la anotación usando el web service de 
 ![image](https://github.com/JannaColt/MineriaGen/assets/13104654/93d5fe5e-96d9-4a49-9000-297c3a0aa1af)
 
 luego en los parámetros seleccionar 
+
 :red_circle: en **Lineage data source** -> **Download lineage data** 
+
 :red_circle: en **Mode** -> **Genome assembly (DNA)**
+
 :red_circle: en **Generate miniprot output** se puede dejar a su elección, si se activa tendremos un output tabular con los genes anotados y su posición (gff)
+
 :red_circle: en  **Use Augustus instead of Metaeuk** seleccionamos Augustus, ya que metaeuk es exclusivo de eucariotas.
+
 :red_circle: en **Auto-detect or select lineage?** seleccionamos auto-detect, si sabemos el linaje podemos colocarlo aquí
 
-3. asdads   
+:red_circle: en **auto-lineage group'*'** podemos dejar el auto lineage de todos los grupos taxonómicos o el prokaryotes 
 
-Que me dice el análisis de busco? 
+:red_circle: en **Which outputs should be generated** hay que señalar todos los output que queremos, los cuales pueden ser: un output con el resumen, una listado con los genes perdidos, un gff con datos de la anotación y una imagen con el resumen de genes núcleo.
+
+3. Una vez establecidos todos los parámetros, podemos correr la herramienta. Si existe algún fallo en algunos de los archivos de salida podemos editar los atributos y presionar auto-detect para que se haga la corrección automática.   
+
+*¿Qué me dice el análisis de busco?*
+
+El programa nos proporciona un aseguramiento de la completitud en términos de contenido degenes esperados de un ensamble o conjunto de genes anotados. Los resultaados son simplificados en categorías de completos y de copia única, completos y duplicados, fragmentados o Busco's perdidos (genes marcadores). 
+
+Los resultados de Busco hacen sentido en el contexto de la biología del organismo. Entendiento que los genes duplicados o perdidos pueden ser de origen técnico o biológico. Por ello un alto nivel de duplicación puede ser explicado por un evento de duplicación reciente (biológicamente hablando) o un ensamble quimérico de haplotipos (técnico).
+
+:high_brightness: **Completos** 
+Si encontramos genes completos, ya sea de copia única o duplicados, los BUSCO han coincidido con Score suficiente, dentro del rango de Scores esperados y en longitud en cuanto a los alineamientos del perfil BUSCO. Si un ortólogo no está presente en el input, o está parcialmente presente (altamente fragmentado), y un homólogo de alta identidad está presente en longitud completa, es posible que este homólogo haya sido confundido y erróneamente identificado como el BUSCO completo. Los límites del score están optimizados para minimizar esta posibilidad pero aún puede ocurrir.
+
+:low_brightness: **Fragmentados**
+
+Si encontramos genes fragmentados, las coincidencias BUSCO han *Scoreado* dentro del rango de scores pero no dentro del rango de longitud de alineamientos. En ensambles de genomas esto podría indicar que o el hen está parcialmente presente o que el paso de la búsqueda de la secuencia y predicción de genes ha fallado en producir un modelo de longitud completa del gen incluso pensando que el gen está completamente presente en el ensamble. Algunos otros pueden aún estar completos pero pueden ser muy divergentes o tener estructuras genéticas complejas, haciéndolos muy difícil de localizar y predecir al 100%. 
+
+⁉️ :full_moon: **Missing *(perdidos)***
+
+Esto significa que, o no hubo coincidencias significativas, o que las coincidencias BUSCO se presentaron con un score por debajo del rango de scores para el perfil BUSCO. Esto puede indicar que los ortólogos están perdidos, o que el paso de búsqueda de secuencia falló al identificar cualquier coincidencia significativa, o que el paso de predicción de genes falló al producir incluso un modelo genético parcial que podría haber sido reconocido como una coincidencia BUSCO fragmentada. Algunos missing BUSCOs de los aseguramientos de ensambles de genoma podrían así estar parcialmente presentes, e incluso posible pero difícilmente completos, solo que son demasiado divergentes o tienen muy complejas estructuras genéticas haciendo difícil su localización o predicción correcta o incluso parcial.
+
 
 ### 7.3.3.2 Archivos de salida en Colaboratory
 
+Actualmente el perfil de BUSCOs de colaboratory está limitado, probablemente debido a que se tiene que definir el path hacia Augustus. Ver Nota
 ![image](https://github.com/JannaColt/MineriaGen/assets/13104654/45d1a0b8-85ed-4757-a95b-e79b8e0ca0ac)
 
 
@@ -1622,6 +1648,9 @@ Que me dice el análisis de busco?
 
 ### 7.3.3.3 Archivos de salida en Galaxy
 
+Los archivos de salida de Galaxy dependerán de lo que se haya marcado en el último punto del paso 2 en [Configuración en Galaxy](#7331-configuracion-en-galaxy)
+ 
+![image](https://github.com/JannaColt/MineriaGen/assets/13104654/c9b4ee98-c07f-4676-85dc-a15307ffe3a7)
 
 
 > [!NOTE]
@@ -1790,7 +1819,8 @@ La anotación la podemos realizar en PATRIC o BV-BRC
 
 [Artículo](https://www.sciencedirect.com/science/article/abs/pii/S0022283622001772)
 
- []()
+ [repositorio]()
+
 ## 10.4 DecRippter
 
 [Artículo](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.3001026)
@@ -1807,6 +1837,7 @@ La anotación la podemos realizar en PATRIC o BV-BRC
 
 [Deep Self supervised Learning](https://www.biorxiv.org/content/10.1101/2022.07.22.500861v1.full.pdf)
 
+GECCO
 
 # 11. ANÁLISIS FILOGENÉTICOS
 
