@@ -1750,6 +1750,33 @@ g++ -std=c++11 -std=gnu++11 MAC2.0.cpp -o MAC2.0
 [artículo](https://www.nature.com/articles/srep34963)
 
 [repositorio](https://gfinisher.sourceforge.net/)
+
+## 7.5.6 Filtrado de contigs
+### 7.5.6.1 con BBMAP
+
+```bash
+#Instalamos BBMAP
+! conda install -c bioconda bbmap -y
+```
+
+```Bash
+# arriba 1000pb
+#Para eliminar los contigs que son menor de 1000pb se puede usar bbmap (hay que instalar bbmap primero)
+#en in se coloca la dirección del ensamble que vas a filtrar, en out le vas a poner la dirección donde quieres que quede y el nombre de salida
+#en min length es la longitud de los que quedan filtrados
+
+! reformat.sh in=/content/drive/MyDrive/Cynthia/CH230_CC/Ensamble_MEGAHIT/CH230_Ensamble_MEGAHIT_final.contigs.fa out=/content/drive/MyDrive/Cynthia/CH230_CC/Limpieza_Ensambles/Limpieza_Ensamble_MEGAHIT/CH230_filteredMAC1000.fasta minlength=1000
+
+```
+
+### 7.5.6.2 con KBase
+
+[Artículo](https://www.nature.com/articles/nbt.4163)
+
+[repositorio app](https://github.com/kbaseapps/kb_assembly_compare/tree/87b74d0dba8cb19dcbd3e7782d4f73a5eaeff76b/ui/narrative/methods/run_filter_contigs_by_length)
+
+Se necesita registrarse a Kbase
+[App](https://kbase.us/applist/apps/kb_assembly_compare/run_filter_contigs_by_length/release)
  
  # 8. ANOTACION
  
