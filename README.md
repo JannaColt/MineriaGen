@@ -1640,6 +1640,7 @@ Esto significa que, o no hubo coincidencias significativas, o que las coincidenc
 ### 7.3.3.2 Archivos de salida en Colaboratory
 
 Actualmente el perfil de BUSCOs de colaboratory está limitado, probablemente debido a que se tiene que definir el path hacia Augustus. Ver Nota
+
 ![image](https://github.com/JannaColt/MineriaGen/assets/13104654/45d1a0b8-85ed-4757-a95b-e79b8e0ca0ac)
 
 
@@ -1715,11 +1716,35 @@ g++ -std=c++11 -std=gnu++11 MAC2.0.cpp -o MAC2.0
  # 7.5 Mejoramiento del Ensamble
  
  ## 7.5.1 SASpector
+
+[Artículo](https://academic.oup.com/bioinformatics/article/38/10/2920/6564223)
+
+[Repositorio](https://github.com/LoGT-KULeuven/SASpector)
+ 
  ## 7.5.1 Gap predict
+
+ [Artículo](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8772386/pdf/nihms-1763064.pdf)
+
+ [Repositorio](https://github.com/bcgsc/GapPredict)
+ 
  ## 7.5.2 Gap closer
+
+ [Artículo](https://academic.oup.com/gigascience/article/9/9/giaa094/5902284?login=false)
+
+ [Repositorio](https://github.com/BGI-Qingdao/TGS-GapCloser)
+ 
  ## 7.5.3 Improvement assembly
+ 
+[Artículo](https://www.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000083)
+
+[Repositorio](https://github.com/sanger-pathogens/assembly_improvement)
+ 
  ## 7.5.4 Figbird
  
+ [Artículo](https://academic.oup.com/bioinformatics/article/38/15/3717/6613135?login=false)
+
+ [Repositorio](https://github.com/SumitTarafder/Figbird)
+
  
  # 8. ANOTACION
  
@@ -1779,24 +1804,24 @@ La anotación la podemos realizar en PATRIC o BV-BRC
 
 ![Diagrama de *workflow*](https://github.com/JannaColt/MineriaGen/assets/13104654/96932911-9cbe-4a7d-9480-286736727738)
 
-## FunMappOne 
+## 9.2 FunMappOne 
 
 [Artículo](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-2639-2)
 
 [Repositorio](https://github.com/Greco-Lab/FunMappOne)
 
-## 9.2 MicrobeAnnotator
+## 9.3 MicrobeAnnotator
 
 [Artículo](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03940-5)
 
 [Repositorio](https://github.com/cruizperez/MicrobeAnnotator)
 
-## 9.3 Deep Learning
+## 9.4 Deep Learning
 [Artículo](https://pubmed.ncbi.nlm.nih.gov/37010293/)
 
 ![DL-functionalAnnotation](https://github.com/JannaColt/MineriaGen/assets/13104654/6535dca0-8913-44b1-9b54-dbb45b829bc6)
 
-## 9.4 MicroScope
+## 9.5 MicroScope
 
 [Artículo](https://academic.oup.com/nar/article/48/D1/D579/5606622)
 [Plataforma](https://mage.genoscope.cns.fr/microscope/home/index.php)
@@ -1833,11 +1858,16 @@ La anotación la podemos realizar en PATRIC o BV-BRC
 
 [Repositorio](https://github.com/magarveylab/NLPPrecursor)
 
-## 10.6 Otros
+## 10.6 GECCO
+
+[Artículo](https://www.biorxiv.org/content/10.1101/2021.05.03.442509v1)
+
+[Repositorio](https://github.com/zellerlab/GECCO)
+
+## 10.7 Otros
 
 [Deep Self supervised Learning](https://www.biorxiv.org/content/10.1101/2022.07.22.500861v1.full.pdf)
 
-GECCO
 
 # 11. ANÁLISIS FILOGENÉTICOS
 
