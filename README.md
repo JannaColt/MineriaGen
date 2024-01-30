@@ -1745,6 +1745,11 @@ g++ -std=c++11 -std=gnu++11 MAC2.0.cpp -o MAC2.0
 
  [Repositorio](https://github.com/SumitTarafder/Figbird)
 
+## 7.5.5 GFinisher
+
+[artículo](https://www.nature.com/articles/srep34963)
+
+[repositorio](https://gfinisher.sourceforge.net/)
  
  # 8. ANOTACION
  
