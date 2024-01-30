@@ -1864,7 +1864,13 @@ La anotación la podemos realizar en PATRIC o BV-BRC
 
 [Repositorio](https://github.com/zellerlab/GECCO)
 
-## 10.7 Otros
+## 10.7 BigCARP
+
+[Artículo](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1011162)
+
+[Repositorio](https://github.com/microsoft/bigcarp)
+
+## 10.8 Otros
 
 [Deep Self supervised Learning](https://www.biorxiv.org/content/10.1101/2022.07.22.500861v1.full.pdf)
 
