@@ -1621,20 +1621,21 @@ luego en los parámetros seleccionar
 
 *¿Qué me dice el análisis de busco?*
 
-El programa nos proporciona un aseguramiento de la completitud en términos de contenido degenes esperados de un ensamble o conjunto de genes anotados. Los resultaados son simplificados en categorías de completos y de copia única, completos y duplicados, fragmentados o Busco's perdidos (genes marcadores). 
+El programa nos proporciona un aseguramiento de la completitud en términos de contenido de genes esperados de un ensamble o conjunto de genes anotados. Los resultados son simplificados en categorías de completos y de copia única, completos y duplicados, fragmentados o Busco's perdidos (genes marcadores). 
 
-Los resultados de Busco hacen sentido en el contexto de la biología del organismo. Entendiento que los genes duplicados o perdidos pueden ser de origen técnico o biológico. Por ello un alto nivel de duplicación puede ser explicado por un evento de duplicación reciente (biológicamente hablando) o un ensamble quimérico de haplotipos (técnico).
+Los resultados de Busco hacen sentido en el contexto de la biología del organismo. Entendiendo que los genes duplicados o perdidos pueden ser de origen técnico o biológico. Por ello un alto nivel de duplicación puede ser explicado por un evento de duplicación reciente (biológicamente hablando) o un ensamble quimérico de haplotipos (técnico).
 
 :high_brightness: **Completos** 
-Si encontramos genes completos, ya sea de copia única o duplicados, los BUSCO han coincidido con Score suficiente, dentro del rango de Scores esperados y en longitud en cuanto a los alineamientos del perfil BUSCO. Si un ortólogo no está presente en el input, o está parcialmente presente (altamente fragmentado), y un homólogo de alta identidad está presente en longitud completa, es posible que este homólogo haya sido confundido y erróneamente identificado como el BUSCO completo. Los límites del score están optimizados para minimizar esta posibilidad pero aún puede ocurrir.
+
+Si encontramos genes completos, ya sea de copia única o duplicados, los BUSCO han coincidido con Score suficiente, dentro del rango de Scores esperados y en longitud en cuanto a los alineamientos del perfil BUSCO. Si un ortólogo no está presente en el *input*, o está parcialmente presente (altamente fragmentado), y un homólogo de alta identidad está presente en longitud completa, es posible que este homólogo haya sido confundido y erróneamente identificado como el BUSCO completo. Los límites del score están optimizados para minimizar esta posibilidad pero aún puede ocurrir.
 
 :low_brightness: **Fragmentados**
 
-Si encontramos genes fragmentados, las coincidencias BUSCO han *Scoreado* dentro del rango de scores pero no dentro del rango de longitud de alineamientos. En ensambles de genomas esto podría indicar que o el hen está parcialmente presente o que el paso de la búsqueda de la secuencia y predicción de genes ha fallado en producir un modelo de longitud completa del gen incluso pensando que el gen está completamente presente en el ensamble. Algunos otros pueden aún estar completos pero pueden ser muy divergentes o tener estructuras genéticas complejas, haciéndolos muy difícil de localizar y predecir al 100%. 
+Si encontramos genes fragmentados, las coincidencias BUSCO han *Scoreado* dentro del rango de scores pero no dentro del rango de longitud de alineamientos. En ensambles de genomas esto podría indicar que o el gen está parcialmente presente o que el paso de la búsqueda de la secuencia y predicción de genes ha fallado en producir un modelo de longitud completa del gen incluso pensando que el gen está completamente presente en el ensamble. Algunos otros pueden aún estar completos, pero pueden ser muy divergentes o tener estructuras genéticas complejas, haciéndolos muy difícil de localizar y predecir al 100%. 
 
 ⁉️ :full_moon: **Missing *(perdidos)***
 
-Esto significa que, o no hubo coincidencias significativas, o que las coincidencias BUSCO se presentaron con un score por debajo del rango de scores para el perfil BUSCO. Esto puede indicar que los ortólogos están perdidos, o que el paso de búsqueda de secuencia falló al identificar cualquier coincidencia significativa, o que el paso de predicción de genes falló al producir incluso un modelo genético parcial que podría haber sido reconocido como una coincidencia BUSCO fragmentada. Algunos missing BUSCOs de los aseguramientos de ensambles de genoma podrían así estar parcialmente presentes, e incluso posible pero difícilmente completos, solo que son demasiado divergentes o tienen muy complejas estructuras genéticas haciendo difícil su localización o predicción correcta o incluso parcial.
+Esto significa que, o no hubo coincidencias significativas, o que las coincidencias BUSCO se presentaron con un score por debajo del rango de scores para el perfil BUSCO. Esto puede indicar que los ortólogos están perdidos, o que el paso de búsqueda de secuencia falló al identificar cualquier coincidencia significativa, o que el paso de predicción de genes falló al producir incluso un modelo genético parcial que podría haber sido reconocido como una coincidencia BUSCO fragmentada. Algunos missing BUSCOs de los aseguramientos de ensambles de genoma podrían así estar parcialmente presentes, e incluso posible pero difícilmente completos, solo que son divergentes o tienen muy complejas estructuras genéticas haciendo difícil su localización o predicción correcta o incluso parcial.
 
 
 ### 7.3.3.2 Archivos de salida en Colaboratory
@@ -1765,7 +1766,7 @@ g++ -std=c++11 -std=gnu++11 MAC2.0.cpp -o MAC2.0
 #en in se coloca la dirección del ensamble que vas a filtrar, en out le vas a poner la dirección donde quieres que quede y el nombre de salida
 #en min length es la longitud de los que quedan filtrados
 
-! reformat.sh in=/content/drive/MyDrive/Cynthia/CH230_CC/Ensamble_MEGAHIT/CH230_Ensamble_MEGAHIT_final.contigs.fa out=/content/drive/MyDrive/Cynthia/CH230_CC/Limpieza_Ensambles/Limpieza_Ensamble_MEGAHIT/CH230_filteredMAC1000.fasta minlength=1000
+! reformat.sh in=/content/drive/MyDrive/Cynthia/CH230_CC/Ensamble_MEGAHIT/CH230_Ensamble_MEGAHIT_final.contigs.fa out=/content/drive/MyDrive/Cynthia/CH230_CC/Limpieza_Ensambles/Limpieza_Ensamble_MEGAHIT/CH230_filteredMAC1000.fasta minlength=2000
 
 ```
 
